@@ -1,0 +1,24 @@
+{
+  "version": "2.1.0",
+  "versionCode": 210,
+  "releaseDate": "2026-08-26",
+  "buildTimestamp": 1787732200000,
+  "title": "Abyntra AI Pro — 100% Standalone & Hollywood Video Release",
+  "channel": "stable",
+  "critical": false,
+  "changelog": [
+    "🚀 100% Standalone Native Desktop Engine: No website or external server needed.",
+    "🎬 Hollywood 4-Shot Cinematic Video Studio with Web Audio Stereo Scoring.",
+    "🎨 8K FLUX.1 Visual Studio: 8 artistic styles, 4x variations, & aspect ratio controls.",
+    "⚡ Real-Time Over-The-Air (OTA) Code Sync: Instant 1-click update across all apps.",
+    "🔒 Isolated Local Machine Vault: 90-day extended chat retention (%LocalAppData%).",
+    "📱 Multi-Platform Standalone Builds: Native executables for Windows, Android, macOS, Linux, & iOS."
+  ],
+  "platformDownloads": {
+    "windows": "/downloads/Abyntra_AI_Setup.exe",
+    "android": "/downloads/Abyntra_AI_v2.0.apk",
+    "mac": "/downloads/Abyntra_AI_macOS.dmg",
+    "linux": "/downloads/Abyntra_AI_Linux.AppImage",
+    "ios": "/downloads/Abyntra_AI_iOS.mobileconfig"
+  }
+}

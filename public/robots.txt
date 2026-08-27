@@ -1,0 +1,41 @@
+# ========================================================
+# ABYNTRA AI - ROBOTS.TXT (SEARCH ENGINE CRAWLER DIRECTIVES)
+# Primary Production: https://abyntra-ai.site.je/
+# Global Mirror: https://abyntra.ai/
+# ========================================================
+
+User-agent: *
+Allow: /
+Allow: /logo.png
+Allow: /manifest.json
+Allow: /sitemap.xml
+Allow: /downloads/
+
+# Allow major search engine bots
+User-agent: Googlebot
+Allow: /
+
+User-agent: Googlebot-Image
+Allow: /
+Allow: /*.png$
+Allow: /*.jpg$
+Allow: /*.svg$
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Applebot
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+User-agent: Baiduspider
+Allow: /
+
+User-agent: Yandex
+Allow: /
+
+# Canonical Sitemap Locations
+Sitemap: https://abyntra-ai.site.je/sitemap.xml
+Sitemap: https://abyntra.ai/sitemap.xml

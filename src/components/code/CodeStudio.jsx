@@ -1,0 +1,662 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { 
+  Code2, 
+  Play, 
+  Sparkles, 
+  Copy, 
+  Check, 
+  Download, 
+  Smartphone, 
+  Monitor, 
+  Tablet, 
+  FileCode, 
+  Terminal,
+  Zap,
+  Activity,
+  Trash2,
+  ChevronDown,
+  ChevronUp,
+  RefreshCw,
+  Gauge,
+  RotateCcw,
+  ClipboardPaste,
+  Wand2,
+  TestTube
+} from 'lucide-react';
+import { DEMO_CODE_PROJECT } from '../../data/demoData';
+import { openrouter } from '../../services/openrouter';
+import { localNeuralEngine } from '../../services/localNeuralEngine';
+
+export default function CodeStudio({ activeModel, injectedCode, isTitanMode = false }) {
+  const [project, setProject] = useState(DEMO_CODE_PROJECT);
+  const [activeFileName, setActiveFileName] = useState('App.jsx');
+  const [copied, setCopied] = useState(false);
+  const [pasted, setPasted] = useState(false);
+  const [viewMode, setViewMode] = useState('desktop'); // 'desktop' | 'tablet' | 'mobile'
+  const [isGenerating, setIsGenerating] = useState(false);
+  const [aiPrompt, setAiPrompt] = useState('');
+  const [consoleLogs, setConsoleLogs] = useState([]);
+  const [isConsoleOpen, setIsConsoleOpen] = useState(false);
+
+  // Micro-Benchmark Execution state
+  const [benchmarkResult, setBenchmarkResult] = useState(null);
+  const [isRunningBenchmark, setIsRunningBenchmark] = useState(false);
+
+  // Auto-Fix state
+  const [isAutoFixing, setIsAutoFixing] = useState(false);
+
+  const iframeRef = useRef(null);
+
+  useEffect(() => {
+    if (injectedCode) {
+      setProject(prev => {
+        const files = prev.files.map(f => {
+          if (f.name === 'App.jsx') {
+            return { ...f, content: injectedCode };
+          }
+          return f;
+        });
+        return { ...prev, files };
+      });
+    }
+  }, [injectedCode]);
+
+  useEffect(() => {
+    const handleWindowMessage = (event) => {
+      if (event.data?.type === 'ABYNTRA_CONSOLE_LOG') {
+        setConsoleLogs(prev => [...prev.slice(-40), {
+          type: event.data.level,
+          text: event.data.message,
+          time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' })
+        }]);
+      }
+    };
+    window.addEventListener('message', handleWindowMessage);
+    return () => window.removeEventListener('message', handleWindowMessage);
+  }, []);
+
+  const activeFile = project.files.find(f => f.name === activeFileName) || project.files[0];
+
+  const handleCodeChange = (newContent) => {
+    setProject(prev => ({
+      ...prev,
+      files: prev.files.map(f => f.name === activeFileName ? { ...f, content: newContent } : f)
+    }));
+  };
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(activeFile.content);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  // 1-Click Paste from Clipboard
+  const handlePasteFromClipboard = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.trim()) {
+        const cleanText = text.replace(/^```[a-zA-Z]*\n/i, '').replace(/```$/i, '');
+        handleCodeChange(cleanText);
+        setPasted(true);
+        setTimeout(() => setPasted(false), 2000);
+      }
+    } catch (err) {
+      console.warn('Clipboard read failed:', err);
+    }
+  };
+
+  // 1-Click Auto-Indent & Format
+  const handleFormatCode = () => {
+    try {
+      const lines = activeFile.content.split('\n');
+      let indent = 0;
+      const formatted = lines.map(line => {
+        let trimmed = line.trim();
+        if (trimmed.startsWith('}') || trimmed.startsWith(']') || trimmed.startsWith(')')) {
+          indent = Math.max(0, indent - 1);
+        }
+        const result = '  '.repeat(indent) + trimmed;
+        if (trimmed.endsWith('{') || trimmed.endsWith('[') || trimmed.endsWith('(')) {
+          indent++;
+        }
+        return result;
+      }).join('\n');
+
+      handleCodeChange(formatted);
+    } catch (_) {}
+  };
+
+  // 1-Click Generate Unit Tests
+  const handleGenerateUnitTests = async () => {
+    setIsGenerating(true);
+    try {
+      let testCode = '';
+      if (isTitanMode || activeModel?.isTitan || activeModel?.isLocal || !navigator.onLine) {
+        await localNeuralEngine.generateStream({
+          messages: [
+            {
+              role: 'system',
+              content: 'Generate clean Vitest / Jest unit tests with mock rendering and assertions for the provided React component. Return ONLY executable test code.'
+            },
+            { role: 'user', content: activeFile.content }
+          ],
+          model: 'abyntra-titan-coder',
+          onChunk: (chunk, acc) => { testCode = acc; }
+        });
+      } else {
+        await openrouter.streamChat({
+          messages: [
+            {
+              role: 'system',
+              content: 'Generate clean Vitest / Jest unit tests with mock rendering and assertions for the provided React component. Return ONLY executable test code.'
+            },
+            {
+              role: 'user',
+              content: activeFile.content
+            }
+          ],
+          model: activeModel?.id || 'anthropic/claude-3.7-sonnet',
+          onChunk: (chunk, acc) => { testCode = acc; }
+        });
+      }
+
+      const cleanTest = testCode.replace(/^```[a-zA-Z]*\n/i, '').replace(/```$/i, '').trim();
+      if (cleanTest) {
+        setProject(prev => {
+          const exists = prev.files.find(f => f.name === 'App.test.jsx');
+          if (exists) {
+            return {
+              ...prev,
+              files: prev.files.map(f => f.name === 'App.test.jsx' ? { ...f, content: cleanTest } : f)
+            };
+          }
+          return {
+            ...prev,
+            files: [...prev.files, { name: 'App.test.jsx', language: 'javascript', content: cleanTest }]
+          };
+        });
+        setActiveFileName('App.test.jsx');
+      }
+    } catch (err) {
+      console.warn('Test generation failed:', err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const handleDownloadActiveFile = () => {
+    const blob = new Blob([activeFile.content], { type: 'text/plain;charset=utf-8' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = activeFile.name;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleDownloadProjectZip = () => {
+    const jsonContent = JSON.stringify(project, null, 2);
+    const blob = new Blob([jsonContent], { type: 'application/json' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `abyntra_project_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  };
+
+  const handleRunBenchmark = () => {
+    setIsRunningBenchmark(true);
+    const start = performance.now();
+    const iterations = 100000;
+    let acc = 0;
+    for (let i = 0; i < iterations; i++) {
+      acc += Math.sin(i) * Math.cos(i);
+    }
+    const end = performance.now();
+    const duration = (end - start).toFixed(2);
+    const ops = Math.round((iterations / (end - start)) * 1000).toLocaleString();
+
+    setBenchmarkResult({
+      durationMs: duration,
+      opsPerSec: ops,
+      iterations
+    });
+    setIsRunningBenchmark(false);
+  };
+
+  const handleAutoFixCode = async () => {
+    setIsAutoFixing(true);
+    try {
+      const errorContext = consoleLogs.filter(l => l.type === 'error').map(l => l.text).join('\n') || 'Fix syntax errors or runtime issues in this React component.';
+      let fixedContent = '';
+
+      if (isTitanMode || activeModel?.isTitan || activeModel?.isLocal || !navigator.onLine) {
+        await localNeuralEngine.generateStream({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Abyntra Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
+            },
+            { role: 'user', content: `Error context:\n${errorContext}\n\nCurrent Code:\n${activeFile.content}` }
+          ],
+          model: 'abyntra-titan-coder',
+          onChunk: (chunk, acc) => { fixedContent = acc; }
+        });
+      } else {
+        await openrouter.streamChat({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Abyntra Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
+            },
+            { role: 'user', content: `Error context:\n${errorContext}\n\nCurrent Code:\n${activeFile.content}` }
+          ],
+          model: activeModel?.id || 'anthropic/claude-3.7-sonnet',
+          onChunk: (chunk, acc) => { fixedContent = acc; }
+        });
+      }
+
+      const cleanCode = fixedContent.replace(/^```[a-zA-Z]*\n/i, '').replace(/```$/i, '').trim();
+      if (cleanCode) {
+        handleCodeChange(cleanCode);
+        setConsoleLogs(prev => [...prev, {
+          type: 'info',
+          text: '⚡ Abyntra Auto-Fix applied successfully!',
+          time: new Date().toLocaleTimeString()
+        }]);
+      }
+    } catch (err) {
+      console.warn('Auto-fix failed:', err);
+    } finally {
+      setIsAutoFixing(false);
+    }
+  };
+
+  const handleAiModify = async () => {
+    if (!aiPrompt.trim() || isGenerating) return;
+    setIsGenerating(true);
+
+    try {
+      let fullCode = '';
+      if (isTitanMode || activeModel?.isTitan || activeModel?.isLocal || !navigator.onLine) {
+        await localNeuralEngine.generateStream({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Abyntra AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
+            },
+            {
+              role: 'user',
+              content: `Instruction: "${aiPrompt}"\n\nCurrent Code:\n${activeFile.content}`
+            }
+          ],
+          model: 'abyntra-titan-coder',
+          onChunk: (chunk, acc) => {
+            fullCode = acc;
+          }
+        });
+      } else {
+        await openrouter.streamChat({
+          messages: [
+            {
+              role: 'system',
+              content: 'You are Abyntra AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
+            },
+            {
+              role: 'user',
+              content: `Instruction: "${aiPrompt}"\n\nCurrent Code:\n${activeFile.content}`
+            }
+          ],
+          model: activeModel?.id || 'anthropic/claude-3.7-sonnet',
+          onChunk: (chunk, acc) => {
+            fullCode = acc;
+          }
+        });
+      }
+
+      const cleanCode = fullCode.replace(/^```[a-zA-Z]*\n/i, '').replace(/```$/i, '').trim();
+      if (cleanCode) {
+        handleCodeChange(cleanCode);
+        setAiPrompt('');
+      }
+    } catch (err) {
+      console.warn('AI modify error:', err);
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const getSandboxHtml = () => {
+    const appFile = project.files.find(f => f.name === 'App.jsx')?.content || '';
+    
+    // Clean and transform ES6 imports & exports for in-browser Babel execution
+    let transformedCode = appFile
+      .replace(/import\s+React\s*,\s*\{([^}]+)\}\s+from\s+['"]react['"];?/g, 'const { $1 } = React;')
+      .replace(/import\s+React\s+from\s+['"]react['"];?/g, '')
+      .replace(/import\s*\{([^}]+)\}\s+from\s+['"]react['"];?/g, 'const { $1 } = React;')
+      .replace(/import\s*\{([^}]+)\}\s+from\s+['"]lucide-react['"];?/g, 'const { $1 } = (window.LucideIcons || {});')
+      .replace(/import\s+([A-Za-z0-9_]+)\s+from\s+['"]lucide-react['"];?/g, 'const $1 = (window.LucideIcons && window.LucideIcons.$1) || (window.LucideIcons?.Sparkles);')
+      .replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, 'window.__DEFAULT_EXPORT__ = $1; function $1')
+      .replace(/export\s+default\s+class\s+([A-Za-z0-9_]+)/g, 'window.__DEFAULT_EXPORT__ = $1; class $1')
+      .replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, 'window.__DEFAULT_EXPORT__ = $1;')
+      .replace(/export\s+default\s+/g, 'window.__DEFAULT_EXPORT__ = ')
+      .replace(/export\s+\{[^}]+\};?/g, '');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    body { background-color: #07080F; color: #FFFFFF; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 12px; }
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 4px; }
+  </style>
+  <script>
+    const sendLog = (level, msg) => {
+      window.parent.postMessage({ type: 'ABYNTRA_CONSOLE_LOG', level, message: String(msg) }, '*');
+    };
+    console.log = (...args) => sendLog('log', args.join(' '));
+    console.warn = (...args) => sendLog('warn', args.join(' '));
+    console.error = (...args) => sendLog('error', args.join(' '));
+    window.onerror = (msg) => { sendLog('error', msg); return true; };
+
+    // Universal Lucide React SVG Icon Proxy Generator
+    window.LucideIcons = new Proxy({}, {
+      get: function(target, prop) {
+        return function DynamicIcon(props) {
+          const className = props?.className || 'w-4 h-4 inline-block';
+          const size = props?.size || 18;
+          return React.createElement('svg', {
+            xmlns: 'http://www.w3.org/2000/svg',
+            width: size,
+            height: size,
+            viewBox: '0 0 24 24',
+            fill: props?.fill || 'none',
+            stroke: 'currentColor',
+            strokeWidth: props?.strokeWidth || 2,
+            strokeLinecap: 'round',
+            strokeLinejoin: 'round',
+            className: className,
+            ...props
+          }, React.createElement('circle', { cx: 12, cy: 12, r: 9, strokeOpacity: 0.8 }),
+             React.createElement('path', { d: 'M12 8v8M8 12h8' }));
+        };
+      }
+    });
+  </script>
+</head>
+<body>
+  <div id="root"></div>
+  <script type="text/babel">
+    try {
+      window.__DEFAULT_EXPORT__ = null;
+      ${transformedCode}
+
+      let RootComponent = window.__DEFAULT_EXPORT__ || (typeof App !== 'undefined' ? App : (typeof MainExport !== 'undefined' ? MainExport : null));
+
+      if (!RootComponent) {
+        // Search global functions for any defined component
+        const candidates = ['App', 'AbyntraQuantumSphere', 'StandaloneSnakeGame', 'TitanEngineDashboard', 'Dashboard', 'Component', 'Main'];
+        for (const name of candidates) {
+          if (typeof window[name] === 'function') {
+            RootComponent = window[name];
+            break;
+          }
+        }
+      }
+
+      if (RootComponent) {
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<RootComponent />);
+      } else {
+        document.getElementById('root').innerHTML = '<div class="p-6 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 text-cyan-300 font-mono text-xs text-center space-y-2"><div class="font-bold text-sm text-white">⚡ Component Ready</div><div>Type or paste your React 18 / Tailwind component in the editor.</div></div>';
+      }
+    } catch (err) {
+      console.error(err.message);
+      document.getElementById('root').innerHTML = '<div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 font-mono text-xs"><strong>Runtime Notice:</strong> ' + err.message + '</div>';
+    }
+  </script>
+</body>
+</html>`;
+  };
+
+  return (
+    <div className="flex-1 flex flex-col h-full bg-[#07080F] text-gray-200 overflow-hidden">
+      {/* Top Studio Control Bar */}
+      <div className="p-3 border-b border-white/10 bg-[#090B16] flex items-center justify-between gap-3 text-xs font-mono">
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-cyan-500/10 text-cyan-400 border border-cyan-500/30 font-bold">
+            <Code2 className="w-4 h-4" />
+            <span>React 18 Live IDE</span>
+          </div>
+
+          <div className="flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+            {project.files.map(f => (
+              <button
+                key={f.name}
+                onClick={() => setActiveFileName(f.name)}
+                className={`px-2.5 py-1 rounded-lg text-xs transition-all ${
+                  activeFileName === f.name
+                    ? 'bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                {f.name}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Viewport switcher & 1-Click Code Actions */}
+        <div className="flex items-center gap-2">
+          {/* 1-Click Paste Button */}
+          <button
+            onClick={handlePasteFromClipboard}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all"
+            title="1-Click Paste from Clipboard"
+          >
+            <ClipboardPaste className="w-3.5 h-3.5 text-cyan-400" />
+            <span>{pasted ? 'Pasted!' : 'Paste Code'}</span>
+          </button>
+
+          {/* 1-Click Auto-Indent / Format */}
+          <button
+            onClick={handleFormatCode}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all"
+            title="Format Code & Auto-Indent"
+          >
+            <Wand2 className="w-3.5 h-3.5 text-purple-400" />
+            <span>Format</span>
+          </button>
+
+          {/* 1-Click Generate Unit Tests */}
+          <button
+            onClick={handleGenerateUnitTests}
+            disabled={isGenerating}
+            className="hidden md:flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-emerald-300 border border-white/10 text-xs font-mono transition-all"
+            title="Generate Vitest / Jest Unit Tests"
+          >
+            <TestTube className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Unit Tests</span>
+          </button>
+
+          <div className="hidden sm:flex items-center gap-1 bg-black/40 p-1 rounded-xl border border-white/5">
+            <button
+              onClick={() => setViewMode('desktop')}
+              className={`p-1.5 rounded-lg ${viewMode === 'desktop' ? 'bg-cyan-500/20 text-cyan-300' : 'text-gray-400 hover:text-white'}`}
+              title="Desktop 100%"
+            >
+              <Monitor className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('tablet')}
+              className={`p-1.5 rounded-lg ${viewMode === 'tablet' ? 'bg-cyan-500/20 text-cyan-300' : 'text-gray-400 hover:text-white'}`}
+              title="Tablet (768px)"
+            >
+              <Tablet className="w-3.5 h-3.5" />
+            </button>
+            <button
+              onClick={() => setViewMode('mobile')}
+              className={`p-1.5 rounded-lg ${viewMode === 'mobile' ? 'bg-cyan-500/20 text-cyan-300' : 'text-gray-400 hover:text-white'}`}
+              title="Mobile (375px)"
+            >
+              <Smartphone className="w-3.5 h-3.5" />
+            </button>
+          </div>
+
+          <button
+            onClick={handleRunBenchmark}
+            disabled={isRunningBenchmark}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 font-bold transition-colors"
+            title="Run 100k-ops JavaScript Execution Micro-Benchmark"
+          >
+            <Activity className="w-3.5 h-3.5" />
+            <span>{isRunningBenchmark ? 'Measuring...' : 'Benchmark'}</span>
+          </button>
+
+          <button
+            onClick={handleAutoFixCode}
+            disabled={isAutoFixing}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-emerald-500/15 hover:bg-emerald-500/25 text-emerald-300 border border-emerald-500/30 font-bold transition-colors"
+            title="1-Click Code Auto-Fix: Automatically repair console errors"
+          >
+            <Zap className="w-3.5 h-3.5" />
+            <span>{isAutoFixing ? 'Fixing...' : 'Auto-Fix'}</span>
+          </button>
+
+          <button
+            onClick={handleDownloadActiveFile}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5"
+            title="Download Active File (.jsx)"
+          >
+            <Download className="w-4 h-4" />
+          </button>
+
+          <button
+            onClick={handleCopy}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5"
+            title="Copy current file code"
+          >
+            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+          </button>
+        </div>
+      </div>
+
+      {/* Benchmark Results HUD */}
+      {benchmarkResult && (
+        <div className="px-4 py-2 bg-gradient-to-r from-purple-950/40 via-indigo-950/40 to-slate-900 border-b border-purple-500/20 flex items-center justify-between text-xs font-mono">
+          <div className="flex items-center gap-3">
+            <span className="text-purple-300 font-bold flex items-center gap-1">
+              <Gauge className="w-3.5 h-3.5 text-purple-400" />
+              <span>JS Engine Latency:</span>
+            </span>
+            <span className="px-2 py-0.5 rounded bg-purple-500/20 text-purple-200 font-bold">
+              {benchmarkResult.durationMs} ms
+            </span>
+            <span className="text-gray-400">
+              Throughput: <strong className="text-cyan-300">{benchmarkResult.opsPerSec} ops/sec</strong> ({benchmarkResult.iterations} cycles)
+            </span>
+          </div>
+          <button onClick={() => setBenchmarkResult(null)} className="text-gray-400 hover:text-white">✕</button>
+        </div>
+      )}
+
+      {/* Main Split: Code Editor (Left) & Sandboxed Preview (Right) */}
+      <div className="flex-1 grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-white/10 overflow-hidden">
+        {/* Left: Code Editor */}
+        <div className="flex flex-col h-full bg-[#05060A] overflow-hidden">
+          <div className="flex-1 overflow-auto p-4 font-mono text-xs text-cyan-100">
+            <textarea
+              value={activeFile.content}
+              onChange={(e) => handleCodeChange(e.target.value)}
+              className="w-full h-full bg-transparent border-0 outline-none resize-none font-mono text-xs text-cyan-200 leading-relaxed focus:outline-none"
+              spellCheck="false"
+            />
+          </div>
+
+          {/* AI Code Copilot Prompt Bar */}
+          <div className="p-3 border-t border-white/10 bg-[#090B16] flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+            <input
+              type="text"
+              placeholder="Ask Abyntra to add a feature, refactor, or style this component..."
+              value={aiPrompt}
+              onChange={(e) => setAiPrompt(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter') handleAiModify(); }}
+              className="flex-1 bg-black/50 border border-white/10 rounded-xl px-3 py-1.5 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500/40"
+            />
+            <button
+              onClick={handleAiModify}
+              disabled={!aiPrompt.trim() || isGenerating}
+              className="px-3 py-1.5 rounded-xl bg-cyan-500 text-black font-bold text-xs disabled:opacity-40 shadow-glow-cyan"
+            >
+              {isGenerating ? 'Synthesizing...' : 'Refactor'}
+            </button>
+          </div>
+        </div>
+
+        {/* Right: Live Sandboxed React 18 Runner */}
+        <div className="flex flex-col h-full bg-[#07080F] overflow-hidden">
+          <div className="flex-1 flex items-center justify-center p-3 bg-black/40 overflow-auto">
+            <div
+              className={`h-full transition-all duration-300 rounded-2xl overflow-hidden border border-white/10 shadow-2xl bg-black ${
+                viewMode === 'desktop' ? 'w-full' : viewMode === 'tablet' ? 'w-[768px] max-w-full' : 'w-[375px] max-w-full'
+              }`}
+            >
+              <iframe
+                ref={iframeRef}
+                title="Abyntra Sandboxed Live App"
+                srcDoc={getSandboxHtml()}
+                sandbox="allow-scripts allow-modals allow-same-origin"
+                className="w-full h-full border-0 bg-[#07080F]"
+              />
+            </div>
+          </div>
+
+          {/* Collapsible Console Drawer */}
+          <div className="border-t border-white/10 bg-[#090B16]">
+            <button
+              onClick={() => setIsConsoleOpen(!isConsoleOpen)}
+              className="w-full px-3 py-1.5 flex items-center justify-between text-[11px] font-mono text-gray-400 hover:text-white"
+            >
+              <div className="flex items-center gap-2">
+                <Terminal className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Console ({consoleLogs.length})</span>
+                {consoleLogs.some(l => l.type === 'error') && (
+                  <span className="px-1.5 py-0.2 rounded bg-rose-500/20 text-rose-300 text-[10px]">Errors</span>
+                )}
+              </div>
+              {isConsoleOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronUp className="w-3.5 h-3.5" />}
+            </button>
+
+            {isConsoleOpen && (
+              <div className="p-3 max-h-36 overflow-y-auto font-mono text-[11px] space-y-1 bg-[#05060A]">
+                {consoleLogs.length === 0 ? (
+                  <div className="text-gray-600">No console outputs yet.</div>
+                ) : (
+                  consoleLogs.map((log, i) => (
+                    <div
+                      key={i}
+                      className={`flex items-start gap-2 ${
+                        log.type === 'error' ? 'text-rose-400' : log.type === 'warn' ? 'text-amber-400' : 'text-cyan-200'
+                      }`}
+                    >
+                      <span className="text-gray-600 flex-shrink-0">{log.time}</span>
+                      <span className="break-all">{log.text}</span>
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
