@@ -10,7 +10,7 @@
     <loc>https://abyntra-ai.pages.dev/</loc>
     <xhtml:link rel="alternate" hreflang="x-default" href="https://abyntra-ai.pages.dev/" />
     <xhtml:link rel="alternate" hreflang="en" href="https://abyntra-ai.pages.dev/" />
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>always</changefreq>
     <priority>1.0</priority>
     <image:image>
@@ -23,7 +23,7 @@
   <!-- 2. Official Introduction & Polymath Overview -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?action=overview</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
@@ -31,7 +31,7 @@
   <!-- 3. Superhuman Dev Studio & React 18 Sandbox IDE -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=code</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -39,7 +39,7 @@
   <!-- 4. Hollywood Screenplay & Script Writing Studio -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=script</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -47,7 +47,7 @@
   <!-- 5. Olympiad Math Lab & 3D Surface Plotter -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=math</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -55,7 +55,7 @@
   <!-- 6. 8K VisionForge Photorealistic FLUX Studio -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=image</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -63,7 +63,7 @@
   <!-- 7. MotionLab 4K/8K 60FPS Cinema Video Studio -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=video</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -71,7 +71,7 @@
   <!-- 8. Real-Time Neural Voice & Sound Studio -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?studio=audio</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
   </url>
@@ -79,7 +79,7 @@
   <!-- 9. Titan Heavy & Titan Lite Sovereign Offline Workstation -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?titan=true</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
   </url>
@@ -87,7 +87,7 @@
   <!-- 10. Downloads for All OS Platforms -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?action=download</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
   </url>
@@ -95,7 +95,7 @@
   <!-- 11. Hardware Audit & System Compatibility Matrix -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?action=specs</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
   </url>
@@ -103,53 +103,9 @@
   <!-- 12. Founder & Creator Official Attribution (Abhinav Giri) -->
   <url>
     <loc>https://abyntra-ai.pages.dev/?action=founder</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
+    <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
-  </url>
-
-  <!-- 13. Standalone Windows Executables & Installers -->
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_Setup.exe</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_Titan_Setup.exe</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_Titan_Lite_Setup.exe</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI.apk</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_Titan.apk</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_macOS.dmg</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
-  </url>
-  <url>
-    <loc>https://abyntra-ai.pages.dev/downloads/Abyntra_AI_Linux.AppImage</loc>
-    <lastmod>2026-08-27T23:07:00+05:30</lastmod>
-    <changefreq>monthly</changefreq>
-    <priority>0.80</priority>
   </url>
 
 </urlset>
