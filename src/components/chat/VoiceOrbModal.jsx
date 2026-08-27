@@ -25,8 +25,8 @@ export default function VoiceOrbModal({ isOpen, onClose, onExportToChat }) {
   const [voiceLang, setVoiceLang] = useState('en-US'); // 'en-US' | 'en-IN' | 'hi-IN'
   const [voiceProfile, setVoiceProfile] = useState('nova');
   const [voicePersona, setVoicePersona] = useState('companion');
-  const [voiceSpeed, setVoiceSpeed] = useState(1.04);
-  const [silenceMode, setSilenceMode] = useState(850); // 850ms snappy silence threshold
+  const [voiceSpeed, setVoiceSpeed] = useState(1.02);
+  const [silenceMode, setSilenceMode] = useState(1200); // 1200ms natural human silence threshold
   const [showSettings, setShowSettings] = useState(false);
   const [audioVolume, setAudioVolume] = useState(0);
   const [chatTurns, setChatTurns] = useState([]); // [{ role: 'user'|'assistant', text: string }]

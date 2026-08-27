@@ -5,8 +5,8 @@
  * Key Highlights:
  * - Single Persistent Self-Healing SpeechRecognition Engine (Eliminates "already started" / abort crashes)
  * - Safe Utterance Anchoring to prevent Chromium V8 SpeechSynthesis GC drop
- * - Chromium Audio Queue Un-sticker (auto-resumes stuck speechSynthesis)
- * - Snappy Conversational Silence Timing (650ms) for zero-lag human dialogue
+ * - Priority Neural & Natural Voice Selection (Microsoft Online Natural, Google Neural, Apple Siri/Enhanced)
+ * - Human Conversational Silence Timing (~1200ms) for natural, unhurried human dialogue
  * - Hands-Free Infinite Turn-Taking: Dialogue seamlessly flows turn 1 -> turn 2 -> turn 100+
  * - Audio Context Analyzer for Reactive Orb Physics
  */
@@ -16,11 +16,11 @@ if (typeof window !== 'undefined') {
 }
 
 export const HUMAN_VOICE_PROFILES = [
-  { id: 'nova', name: 'Nova (Warm & Expressive)', gender: 'female', lang: 'en-US', pitch: 1.02, rate: 1.06 },
-  { id: 'atlas', name: 'Atlas (Deep & Confident)', gender: 'male', lang: 'en-US', pitch: 0.95, rate: 1.03 },
-  { id: 'neerja', name: 'Neerja (Indian English / Hinglish)', gender: 'female', lang: 'en-IN', pitch: 1.02, rate: 1.04 },
-  { id: 'kalpana', name: 'Kalpana (हिन्दी Hindi Expressive)', gender: 'female', lang: 'hi-IN', pitch: 1.0, rate: 1.0 },
-  { id: 'aura', name: 'Aura (Calm & Empathetic)', gender: 'female', lang: 'en-US', pitch: 1.04, rate: 0.98 }
+  { id: 'nova', name: 'Nova (Warm & Expressive)', gender: 'female', lang: 'en-US', pitch: 1.0, rate: 1.02 },
+  { id: 'atlas', name: 'Atlas (Deep & Confident)', gender: 'male', lang: 'en-US', pitch: 0.98, rate: 1.0 },
+  { id: 'neerja', name: 'Neerja (Indian English / Hinglish)', gender: 'female', lang: 'en-IN', pitch: 1.0, rate: 1.02 },
+  { id: 'kalpana', name: 'Kalpana (हिन्दी Hindi Natural)', gender: 'female', lang: 'hi-IN', pitch: 1.0, rate: 0.98 },
+  { id: 'aura', name: 'Aura (Calm & Empathetic)', gender: 'female', lang: 'en-US', pitch: 1.02, rate: 0.96 }
 ];
 
 export const VOICE_PERSONAS = [
@@ -29,28 +29,28 @@ export const VOICE_PERSONAS = [
     name: 'Friendly Companion', 
     icon: '✨', 
     description: 'Warm, conversational, empathetic, and witty',
-    promptStyle: 'Speak warmly, naturally, and conversationally in 1-2 lively spoken sentences.' 
+    promptStyle: 'Speak warmly, naturally, and conversationally in 2-3 lively spoken sentences.' 
   },
   { 
     id: 'polymath', 
     name: 'Thoughtful Mentor', 
     icon: '🧠', 
     description: 'Intellectual, wise, concise, and structured',
-    promptStyle: 'Speak like a wise mentor. Explain with crystal clarity in 1-3 spoken sentences.' 
+    promptStyle: 'Speak like a wise mentor. Explain with crystal clarity in 2-3 spoken sentences.' 
   },
   { 
     id: 'copilot', 
     name: 'Direct Co-Pilot', 
     icon: '⚡', 
     description: 'Fast, sharp, and solution-focused',
-    promptStyle: 'Be direct, super concise, and deliver solutions in 1 sharp spoken sentence.' 
+    promptStyle: 'Be direct, super concise, and deliver solutions in 1-2 sharp spoken sentences.' 
   },
   { 
     id: 'storyteller', 
     name: 'Dynamic Storyteller', 
     icon: '🎙️', 
     description: 'Engaging, narrative-driven, and expressive',
-    promptStyle: 'Speak with vivid imagination and engaging rhythm in 2 expressive spoken sentences.' 
+    promptStyle: 'Speak with vivid imagination and engaging rhythm in 2-3 expressive spoken sentences.' 
   }
 ];
 
@@ -187,7 +187,7 @@ class SpeechService {
     if (typeof window === 'undefined') return;
 
     this.activeCallbacks = callbacks;
-    const { onResult, onEnd, onError, onSpeechFinalized, lang, onVolumeChange, silenceTimeoutMs = 650 } = callbacks;
+    const { onResult, onEnd, onError, onSpeechFinalized, lang, onVolumeChange, silenceTimeoutMs = 1200 } = callbacks;
 
     this.desiredListening = true;
     this.isProcessing = false;
@@ -263,7 +263,7 @@ class SpeechService {
           });
         }
 
-        // Fast adaptive silence threshold (650ms) for snappy, zero-lag conversations
+        // Natural human breathing silence threshold (~1200ms) so users aren't cut off mid-thought
         clearTimeout(this.silenceTimer);
         this.silenceTimer = setTimeout(() => {
           if (accumulatedText.trim() && !this.isSpeaking && !this.isProcessing) {
@@ -323,7 +323,6 @@ class SpeechService {
     } catch (e) {
       console.warn('Recognition start caught:', e?.message);
       this.isStarting = false;
-      // Retry in 200ms if race condition occurred
       if (this.desiredListening && !this.isSpeaking && !this.isProcessing) {
         setTimeout(() => {
           if (this.desiredListening && !this.isSpeaking && !this.isProcessing) {
@@ -385,27 +384,39 @@ class SpeechService {
       .replace(/!\[.*?\]\(.*?\)/g, '')
       .replace(/\[([^\]]+)\]\(.*?\)/g, '$1')
       .replace(/^#{1,6}\s+/gm, '')
-      .replace(/^[-*+]\s+/gm, '')
+      .replace(/^[-*+•]\s+/gm, '')
       .replace(/^\d+\.\s+/gm, '')
-      .replace(/[*_~>]/g, '')
-      .replace(/\|.*?\|/g, '')
+      .replace(/[*_~>#|]/g, '')
       .replace(/https?:\/\/\S+/g, '')
       .replace(/[\u{1F600}-\u{1F64F}\u{1F300}-\u{1F5FF}\u{1F680}-\u{1F6FF}\u{1F1E0}-\u{1F1FF}\u{2600}-\u{26FF}\u{2700}-\u{27BF}]/gu, '');
 
-    const acronyms = [
-      [/\bReact 18\b/gi, 'React eighteen'],
-      [/\bReact 19\b/gi, 'React nineteen'],
+    const spokenReplacements = [
+      [/\bDr\.\b/gi, 'Doctor '],
+      [/\bMr\.\b/gi, 'Mister '],
+      [/\bMrs\.\b/gi, 'Missus '],
+      [/\bMs\.\b/gi, 'Miss '],
+      [/\bProf\.\b/gi, 'Professor '],
+      [/\bvs\.\b/gi, 'versus '],
+      [/\bapprox\.\b/gi, 'approximately '],
+      [/\bi\.e\.\b/gi, 'that is, '],
+      [/\be\.g\.\b/gi, 'for example, '],
+      [/\betc\.\b/gi, 'and so on'],
       [/\bAI\b/g, 'A I'],
       [/\bUI\b/g, 'U I'],
       [/\bAPI\b/g, 'A P I'],
       [/\b8K\b/gi, 'eight K'],
       [/\b4K\b/gi, 'four K'],
       [/\b60 FPS\b/gi, 'sixty frames per second'],
-      [/\be\.g\.\b/gi, 'for example, '],
-      [/\betc\.\b/gi, 'and so forth']
+      [/\bReact 18\b/gi, 'React eighteen'],
+      [/\bReact 19\b/gi, 'React nineteen'],
+      [/\bAGS\b/g, 'A G S'],
+      [/\bCBSE\b/g, 'C B S E'],
+      [/\bUP\b/g, 'U P'],
+      [/&/g, ' and '],
+      [/%/g, ' percent ']
     ];
 
-    acronyms.forEach(([pattern, rep]) => {
+    spokenReplacements.forEach(([pattern, rep]) => {
       t = t.replace(pattern, rep);
     });
 
@@ -434,24 +445,67 @@ class SpeechService {
     const isIndianEn = targetLang === 'en-IN' || profile.lang === 'en-IN';
     const wantsMale = profile.gender === 'male';
 
+    // 1. High-Fidelity Hindi Neural/Natural Voice Matching
     if (isHindi) {
-      const hindi = this.voices.find(v => (v.lang.includes('hi') || v.name.toLowerCase().includes('hindi') || v.name.toLowerCase().includes('kalpana') || v.name.toLowerCase().includes('swara')));
-      if (hindi) return hindi;
+      const topHindiKeywords = ['Natural', 'Neural', 'Swara', 'Kalpana', 'Madhur', 'Google हिन्दी', 'hi-IN', 'hi_IN', 'Hindi'];
+      for (const kw of topHindiKeywords) {
+        const match = this.voices.find(v => (v.lang.includes('hi') || v.name.toLowerCase().includes('hindi')) && v.name.toLowerCase().includes(kw.toLowerCase()));
+        if (match) return match;
+      }
+      const genericHindi = this.voices.find(v => v.lang.includes('hi') || v.name.toLowerCase().includes('hindi'));
+      if (genericHindi) return genericHindi;
     }
 
+    // 2. High-Fidelity Indian English / Hinglish Voice Matching
     if (isIndianEn) {
-      const indian = this.voices.find(v => (v.lang === 'en-IN' || v.name.toLowerCase().includes('india') || v.name.toLowerCase().includes('neerja') || v.name.toLowerCase().includes('ravi')));
-      if (indian) return indian;
+      const topIndianKeywords = wantsMale
+        ? ['Prabhat', 'Ravi', 'Natural', 'Neural', 'en-IN', 'India']
+        : ['Neerja', 'Aarti', 'Natural', 'Neural', 'en-IN', 'India'];
+      for (const kw of topIndianKeywords) {
+        const match = this.voices.find(v => (v.lang === 'en-IN' || v.lang === 'en_IN' || v.name.toLowerCase().includes('india')) && v.name.toLowerCase().includes(kw.toLowerCase()));
+        if (match) return match;
+      }
+      const genericIndian = this.voices.find(v => v.lang === 'en-IN' || v.lang === 'en_IN' || v.name.toLowerCase().includes('india'));
+      if (genericIndian) return genericIndian;
     }
 
+    // 3. Top-Tier Human Natural & Neural English Voices (Edge Neural, Google, Apple Siri/Samantha Enhanced)
     const priorityKeywords = wantsMale
-      ? ['Guy', 'Daniel', 'David', 'George', 'Arthur', 'Male', 'Natural', 'Neural']
-      : ['Jenny', 'Samantha', 'Sonia', 'Aria', 'Google US English', 'Natural', 'Neural', 'Female'];
+      ? [
+          'Microsoft Guy Online (Natural)',
+          'Microsoft Christopher Online (Natural)',
+          'Microsoft Eric Online (Natural)',
+          'Google UK English Male',
+          'Google US English Male',
+          'Alex',
+          'Daniel (Enhanced)',
+          'Daniel',
+          'Natural',
+          'Neural',
+          'Male'
+        ]
+      : [
+          'Microsoft Aria Online (Natural)',
+          'Microsoft Jenny Online (Natural)',
+          'Microsoft Sonia Online (Natural)',
+          'Google US English',
+          'Google UK English Female',
+          'Samantha (Enhanced)',
+          'Samantha',
+          'Siri',
+          'Karen (Enhanced)',
+          'Natural',
+          'Neural',
+          'Female'
+        ];
 
     for (const keyword of priorityKeywords) {
       const matched = this.voices.find(v => v.name.toLowerCase().includes(keyword.toLowerCase()) && v.lang.startsWith('en'));
       if (matched) return matched;
     }
+
+    const neuralFallback = this.voices.find(v => (v.name.includes('Natural') || v.name.includes('Neural') || v.name.includes('Google')) && v.lang.startsWith('en'));
+    if (neuralFallback) return neuralFallback;
 
     return this.voices.find(v => v.lang.startsWith('en')) || this.voices[0] || null;
   }
@@ -488,7 +542,7 @@ class SpeechService {
     const profile = HUMAN_VOICE_PROFILES.find(p => p.id === profileId) || HUMAN_VOICE_PROFILES[0];
 
     const utterance = new SpeechSynthesisUtterance(spokenText);
-    utterance.rate = Math.max(0.85, Math.min(1.35, (profile.rate || 1.06) * speedMultiplier));
+    utterance.rate = Math.max(0.85, Math.min(1.25, (profile.rate || 1.02) * speedMultiplier));
     utterance.pitch = profile.pitch || 1.0;
     utterance.lang = targetLang;
 
@@ -507,10 +561,10 @@ class SpeechService {
       if (typeof window !== 'undefined') {
         window._activeSpeechUtterances = window._activeSpeechUtterances.filter(u => u !== utterance);
       }
-      // 120ms acoustic cooldown so speaker audio doesn't re-trigger microphone
+      // 150ms acoustic cooldown so speaker audio doesn't re-trigger microphone
       setTimeout(() => {
         if (onEnd) onEnd();
-      }, 120);
+      }, 150);
     };
 
     utterance.onend = handleFinished;
@@ -527,7 +581,7 @@ class SpeechService {
 
     // Accurate Watchdog Timer: calculated tightly by speech rate
     const words = spokenText.split(' ').length;
-    const estimatedDurationMs = Math.max(1800, (words / 2.5) * 1000 + 1200);
+    const estimatedDurationMs = Math.max(2000, (words / 2.5) * 1000 + 1500);
     this.watchdogTimer = setTimeout(handleFinished, estimatedDurationMs);
 
     try {
