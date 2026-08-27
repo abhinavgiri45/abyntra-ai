@@ -317,13 +317,8 @@ for (const binName of binaryFiles) {
 }
 
 const payloadJson = JSON.stringify(payloadMap);
-const payloadChunks = [];
-const chunkSize = 60000;
-for (let i = 0; i < payloadJson.length; i += chunkSize) {
-  payloadChunks.push(payloadJson.slice(i, i + chunkSize));
-}
-
-const csharpChunks = payloadChunks.map(c => `            sb.Append(@"${c.replace(/"/g, '""')}");`).join('\n');
+const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, 'utf8'));
+fs.writeFileSync(path.join(downloadsDir, 'payload.dat'), payloadGz);
 
 const setupWizardTemplate = `using System;
 using System.Collections.Generic;
@@ -575,9 +570,12 @@ namespace AbyntraAIInstaller
 
         private string GetPayloadJson()
         {
-            StringBuilder sb = new StringBuilder();
-${csharpChunks}
-            return sb.ToString();
+            using (Stream s = typeof(SetupForm).Assembly.GetManifestResourceStream("payload.dat"))
+            using (GZipStream gz = new GZipStream(s, CompressionMode.Decompress))
+            using (StreamReader reader = new StreamReader(gz, Encoding.UTF8))
+            {
+                return reader.ReadToEnd();
+            }
         }
 
         private void CompleteInstallation()
@@ -732,7 +730,7 @@ ${csharpChunks}
 
 fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupWizard.cs'), setupWizardTemplate, 'utf8');
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Abyntra_AI_Setup.exe AbyntraSetupWizard.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /resource:payload.dat,payload.dat /out:Abyntra_AI_Setup.exe AbyntraSetupWizard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
@@ -1084,10 +1082,13 @@ namespace AbyntraAITitanInstaller
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
-${csharpChunks}
-
-                string json = sb.ToString();
+                string json;
+                using (Stream s = typeof(TitanSetupForm).Assembly.GetManifestResourceStream("payload.dat"))
+                using (GZipStream gz = new GZipStream(s, CompressionMode.Decompress))
+                using (StreamReader reader = new StreamReader(gz, Encoding.UTF8))
+                {
+                    json = reader.ReadToEnd();
+                }
                 int idx = 0;
                 while (idx < json.Length)
                 {
@@ -1218,7 +1219,7 @@ ${csharpChunks}
 
 fs.writeFileSync(path.join(downloadsDir, 'AbyntraTitanSetupWizard.cs'), titanSetupWizardTemplate, 'utf8');
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Abyntra_AI_Titan_Setup.exe AbyntraTitanSetupWizard.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /resource:payload.dat,payload.dat /out:Abyntra_AI_Titan_Setup.exe AbyntraTitanSetupWizard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
@@ -1554,10 +1555,13 @@ namespace AbyntraAITitanLiteInstaller
         {
             try
             {
-                StringBuilder sb = new StringBuilder();
-${csharpChunks}
-
-                string json = sb.ToString();
+                string json;
+                using (Stream s = typeof(TitanLiteSetupForm).Assembly.GetManifestResourceStream("payload.dat"))
+                using (GZipStream gz = new GZipStream(s, CompressionMode.Decompress))
+                using (StreamReader reader = new StreamReader(gz, Encoding.UTF8))
+                {
+                    json = reader.ReadToEnd();
+                }
                 int idx = 0;
                 while (idx < json.Length)
                 {
@@ -1688,7 +1692,7 @@ ${csharpChunks}
 
 fs.writeFileSync(path.join(downloadsDir, 'AbyntraTitanLiteSetupWizard.cs'), titanLiteSetupWizardTemplate, 'utf8');
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Abyntra_AI_Titan_Lite_Setup.exe AbyntraTitanLiteSetupWizard.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /resource:payload.dat,payload.dat /out:Abyntra_AI_Titan_Lite_Setup.exe AbyntraTitanLiteSetupWizard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
