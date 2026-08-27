@@ -58,12 +58,12 @@ export const openrouter = {
     const encodedSystem = encodeURIComponent(systemPrompt);
     const encodedPrompt = encodeURIComponent(userPrompt);
 
-    const modelsToTry = ['openai', 'qwen', 'mistral'];
+    const modelsToTry = ['searchgpt', 'openai', 'gemini-fast', 'qwen-coder'];
 
     try {
       const fetchPromises = modelsToTry.map(async (targetModel) => {
         const url = `https://text.pollinations.ai/${encodedPrompt}?system=${encodedSystem}&model=${targetModel}`;
-        const fetchSignal = signal || AbortSignal.timeout(1800);
+        const fetchSignal = signal || AbortSignal.timeout(8000);
         const response = await fetch(url, { signal: fetchSignal });
         if (!response.ok) throw new Error('Bad response');
         const text = await response.text();
@@ -158,6 +158,7 @@ Here is the analytical breakdown for your request: **"${prompt}"**
     model = 'abyntra-pro',
     temperature = 0.6,
     maxTokens = 4096,
+    webSearchEnabled = false,
     onChunk,
     onReasoningChunk,
     signal
@@ -211,24 +212,31 @@ Here is the analytical breakdown for your request: **"${prompt}"**
       const endpoint = `${config.baseUrl}/chat/completions`;
       const requestHeaders = {
         'Content-Type': 'application/json',
-        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra.ai',
-        'X-Title': 'Abyntra Pro Workstation',
+        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.pages.dev',
+        'X-Title': 'Abyntra AI Polymath Workstation',
       };
       if (apiKey) {
         requestHeaders['Authorization'] = `Bearer ${apiKey}`;
       }
 
+      const bodyPayload = {
+        model: targetModelId,
+        messages: enrichedMessages,
+        temperature: temperature,
+        max_tokens: maxTokens,
+        stream: true,
+        include_reasoning: true
+      };
+
+      // If OpenRouter is used and Web Grounding is active or requested
+      if (config.providerId === 'openrouter' && webSearchEnabled) {
+        bodyPayload.plugins = [{ id: 'web', max_results: 5 }];
+      }
+
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: requestHeaders,
-        body: JSON.stringify({
-          model: targetModelId,
-          messages: enrichedMessages,
-          temperature: temperature,
-          max_tokens: maxTokens,
-          stream: true,
-          include_reasoning: true
-        }),
+        body: JSON.stringify(bodyPayload),
         signal
       });
 

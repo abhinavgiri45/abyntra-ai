@@ -39,6 +39,286 @@ import { speech } from '../../services/speech';
 import { openrouter } from '../../services/openrouter';
 import { imageGenerator, ASPECT_RATIOS, IMAGE_MODELS } from '../../services/imageGenerator';
 
+// Markdown Inline Parser (Bold, Italic, Code, Links, Strikethrough)
+function formatInlineMarkdown(text) {
+  if (typeof text !== 'string') return text;
+  if (!text) return null;
+
+  const tokenRegex = /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|`[^`]+`|\*\*\*[^*\n]+\*\*\*|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_)/g;
+  const parts = text.split(tokenRegex);
+
+  return parts.map((part, i) => {
+    if (!part) return null;
+
+    // Link: [text](url)
+    if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
+      const match = part.match(/^\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)$/);
+      if (match) {
+        return (
+          <a
+            key={i}
+            href={match[2]}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-cyan-400 hover:text-cyan-200 underline font-medium inline-flex items-center gap-0.5"
+          >
+            {match[1]}
+          </a>
+        );
+      }
+    }
+
+    // Inline Code: `code`
+    if (part.startsWith('`') && part.endsWith('`') && part.length >= 2) {
+      return (
+        <code
+          key={i}
+          className="px-1.5 py-0.5 rounded-md bg-white/[0.08] text-cyan-300 font-mono text-[11px] border border-cyan-500/20 font-medium"
+        >
+          {part.slice(1, -1)}
+        </code>
+      );
+    }
+
+    // Bold Italic: ***text***
+    if (part.startsWith('***') && part.endsWith('***') && part.length >= 6) {
+      return (
+        <strong key={i} className="font-bold italic text-cyan-200">
+          {formatInlineMarkdown(part.slice(3, -3))}
+        </strong>
+      );
+    }
+
+    // Bold: **text** or __text__
+    if ((part.startsWith('**') && part.endsWith('**') && part.length >= 4) ||
+        (part.startsWith('__') && part.endsWith('__') && part.length >= 4)) {
+      return (
+        <strong key={i} className="font-bold text-white tracking-wide">
+          {formatInlineMarkdown(part.slice(2, -2))}
+        </strong>
+      );
+    }
+
+    // Italic: *text* or _text_
+    if ((part.startsWith('*') && part.endsWith('*') && part.length >= 2) ||
+        (part.startsWith('_') && part.endsWith('_') && part.length >= 2)) {
+      return (
+        <em key={i} className="italic text-cyan-100/90 font-medium">
+          {part.slice(1, -1)}
+        </em>
+      );
+    }
+
+    // Strikethrough: ~~text~~
+    if (part.startsWith('~~') && part.endsWith('~~') && part.length >= 4) {
+      return (
+        <del key={i} className="line-through text-gray-400">
+          {part.slice(2, -2)}
+        </del>
+      );
+    }
+
+    return part;
+  });
+}
+
+// Markdown Block Parser (Headers, Lists, Blockquotes, Tables, Paragraphs)
+function formatBlockMarkdown(text) {
+  if (!text) return null;
+  const lines = text.split('\n');
+  const elements = [];
+  let currentList = null;
+  let currentQuote = [];
+  let currentTable = null;
+
+  const flushList = () => {
+    if (currentList) {
+      const isUl = currentList.type === 'ul';
+      elements.push(
+        isUl ? (
+          <ul key={`ul-${elements.length}`} className="my-1.5 space-y-1 pl-0.5">
+            {currentList.items.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-gray-200">
+                <span className="text-cyan-400 font-bold mt-0.5 select-none text-xs leading-none">•</span>
+                <div className="flex-1 leading-relaxed">{formatInlineMarkdown(item)}</div>
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <ol key={`ol-${elements.length}`} className="my-1.5 space-y-1 pl-0.5">
+            {currentList.items.map((item, idx) => (
+              <li key={idx} className="flex items-start gap-2 text-gray-200">
+                <span className="text-cyan-400 font-mono font-bold text-[11px] mt-0.5 select-none">{idx + 1}.</span>
+                <div className="flex-1 leading-relaxed">{formatInlineMarkdown(item)}</div>
+              </li>
+            ))}
+          </ol>
+        )
+      );
+      currentList = null;
+    }
+  };
+
+  const flushQuote = () => {
+    if (currentQuote.length > 0) {
+      elements.push(
+        <blockquote key={`quote-${elements.length}`} className="border-l-2 border-cyan-400/80 bg-cyan-950/20 pl-3 py-1.5 rounded-r-xl my-2 text-gray-300 italic">
+          {currentQuote.map((qLine, qIdx) => (
+            <div key={qIdx}>{formatInlineMarkdown(qLine)}</div>
+          ))}
+        </blockquote>
+      );
+      currentQuote = [];
+    }
+  };
+
+  const flushTable = () => {
+    if (currentTable) {
+      elements.push(
+        <div key={`table-${elements.length}`} className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-[#070913] shadow-lg">
+          <table className="w-full text-left text-xs border-collapse">
+            <thead>
+              <tr className="bg-white/[0.06] border-b border-white/10 text-cyan-300">
+                {currentTable.headers.map((h, hIdx) => (
+                  <th key={hIdx} className="px-3 py-2 font-semibold">{formatInlineMarkdown(h.trim())}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {currentTable.rows.map((r, rIdx) => (
+                <tr key={rIdx} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                  {r.map((c, cIdx) => (
+                    <td key={cIdx} className="px-3 py-2 text-gray-200">{formatInlineMarkdown(c.trim())}</td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      );
+      currentTable = null;
+    }
+  };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const trimmed = line.trim();
+
+    // Table row: | col1 | col2 |
+    if (trimmed.startsWith('|') && trimmed.endsWith('|') && trimmed.length > 2) {
+      flushList();
+      flushQuote();
+      const cells = trimmed.slice(1, -1).split('|');
+      if (cells.every(c => /^[\s-:]+$/.test(c))) {
+        continue;
+      }
+      if (!currentTable) {
+        currentTable = { headers: cells, rows: [] };
+      } else {
+        currentTable.rows.push(cells);
+      }
+      continue;
+    } else {
+      flushTable();
+    }
+
+    // Horizontal divider
+    if (/^(\-{3,}|\*{3,}|_{3,})$/.test(trimmed)) {
+      flushList();
+      flushQuote();
+      elements.push(<hr key={`hr-${elements.length}`} className="my-2.5 border-white/10" />);
+      continue;
+    }
+
+    // Blockquote
+    if (line.startsWith('>')) {
+      flushList();
+      currentQuote.push(line.replace(/^>\s?/, ''));
+      continue;
+    } else {
+      flushQuote();
+    }
+
+    // Headings
+    if (/^#{1,4}\s/.test(trimmed)) {
+      flushList();
+      const level = trimmed.match(/^#+/)[0].length;
+      const textOnly = trimmed.replace(/^#+\s*/, '');
+      if (level === 1) {
+        elements.push(
+          <h1 key={`h1-${elements.length}`} className="text-base font-extrabold text-white mt-3 mb-1.5 border-b border-white/10 pb-1">
+            {formatInlineMarkdown(textOnly)}
+          </h1>
+        );
+      } else if (level === 2) {
+        elements.push(
+          <h2 key={`h2-${elements.length}`} className="text-sm font-bold text-cyan-300 mt-2.5 mb-1">
+            {formatInlineMarkdown(textOnly)}
+          </h2>
+        );
+      } else if (level === 3) {
+        elements.push(
+          <h3 key={`h3-${elements.length}`} className="text-xs font-bold text-purple-300 mt-2 mb-1">
+            {formatInlineMarkdown(textOnly)}
+          </h3>
+        );
+      } else {
+        elements.push(
+          <h4 key={`h4-${elements.length}`} className="text-xs font-bold text-gray-200 mt-1.5 mb-0.5">
+            {formatInlineMarkdown(textOnly)}
+          </h4>
+        );
+      }
+      continue;
+    }
+
+    // Unordered List item
+    if (/^(\*|-|•|\+)\s/.test(trimmed)) {
+      const itemText = trimmed.replace(/^(\*|-|•|\+)\s+/, '');
+      if (!currentList || currentList.type !== 'ul') {
+        flushList();
+        currentList = { type: 'ul', items: [itemText] };
+      } else {
+        currentList.items.push(itemText);
+      }
+      continue;
+    }
+
+    // Ordered List item
+    if (/^\d+\.\s/.test(trimmed)) {
+      const itemText = trimmed.replace(/^\d+\.\s+/, '');
+      if (!currentList || currentList.type !== 'ol') {
+        flushList();
+        currentList = { type: 'ol', items: [itemText] };
+      } else {
+        currentList.items.push(itemText);
+      }
+      continue;
+    }
+
+    // Empty line
+    if (trimmed === '') {
+      flushList();
+      elements.push(<div key={`space-${elements.length}`} className="h-1.5" />);
+      continue;
+    }
+
+    // Regular line
+    flushList();
+    elements.push(
+      <p key={`p-${elements.length}`} className="my-1 leading-relaxed">
+        {formatInlineMarkdown(line)}
+      </p>
+    );
+  }
+
+  flushList();
+  flushQuote();
+  flushTable();
+
+  return elements;
+}
+
 function GeneratedImageCard({ initialUrl, altText, onOpenLightbox }) {
   const [url, setUrl] = useState(initialUrl);
   const [aspect, setAspect] = useState(() => {
@@ -602,7 +882,7 @@ export default function MessageItem({
         return <KatexMath key={index} math={math} block={false} />;
       }
 
-      // 4. Regular Text: Check for markdown images and direct image URLs
+      // 4. Regular Text: Check for markdown images and format rich markdown (bold, italic, lists, headers, etc.)
       const subParts = [];
       let lastIdx = 0;
       let match;
@@ -610,7 +890,12 @@ export default function MessageItem({
 
       while ((match = imgRegex.exec(part)) !== null) {
         if (match.index > lastIdx) {
-          subParts.push(part.substring(lastIdx, match.index));
+          const textChunk = part.substring(lastIdx, match.index);
+          subParts.push(
+            <React.Fragment key={`text-${lastIdx}`}>
+              {formatBlockMarkdown(textChunk)}
+            </React.Fragment>
+          );
         }
 
         const altText = match[1] || 'Generated Masterpiece';
@@ -629,13 +914,18 @@ export default function MessageItem({
       }
 
       if (lastIdx < part.length) {
-        subParts.push(part.substring(lastIdx));
+        const textChunk = part.substring(lastIdx);
+        subParts.push(
+          <React.Fragment key={`text-${lastIdx}`}>
+            {formatBlockMarkdown(textChunk)}
+          </React.Fragment>
+        );
       }
 
       return (
-        <span key={index} className="whitespace-pre-wrap">
-          {subParts.length > 0 ? subParts : part}
-        </span>
+        <div key={index} className="space-y-1">
+          {subParts.length > 0 ? subParts : formatBlockMarkdown(part)}
+        </div>
       );
     });
   };

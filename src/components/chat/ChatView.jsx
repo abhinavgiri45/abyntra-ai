@@ -81,7 +81,7 @@ export default function ChatView({
   const [input, setInput] = useState('');
   const [isStreaming, setIsStreaming] = useState(false);
   const [useThinking, setUseThinking] = useState(true);
-  const [webSearchEnabled, setWebSearchEnabled] = useState(false);
+  const [webSearchEnabled, setWebSearchEnabled] = useState(true);
   const [isListening, setIsListening] = useState(false);
   const [isVoiceOrbOpen, setIsVoiceOrbOpen] = useState(false);
   const [isEngineDropdownOpen, setIsEngineDropdownOpen] = useState(false);
@@ -572,6 +572,7 @@ export default function ChatView({
         model: effectiveModel.id,
         temperature: settings.temperature,
         maxTokens: settings.maxTokens,
+        webSearchEnabled: webSearchEnabled,
         signal: abortControllerRef.current.signal,
         onReasoningChunk: (chunk, fullReasoning) => {
           setSessions(prev => prev.map(s => s.id === activeSessionId ? {

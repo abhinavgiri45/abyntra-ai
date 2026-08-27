@@ -52,10 +52,10 @@ export const DEFAULT_MODEL_FAMILIES = {
     category: 'multimodal'
   },
   fast: {
-    name: 'High-Speed Low Latency',
-    currentId: 'google/gemini-2.5-flash',
+    name: 'High-Speed Low Latency & High Accuracy',
+    currentId: 'google/gemini-2.0-flash-001',
     fallbackId: 'openai/gpt-4o-mini',
-    patterns: [/gemini-2\.5-flash/i, /gemini-2\.0-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i, /mistral-nemo/i],
+    patterns: [/gemini-2\.0-flash/i, /gemini-2\.5-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i, /mistral-nemo/i],
     category: 'fast'
   },
   script: {
@@ -272,7 +272,7 @@ export const universalApiEngine = {
     // If auto-upgrade is disabled, use static baseline mappings
     if (!config.autoUpgradeEnabled) {
       if (requestedModelId === 'abyntra-pro') return 'deepseek/deepseek-r1';
-      if (requestedModelId === 'abyntra-lite') return 'google/gemini-2.5-flash';
+      if (requestedModelId === 'abyntra-lite') return 'google/gemini-2.0-flash-001';
       return requestedModelId;
     }
 
@@ -283,7 +283,7 @@ export const universalApiEngine = {
 
     // High-Speed / Visual Engine
     if (requestedModelId === 'abyntra-lite') {
-      return registry.fast?.currentId || 'google/gemini-2.5-flash';
+      return registry.fast?.currentId || 'google/gemini-2.0-flash-001';
     }
 
     // Dedicated Coding Studio
