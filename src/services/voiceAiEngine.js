@@ -223,7 +223,7 @@ VOICE RULES:
           headers: {
             'Content-Type': 'application/json',
             'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
-            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.site.je',
+            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.pages.dev',
             'X-Title': 'Abyntra Real-time Voice AI'
           },
           body: JSON.stringify({

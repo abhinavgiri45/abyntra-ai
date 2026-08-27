@@ -1,6 +1,6 @@
 # ========================================================
 # ABYNTRA AI - ROBOTS.TXT (SEARCH ENGINE CRAWLER DIRECTIVES)
-# Primary Production: https://abyntra-ai.site.je/
+# Primary Production: https://abyntra-ai.pages.dev/
 # Global Mirror: https://abyntra.ai/
 # ========================================================
 
@@ -37,5 +37,5 @@ User-agent: Yandex
 Allow: /
 
 # Canonical Sitemap Locations
-Sitemap: https://abyntra-ai.site.je/sitemap.xml
+Sitemap: https://abyntra-ai.pages.dev/sitemap.xml
 Sitemap: https://abyntra.ai/sitemap.xml
