@@ -241,7 +241,12 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
     <div 
       ref={scrollContainerRef}
       onScroll={handleScroll}
-      className="fixed inset-0 z-[9999] bg-[#000000] text-[#FFFFFF] girionix-custom-scroll font-sans antialiased animate-fadeIn selection:bg-white selection:text-black"
+      className="fixed inset-0 z-[9999] bg-[#000000] text-[#FFFFFF] overflow-y-auto overflow-x-hidden girionix-custom-scroll font-sans antialiased animate-fadeIn selection:bg-white selection:text-black"
+      style={{
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        WebkitOverflowScrolling: 'touch'
+      }}
     >
       {/* Top Minimalist Navbar */}
       <nav className="h-14 sm:h-16 px-3 sm:px-10 flex items-center justify-between border-b border-white/[0.08] bg-black/90 sticky top-0 z-50 backdrop-blur-md">
