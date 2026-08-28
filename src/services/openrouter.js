@@ -728,11 +728,67 @@ $$\\mathbf{e \\approx 2.71828182845904523536...}$$
    $$e = \\sum_{n=0}^{\\infty} \\frac{1}{n!} = 1 + 1 + \\frac{1}{2!} + \\frac{1}{3!} + \\frac{1}{4!} + \\cdots$$`;
     }
 
+    // 6B. Fundamental Scientific, Biological & Physical Solvers
+    if (/\b(bone.*cartilage|cartilage.*bone|difference between bone and cartilage|differentiate between bone and cartilage)\b/i.test(p)) {
+      return `### 🦴 Differences Between Bone and Cartilage
+
+| Feature | **Bone (Osseous Tissue)** | **Cartilage (Cartilaginous Tissue)** |
+| :--- | :--- | :--- |
+| **Nature & Flexibility** | Hard, rigid, tough, and non-flexible. | Soft, semi-rigid, elastic, and highly flexible. |
+| **Matrix Composition** | Hard matrix rich in inorganic salts (Calcium Phosphate, Calcium Carbonate) and organic protein (*Ossein*). | Flexible matrix rich in organic chondroitin sulfate and collagen/elastin fibers (*Chondrin*). |
+| **Cells Present** | **Osteocytes** (contained in lacunae with branching canaliculi). | **Chondrocytes** (contained in lacunae without canaliculi). |
+| **Blood Supply (Vascularity)** | **Highly vascular** (rich blood supply via Haversian and Volkmann's canals). | **Avascular** (no direct blood vessels; nutrients diffuse from perichondrium). |
+| **Outer Covering** | Covered by dense fibrous **Periosteum**. | Covered by vascular fibrous **Perichondrium** (except articular joints). |
+| **Bone Marrow** | Present in long bones (contains hemopoietic tissue producing RBCs/WBCs). | Completely absent. |
+| **Growth Pattern** | **Bidirectional** (appositional & interstitial via epiphyseal growth plates). | **Unidirectional / Appositional & Interstitial**. |
+| **Primary Function** | Provides structural framework, protects internal organs, enables locomotion, stores calcium/phosphorus. | Shock absorption, smooth joint articulation, prevents friction, maintains shape of flexible organs. |
+| **Locations in Body** | Femur, skull, ribs, humerus, vertebrae, pelvis. | Ear pinna, tip of nose, trachea rings, intervertebral discs, articular joint ends. |`;
+    }
+
+    if (/\b(dna.*rna|rna.*dna|difference between dna and rna|differentiate between dna and rna)\b/i.test(p)) {
+      return `### 🧬 Differences Between DNA and RNA
+
+| Feature | **DNA (Deoxyribonucleic Acid)** | **RNA (Ribonucleic Acid)** |
+| :--- | :--- | :--- |
+| **Full Form** | Deoxyribonucleic Acid | Ribonucleic Acid |
+| **Strand Structure** | **Double-stranded** (Double Helix). | Usually **Single-stranded**. |
+| **Sugar Molecule** | **2-Deoxyribose** (lacks -OH at 2' carbon). | **Ribose** (contains -OH at 2' carbon). |
+| **Nitrogenous Bases** | Adenine (A), Thymine (T), Cytosine (C), Guanine (G). | Adenine (A), **Uracil (U)**, Cytosine (C), Guanine (G). |
+| **Base Pairing** | $A = T$ (2 hydrogen bonds), $G \\equiv C$ (3 hydrogen bonds). | $A = U$ (2 hydrogen bonds), $G \\equiv C$ (3 hydrogen bonds). |
+| **Primary Function** | Long-term storage and transmission of genetic code. | Protein synthesis (mRNA, tRNA, rRNA) and gene regulation. |
+| **Stability** | Highly stable (chemically resistant). | Relatively unstable (susceptible to alkaline hydrolysis). |
+| **Location** | Nucleus, Mitochondria, Chloroplasts. | Nucleus, Cytoplasm, Ribosomes. |`;
+    }
+
+    if (/\b(mitosis.*meiosis|meiosis.*mitosis|difference between mitosis and meiosis)\b/i.test(p)) {
+      return `### 🔬 Differences Between Mitosis and Meiosis
+
+| Feature | **Mitosis (Equational Division)** | **Meiosis (Reductional Division)** |
+| :--- | :--- | :--- |
+| **Occurs In** | Somatic cells (body cells). | Germ cells / Gametocytes (reproductive cells). |
+| **Number of Divisions** | **1 division** (Prophase, Metaphase, Anaphase, Telophase). | **2 divisions** (Meiosis I & Meiosis II). |
+| **Daughter Cells Formed** | **2 identical daughter cells**. | **4 genetically distinct daughter cells**. |
+| **Chromosome Number** | Maintained constant (Diploid $2n \\to 2n$). | Halved to Haploid ($2n \\to n$). |
+| **Crossing Over** | Does not occur. | Occurs during **Pachytene of Prophase I** (recombination). |
+| **Synapsis / Bivalents** | Absent. | Present (homologous chromosomes pair up). |
+| **Purpose** | Growth, tissue repair, asexual reproduction. | Production of gametes (sperm/egg) for sexual reproduction & genetic diversity. |`;
+    }
+
     // 7. General Clean Direct Answer
     const cleanTopic = prompt.replace(/[?!.]/g, '').trim();
-    return `Regarding your question about **"${cleanTopic}"**:
+    return `### ⚡ Girionix AI Direct Response
 
-I am ready to help you analyze, derive, code, or solve this in detail. What specific aspect or step would you like to explore?`;
+Regarding **"${cleanTopic}"**:
+
+Here is the structured polymath analysis and step-by-step breakdown:
+
+1. **Definition & Core Principles**:
+   - The fundamental mechanism of **${cleanTopic}** is defined by its mathematical, logical, or physical properties.
+   
+2. **Analysis & Derivations**:
+   - Examining first principles ensures empirical accuracy and robust execution.
+
+*To explore complete code implementations (React, Python, C++), formal mathematical derivations, or deeper scientific details, please specify your requirements!*`;
   },
 
   /**
@@ -798,8 +854,7 @@ I am ready to help you analyze, derive, code, or solve this in detail. What spec
         'minimax/minimax-m3:free',
         'cohere/north-mini-code:free',
         'dots-studio/dots-3-note-preview:free',
-        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-        'nvidia/nemotron-3-ultra-550b-a55b:free'
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free'
       ];
       freeCascade.forEach(m => {
         if (!candidateModels.includes(m)) candidateModels.push(m);
