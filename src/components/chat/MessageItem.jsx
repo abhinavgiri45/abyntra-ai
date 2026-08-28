@@ -39,16 +39,108 @@ import { speech } from '../../services/speech';
 import { openrouter } from '../../services/openrouter';
 import { imageGenerator, ASPECT_RATIOS, IMAGE_MODELS } from '../../services/imageGenerator';
 
-// Markdown Inline Parser (Bold, Italic, Code, Links, Strikethrough)
+// Markdown & HTML Inline Parser (Sup, Sub, Mark, Kbd, Small, U, Span, Links, Code, Bold, Italic, Strikethrough)
 function formatInlineMarkdown(text) {
   if (typeof text !== 'string') return text;
   if (!text) return null;
 
-  const tokenRegex = /(\[[^\]]+\]\(https?:\/\/[^\s)]+\)|`[^`]+`|\*\*\*[^*\n]+\*\*\*|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_)/g;
+  const tokenRegex = /(<sup[^>]*>[\s\S]*?<\/sup>|<sub[^>]*>[\s\S]*?<\/sub>|<mark[^>]*>[\s\S]*?<\/mark>|<kbd[^>]*>[\s\S]*?<\/kbd>|<small[^>]*>[\s\S]*?<\/small>|<u[^>]*>[\s\S]*?<\/u>|<span[^>]*>[\s\S]*?<\/span>|<a\s+[^>]*href="[^"]*"[^>]*>[\s\S]*?<\/a>|<br\s*\/?>|\[[^\]]+\]\(https?:\/\/[^\s)]+\)|`[^`]+`|\*\*\*[^*\n]+\*\*\*|\*\*[^*\n]+\*\*|__[^_\n]+__|~~[^~\n]+~~|\*[^*\n]+\*|_[^_\n]+_)/gi;
   const parts = text.split(tokenRegex);
 
   return parts.map((part, i) => {
     if (!part) return null;
+
+    // HTML: <sup>...</sup>
+    if (/^<sup[^>]*>/i.test(part) && /<\/sup>$/i.test(part)) {
+      const inner = part.replace(/^<sup[^>]*>/i, '').replace(/<\/sup>$/i, '');
+      return (
+        <sup key={i} className="text-[10px] text-cyan-400 font-mono align-super font-medium px-0.5">
+          {formatInlineMarkdown(inner)}
+        </sup>
+      );
+    }
+
+    // HTML: <sub>...</sub>
+    if (/^<sub[^>]*>/i.test(part) && /<\/sub>$/i.test(part)) {
+      const inner = part.replace(/^<sub[^>]*>/i, '').replace(/<\/sub>$/i, '');
+      return (
+        <sub key={i} className="text-[10px] text-cyan-400 font-mono align-sub font-medium px-0.5">
+          {formatInlineMarkdown(inner)}
+        </sub>
+      );
+    }
+
+    // HTML: <mark>...</mark>
+    if (/^<mark[^>]*>/i.test(part) && /<\/mark>$/i.test(part)) {
+      const inner = part.replace(/^<mark[^>]*>/i, '').replace(/<\/mark>$/i, '');
+      return (
+        <mark key={i} className="bg-cyan-500/20 text-cyan-200 px-1 py-0.5 rounded">
+          {formatInlineMarkdown(inner)}
+        </mark>
+      );
+    }
+
+    // HTML: <kbd>...</kbd>
+    if (/^<kbd[^>]*>/i.test(part) && /<\/kbd>$/i.test(part)) {
+      const inner = part.replace(/^<kbd[^>]*>/i, '').replace(/<\/kbd>$/i, '');
+      return (
+        <kbd key={i} className="px-1.5 py-0.5 rounded bg-white/10 text-cyan-300 font-mono text-[11px] border border-white/20">
+          {formatInlineMarkdown(inner)}
+        </kbd>
+      );
+    }
+
+    // HTML: <small>...</small>
+    if (/^<small[^>]*>/i.test(part) && /<\/small>$/i.test(part)) {
+      const inner = part.replace(/^<small[^>]*>/i, '').replace(/<\/small>$/i, '');
+      return (
+        <small key={i} className="text-xs text-gray-400">
+          {formatInlineMarkdown(inner)}
+        </small>
+      );
+    }
+
+    // HTML: <u>...</u>
+    if (/^<u[^>]*>/i.test(part) && /<\/u>$/i.test(part)) {
+      const inner = part.replace(/^<u[^>]*>/i, '').replace(/<\/u>$/i, '');
+      return (
+        <u key={i} className="underline underline-offset-2">
+          {formatInlineMarkdown(inner)}
+        </u>
+      );
+    }
+
+    // HTML: <span>...</span>
+    if (/^<span[^>]*>/i.test(part) && /<\/span>$/i.test(part)) {
+      const inner = part.replace(/^<span[^>]*>/i, '').replace(/<\/span>$/i, '');
+      return (
+        <span key={i}>
+          {formatInlineMarkdown(inner)}
+        </span>
+      );
+    }
+
+    // HTML: <a href="...">...</a>
+    if (/^<a\s+/i.test(part) && /<\/a>$/i.test(part)) {
+      const hrefMatch = part.match(/href="([^"]*)"/i) || part.match(/href='([^']*)'/i);
+      const inner = part.replace(/^<a[^>]*>/i, '').replace(/<\/a>$/i, '');
+      return (
+        <a
+          key={i}
+          href={hrefMatch ? hrefMatch[1] : '#'}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-cyan-400 hover:text-cyan-200 underline font-medium inline-flex items-center gap-0.5"
+        >
+          {formatInlineMarkdown(inner)}
+        </a>
+      );
+    }
+
+    // HTML: <br>
+    if (/^<br\s*\/?>$/i.test(part)) {
+      return <br key={i} />;
+    }
 
     // Link: [text](url)
     if (part.startsWith('[') && part.includes('](') && part.endsWith(')')) {
@@ -116,6 +208,30 @@ function formatInlineMarkdown(text) {
           {part.slice(2, -2)}
         </del>
       );
+    }
+
+    // Auto link plain URLs or domains like ncbi.nlm.nih.gov / cshlp.org
+    const urlPattern = /(https?:\/\/[^\s<)]+|(?:[a-zA-Z0-9-]+\.)+(?:gov|org|edu|com|io|ai|net|dev)(?:\/[^\s<)]*)?)/gi;
+    if (urlPattern.test(part)) {
+      const subParts = part.split(urlPattern);
+      return subParts.map((sub, j) => {
+        if (!sub) return null;
+        if (sub.match(/^(https?:\/\/|(?:[a-zA-Z0-9-]+\.)+(?:gov|org|edu|com|io|ai|net|dev))/i)) {
+          const href = sub.startsWith('http') ? sub : `https://${sub}`;
+          return (
+            <a
+              key={`url-${i}-${j}`}
+              href={href}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-cyan-400 hover:text-cyan-200 underline font-medium inline-flex items-center gap-0.5"
+            >
+              {sub}
+            </a>
+          );
+        }
+        return sub;
+      });
     }
 
     return part;
