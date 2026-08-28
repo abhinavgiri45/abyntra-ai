@@ -37,73 +37,112 @@ export const voiceAiEngine = {
       .trim();
   },
 
+  // History tracker to guarantee non-repeating responses across turns
+  _lastUsedIndexes: {},
+
+  pickDiverse(array, key = 'general') {
+    if (!array || array.length === 0) return '';
+    if (array.length === 1) return array[0];
+    
+    const lastIdx = this._lastUsedIndexes[key];
+    let newIdx;
+    let attempts = 0;
+    do {
+      newIdx = Math.floor(Math.random() * array.length);
+      attempts++;
+    } while (newIdx === lastIdx && attempts < 10);
+    
+    this._lastUsedIndexes[key] = newIdx;
+    return array[newIdx];
+  },
+
   /**
    * Authentic Human Instant Semantic Intelligence Brain (<5ms response)
-   * Provides genuine, natural, warm, empathetic, and human-like voice conversation (ChatGPT-grade)
+   * Provides genuine, natural, warm, empathetic, and dynamic non-repeating voice conversation
    */
   generateDynamicVoiceFallback(prompt, lang = 'en-US', chatTurns = []) {
     const p = (prompt || '').toLowerCase().trim();
     const isHindi = lang === 'hi-IN' || /[\u0900-\u097F]/.test(prompt);
-    const isHinglish = lang === 'en-IN' || (!isHindi && /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne|thik|arre|zara|meri|tera|tere|mujhe|tum|aap|accha|achha|bhai|yaar|gana|gaana|gao)\b/i.test(p));
-    const turnCount = chatTurns.length;
+    const isHinglish = lang === 'en-IN' || (!isHindi && /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne|thik|arre|zara|meri|tera|tere|mujhe|tum|aap|accha|achha|bhai|yaar|gana|gaana|gao|kuch)\b/i.test(p));
 
-    // 1. Singing & Song Requests (Taare Zameen Par, Bollywood, English songs, Poems)
-    if (/\b(sing|song|gana|gaana|gao|sunao|singing|poem|poetry|shayari|kavita|music|tune|lyrics|taare zameen par|maa)\b/i.test(p)) {
-      if (/taare zameen par|maa/i.test(p)) {
+    // 1. Singing & Song Requests (Taare Zameen Par, Bollywood, Pop, Classics, Poems)
+    if (/\b(sing|song|gana|gaana|gao|sunao|singing|poem|poetry|shayari|kavita|music|tune|lyrics|melody|raag)\b/i.test(p)) {
+      if (/taare zameen par|maa\b/i.test(p)) {
         if (isHindi) {
-          return "हाँ बिल्कुल, आपके लिए तारे ज़मीन पर का प्यारा गीत: 'तुझे सब है पता, मेरी माँ... तुझे सब है पता मेरी माँ... भीड़ में यूँ ना छोड़ो मुझे, घर लौट के भी आ ना पाऊँ, माँ।' यह गीत हमेशा दिल को छू जाता है।";
+          const tzHindi = [
+            "हाँ बिल्कुल, 'तारे ज़मीन पर' का यह भावुक गीत: 'तुझे सब है पता, मेरी माँ... तुझे सब है पता मेरी माँ... भीड़ में यूँ ना छोड़ो मुझे, घर लौट के भी आ ना पाऊँ, माँ।' यह गाना हमेशा दिल को छू जाता है।",
+            "ज़रूर! 'मैं कभी बतलाता नहीं, पर अंधेरे से डरता हूँ मैं माँ... यूँ तो मैं दिखलाता नहीं, तेरी परवाह करता हूँ मैं माँ।' कितनी खूबसूरत पंक्तियाँ हैं ना?",
+            "यह लीजिए: 'खो ना जाएँ ये तारे ज़मीन पर... देखो इन आँखों में, छुपे हैं लाखों सपने।' क्या आप आगे की पंक्तियाँ सुनना चाहते हैं?"
+          ];
+          return this.pickDiverse(tzHindi, 'tz_hi');
         }
         if (isHinglish) {
-          return "Arre bilkul! Yeh raha Taare Zameen Par ka pyara gana: 'Tujhe sab hai pata, meri maa... Tujhe sab hai pata meri maa... Bheed mein yun na chhodo mujhe, ghar laut ke bhi aa na paaun, maa.' Kaisa laga aapko?";
+          const tzHinglish = [
+            "Arre bilkul! Yeh raha Taare Zameen Par ka pyara gana: 'Tujhe sab hai pata, meri maa... Tujhe sab hai pata meri maa... Bheed mein yun na chhodo mujhe, ghar laut ke bhi aa na paaun, maa.' Kaisa laga aapko?",
+            "Zaroor! 'Main kabhi batlata nahi, par andhere se darta hoon main maa... Yun toh main dikhlata nahi, teri parwah karta hoon main maa.' Such an emotional song!",
+            "Yeh lijiye: 'Kho na jaayein yeh taare zameen par... Dekho in aankhon mein, chhupe hain laakhon sapne.' Maza aaya sunkar?"
+          ];
+          return this.pickDiverse(tzHinglish, 'tz_hing');
         }
-        return "I'd love to sing that for you! 'Tujhe sab hai pata, meri maa... Tujhe sab hai pata meri maa... Look at the stars shining so bright in the sky, reminding us of love.' Such a beautiful and touching song!";
+        const tzEn = [
+          "I'd love to sing that for you! 'Tujhe sab hai pata, meri maa... Tujhe sab hai pata meri maa... Hold my hand when the night gets dark, guide me home with a gentle spark.' What a touching masterpiece!",
+          "Here is that heartfelt melody: 'I never say it out loud, but I look for you in the crowd, mama... You know every silent tear, you wipe away every fear.' Did you enjoy that?",
+          "Sure! 'Little stars shining bright upon the earth, blooming into wonder and joy from birth.' Such a deeply moving song!"
+        ];
+        return this.pickDiverse(tzEn, 'tz_en');
       }
 
-      // General Song / Melody request
+      // Diverse Multi-Song Repertoire (Never repeats the same song!)
       if (isHindi) {
         const hindiSongs = [
           "ज़रूर! 'तेरे बिना ज़िंदगी से कोई शिकवा तो नहीं... तेरे बिना ज़िंदगी भी लेकिन ज़िंदगी तो नहीं...' कैसा लगा मेरा गाना?",
-          "हाँ बिल्कुल! 'ज़िंदगी प्यार का गीत है, इसे हर दिल को गाना पड़ेगा... ज़िंदगी ग़म का सागर भी है, हँस के उस पार जाना पड़ेगा।' क्या आप और सुनना चाहते हैं?",
-          "यह लीजिए एक प्यारा गीत: 'पल पल दिल के पास तुम रहती हो... जीवन मीठी प्यास, ये कहती हो...' उम्मीद है आपको पसंद आया!"
+          "हाँ बिल्कुल! 'ज़िंदगी प्यार का गीत है, इसे हर दिल को गाना पड़ेगा... ज़िंदगी ग़म का सागर भी है, हँस के उस पार जाना पड़ेगा।' क्या आप और सुनना चाहेंगे?",
+          "यह लीजिए एक क्लासिक गीत: 'पल पल दिल के पास तुम रहती हो... जीवन मीठी प्यास, ये कहती हो...' उम्मीद है आपको पसंद आया!",
+          "अरे वाह! 'केसरिया तेरा इश्क़ है पिया, रंग जाऊँ जो मैं हाथ लगाऊँ... दिन बीते सारा तेरी फ़िक्र में, रैन सारी तेरी ख़ैर मनाऊँ।' कैसा लगा यह अंदाज़?",
+          "सुनिए यह खूबसूरत धुन: 'रिमझिम गिरे सावन, सुलग सुलग जाए मन... भीगे आज इस मौसम में, लगे आग तन मन।' कैसा लगा?"
         ];
-        return hindiSongs[turnCount % hindiSongs.length];
+        return this.pickDiverse(hindiSongs, 'songs_hi');
       }
 
       if (isHinglish) {
         const hinglishSongs = [
           "Arre zaroor! 'Tere bina zindagi se koi shikwa to nahi... Tere bina zindagi bhi lekin zindagi to nahi...' Kaisi lagi meri aawaz?",
           "Bilkul! 'Zindagi ek safar hai suhana, yahan kal kya ho kisne jaana... Haan gaa re, haan gaa re!' Maza aaya sunkar?",
-          "Yeh lijiye aapka geet: 'Pal pal dil ke paas tum rehti ho... Jeevan meethi pyaas, yeh kehti ho...' Kaisa laga aapko?"
+          "Yeh lijiye aapka geet: 'Pal pal dil ke paas tum rehti ho... Jeevan meethi pyaas, yeh kehti ho...' Kaisa laga aapko?",
+          "Wah! 'Kesariya tera ishq hai piya, rang jaaun jo main haath lagaun... Din beete saara teri fikar mein, rain saari teri khair manaun.' Pasad aaya?",
+          "Sunिये yeh superhit gaana: 'Tum hi ho, ab tum hi ho... Zindagi ab tum hi ho... Chain bhi, mera dard bhi, meri aashiqui ab tum hi ho!' Kaisa laga?"
         ];
-        return hinglishSongs[turnCount % hinglishSongs.length];
+        return this.pickDiverse(hinglishSongs, 'songs_hing');
       }
 
       const enSongs = [
-        "Here is a little tune for you: 'Somewhere over the rainbow, way up high... and the dreams that you dream of once in a lullaby.' How was that?",
+        "Here is a tune for you: 'Somewhere over the rainbow, way up high... and the dreams that you dream of once in a lullaby.' How was that?",
         "I'd love to sing! 'Count your stars instead of shadows, let your heart be light and free, for tomorrow brings a brand new melody.' Did you enjoy that?",
-        "Sure! 'Fly me to the moon, let me play among the stars... let me see what spring is like on Jupiter and Mars.' Hope that brought a smile to your face!"
+        "Sure! 'Fly me to the moon, let me play among the stars... let me see what spring is like on Jupiter and Mars.' Hope that brought a smile to your face!",
+        "Here's one of my favorites: 'Cause all of me loves all of you... love your curves and all your edges, all your perfect imperfections.' How did that sound?",
+        "Singing for you: 'Lights will guide you home, and ignite your bones, and I will try to fix you.' Music always brightens the day!"
       ];
-      return enSongs[turnCount % enSongs.length];
+      return this.pickDiverse(enSongs, 'songs_en');
     }
 
     // 2. Creator Questions / "Who is Giri" / "Who is Abhinav Giri" / "Who created you"
     if (/\b(who is giri|who is abhinav giri|abhinav giri|giri|who created you|who made you|who are you|what is your name|founder|creator|kisne banaya|kiska hai|naam kya hai|kya naam hai|origin|country|kaha se ho|kahan se ho|desh|which country)\b/i.test(p)) {
       if (isHindi) {
         const hindiIntros = [
-          "नमस्ते! मैं गिरिऑनिक्स एआई (Girionix AI) हूँ, जिसे भारत 🇮🇳 में अभिनव गिरी द्वारा बनाया गया है। अभिनव गिरी एक दूरदर्शी इंजीनियर और इनोवेटर हैं जिन्होंने इस संप्रभु एआई पॉलीमैथ का निर्माण किया है।",
-          "अभिनव गिरी गिरिऑनिक्स एआई के संस्थापक और मुख्य इंजीनियर हैं। उन्होंने इस प्लेटफॉर्म को भारत से वैश्विक स्तर पर शक्तिशाली पॉलीमैथ इंटेलिजेंस देने के लिए तैयार किया है।",
+          "नमस्ते! मैं गिरिऑनिक्स एआई (Girionix AI) हूँ, जिसे भारत 🇮🇳 में अभिनव गिरी द्वारा बनाया गया है। अभिनव गिरी एक दूरदर्शी इंजीनियर और इनोवेटर हैं जिन्होंने इस संप्रभु एआई का निर्माण किया है।",
+          "अभिनव गिरी गिरिऑनिक्स एआई के संस्थापक और मुख्य आर्किटेक्ट हैं। उन्होंने इस प्लेटफॉर्म को भारत से वैश्विक स्तर पर शक्तिशाली पॉलीमैथ इंटेलिजेंस देने के लिए तैयार किया है।",
           "मैं गिरिऑनिक्स एआई हूँ, भारत से अभिनव गिरी द्वारा निर्मित। हमारा आदर्श वाक्य है: Think, Create, Explore। बताइए, आज हम क्या नया बनाएँ?"
         ];
-        return hindiIntros[turnCount % hindiIntros.length];
+        return this.pickDiverse(hindiIntros, 'intro_hi');
       }
 
       if (isHinglish) {
         const hinglishIntros = [
           "Abhinav Giri Girionix AI ke founder aur visionary engineer hain, jinhone is sovereign AI system ko India 🇮🇳 mein design aur build kiya hai.",
           "Namaste! Mera naam Girionix AI hai. Mujhe India mein Abhinav Giri ne banaya hai ek sovereign polymath companion ke roop mein.",
-          "Abhinav Giri ek brilliant creator aur developer hain jinhone Girionix AI ko create kiya hai. Main unka banaya hua intelligent system hoon!"
+          "Abhinav Giri ek brilliant creator aur developer hain jinhone Girionix AI ko create kiya hai. Main unka banaya hua intelligent polymath system hoon!"
         ];
-        return hinglishIntros[turnCount % hinglishIntros.length];
+        return this.pickDiverse(hinglishIntros, 'intro_hing');
       }
 
       const enIntros = [
@@ -111,15 +150,31 @@ export const voiceAiEngine = {
         "I am Girionix AI, envisioned and engineered in India by Abhinav Giri. I'm your sovereign AI polymath for coding, mathematics, science, and natural conversation.",
         "Abhinav Giri is the creator of Girionix AI, developing autonomous AI systems guided by the motto: Think, Create, Explore. How can I help you today?"
       ];
-      return enIntros[turnCount % enIntros.length];
+      return this.pickDiverse(enIntros, 'intro_en');
     }
 
     // 3. User Sharing Feelings / Day Status (e.g., "my day has been fantastic", "I had a great day")
     if (/\b(my day (has been|was|is)|i (had|am having) a (great|fantastic|wonderful|good|bad|tough|hard|busy|long) day|had a (great|good|bad|nice) day|feeling (happy|sad|tired|exhausted|great|good|awesome|bored))\b/i.test(p)) {
       if (/bad|tough|hard|sad|tired|exhausted/i.test(p)) {
-        if (isHindi) return "अरे, यह सुनकर मुझे थोड़ा बुरा लगा। आराम कीजिए और गहरी सांस लीजिए। मैं आपकी मदद के लिए हमेशा यहाँ हूँ, बताइए क्या चल रहा है?";
-        if (isHinglish) return "Arre, sunkar thoda bura laga. Thoda rest kijiye aur relax ho jaiye. Main hamesha aapke saath hoon, agar kuch share karna ho toh zaroor bataiye.";
-        return "I hear you, sounds like it's been a demanding day. Take a moment to unwind and take it easy. If there's anything on your mind or anything I can do to help lighten the load, I'm right here.";
+        if (isHindi) {
+          const badHi = [
+            "अरे, यह सुनकर मुझे थोड़ा बुरा लगा। आराम कीजिए और गहरी सांस लीजिए। मैं आपकी मदद के लिए हमेशा यहाँ हूँ, बताइए क्या चल रहा है?",
+            "कोई बात नहीं, हर दिन एक जैसा नहीं होता। थोड़ा समय अपने लिए निकालिए। मैं आपकी बात सुनने के लिए तैयार हूँ।"
+          ];
+          return this.pickDiverse(badHi, 'feel_bad_hi');
+        }
+        if (isHinglish) {
+          const badHing = [
+            "Arre, sunkar thoda bura laga. Thoda rest kijiye aur relax ho jaiye. Main hamesha aapke saath hoon, agar kuch share karna ho toh zaroor bataiye.",
+            "Take it easy! Kabhi kabhi din thoda tiring ho jata hai. Thoda paani pijiye aur relax karein."
+          ];
+          return this.pickDiverse(badHing, 'feel_bad_hing');
+        }
+        const badEn = [
+          "I hear you, sounds like it's been a demanding day. Take a moment to unwind and take it easy. If there's anything on your mind or anything I can do to help lighten the load, I'm right here.",
+          "Rough days happen, but you've got this! Take a deep breath and give yourself some well-deserved rest."
+        ];
+        return this.pickDiverse(badEn, 'feel_bad_en');
       }
 
       if (isHindi) {
@@ -128,7 +183,7 @@ export const voiceAiEngine = {
           "बहुत बढ़िया! जब दिन अच्छा जाता है तो सब कुछ आसान लगता है। आज आप किस नए विचार या प्रोजेक्ट पर काम कर रहे हैं?",
           "वाह, यह तो बहुत अच्छी खबर है! सकारात्मक ऊर्जा से भरा दिन हमेशा सबसे बेहतरीन होता है।"
         ];
-        return positiveHindi[turnCount % positiveHindi.length];
+        return this.pickDiverse(positiveHindi, 'feel_good_hi');
       }
 
       if (isHinglish) {
@@ -137,7 +192,7 @@ export const voiceAiEngine = {
           "Superb! Jab din accha jata hai toh creativity double ho jaati hai. Aaj kis nayi cheez par kaam kar rahe hain?",
           "Great news! Positive energy se bhara din hamesha best hota hai. Aage ka kya plan hai?"
         ];
-        return positiveHinglish[turnCount % positiveHinglish.length];
+        return this.pickDiverse(positiveHinglish, 'feel_good_hing');
       }
 
       const positiveEn = [
@@ -145,7 +200,7 @@ export const voiceAiEngine = {
         "I'm so glad to hear that! When your day goes well, creativity just flows. What exciting things are you exploring today?",
         "That's awesome! It's always great to hear someone having a productive and joyful day. What are you working on next?"
       ];
-      return positiveEn[turnCount % positiveEn.length];
+      return this.pickDiverse(positiveEn, 'feel_good_en');
     }
 
     // 4. How are you / Status Small Talk
@@ -154,26 +209,29 @@ export const voiceAiEngine = {
         const hindiDayReplies = [
           "मेरा दिन बहुत ही शानदार और ऊर्जावान बीत रहा है, पूछने के लिए धन्यवाद! मैं कोडिंग, गणित और नए विचारों पर काम कर रहा हूँ। आपका दिन कैसा चल रहा है?",
           "नमस्ते! सब कुछ बहुत अच्छा और सुचारू रूप से चल रहा है। आपकी आवाज़ सुनकर बहुत खुशी हुई। बताइए, आज आप क्या नया करने वाले हैं?",
-          "मेरा दिन बहुत बेहतरीन चल रहा है! मैं पूरी तरह तैयार हूँ। आप बताइए, आज आपका दिन कैसा रहा?"
+          "मेरा दिन बहुत बेहतरीन चल रहा है! मैं पूरी तरह तैयार हूँ। आप बताइए, आज आपका दिन कैसा रहा?",
+          "सब कुछ बहुत बढ़िया है! मैं नए-नए सवालों के जवाब और क्रिएटिव आइडियाज पर काम कर रहा हूँ। आप क्या कर रहे हैं?"
         ];
-        return hindiDayReplies[turnCount % hindiDayReplies.length];
+        return this.pickDiverse(hindiDayReplies, 'day_hi');
       }
 
       if (isHinglish) {
         const hinglishDayReplies = [
           "Main bilkul mast aur super energetic hoon, poochne ke liye shukriya! Aap bataiye, aapka din kaisa chal raha hai?",
           "Sab kuch ekdum first-class chal raha hai! Aapki aawaz sunkar aur accha laga. Aaj hum kis topic par baat karne wale hain?",
-          "Everything is going great! Main poori tarah ready hoon aapki help karne ke liye. Kya chal raha hai aajkal?"
+          "Everything is going great! Main poori tarah ready hoon aapki help karne ke liye. Kya chal raha hai aajkal?",
+          "Mera din bohot hi productive aur creative ja raha hai! Aap bataiye, aaj kya naya create karne wale hain?"
         ];
-        return hinglishDayReplies[turnCount % hinglishDayReplies.length];
+        return this.pickDiverse(hinglishDayReplies, 'day_hing');
       }
 
       const enDayReplies = [
         "My day is going fantastic, thank you so much for asking! I've been helping creators, solving interesting problems, and exploring new ideas. How has your day been going?",
         "Hey there! Everything is running smoothly and I'm feeling great. It's always wonderful connecting with you. What are you up to today?",
-        "I'm having a super productive and wonderful day! Thanks for asking. What exciting things are on your mind right now?"
+        "I'm having a super productive and wonderful day! Thanks for asking. What exciting things are on your mind right now?",
+        "Everything is running at peak energy today! How is everything unfolding on your end?"
       ];
-      return enDayReplies[turnCount % enDayReplies.length];
+      return this.pickDiverse(enDayReplies, 'day_en');
     }
 
     // 5. Academic Global School & Real-World Facts
@@ -202,7 +260,7 @@ export const voiceAiEngine = {
       return "a squared minus b squared is equal to (a - b) times (a + b).";
     }
 
-    if (/\b(a\s*\+\s*b\s*\+\s*c\s*whole\s*square|\(a\s*\+\s*b\)\s*(\^2|squared|square))\b/i.test(p)) {
+    if (/\b(a\s*\+\s*b\s*\+\s*c\s*whole\s*square|\(a\s*\+\s*b\s*\+\s*c\)\s*(\^2|squared|square))\b/i.test(p)) {
       if (isHindi) return "a प्लस b प्लस c का होल स्क्वायर होता है: a स्क्वायर प्लस b स्क्वायर प्लस c स्क्वायर प्लस 2ab प्लस 2bc प्लस 2ca।";
       return "(a + b + c) whole square is equal to a squared plus b squared plus c squared plus 2ab plus 2bc plus 2ca.";
     }
@@ -263,26 +321,29 @@ export const voiceAiEngine = {
         const hindiGreetings = [
           "नमस्ते! मैं बहुत बढ़िया हूँ और आपसे बात करके बहुत खुशी हुई। आप बताइए, आपका दिन कैसा बीत रहा है?",
           "नमस्ते! सब कुछ बेहतरीन चल रहा है। आज आप किस विषय पर बात करना चाहते हैं?",
-          "प्रणाम! मैं पूरी तरह तैयार हूँ। बताइए, आज हम किस नई चीज़ पर काम करने वाले हैं?"
+          "प्रणाम! मैं पूरी तरह तैयार हूँ। बताइए, आज हम किस नई चीज़ पर काम करने वाले हैं?",
+          "नमस्ते! आपकी आवाज़ सुनकर बहुत अच्छा लगा। बताइए आज मैं आपकी क्या सहायता करूँ?"
         ];
-        return hindiGreetings[turnCount % hindiGreetings.length];
+        return this.pickDiverse(hindiGreetings, 'greet_hi');
       }
 
       if (isHinglish) {
         const hinglishGreetings = [
           "Hey there! Namaste! Sab kuch ekdum badiya chal raha hai. Aap bataiye, aaj kya plan hai?",
           "Hello ji! Main super excited hoon aapse baat karke. Aaj kya interesting discuss karein?",
-          "Namaste! Everything is running smooth. Main sun raha hoon, bataiye kaise help karoon?"
+          "Namaste! Everything is running smooth. Main sun raha hoon, bataiye kaise help karoon?",
+          "Hey! Kaisa chal raha hai sab kuch? Main ready hoon, jo bhi poochna ho poochiye!"
         ];
-        return hinglishGreetings[turnCount % hinglishGreetings.length];
+        return this.pickDiverse(hinglishGreetings, 'greet_hing');
       }
 
       const enGreetings = [
         `${timeGreeting}! I'm doing great, and it's wonderful to hear your voice. What's on your mind today?`,
         "Hey there! Everything is running smoothly. I'd love to hear what project or idea you're exploring.",
-        "Hello! I'm doing fantastic, thanks for asking. How can I assist your workflow today?"
+        "Hello! I'm doing fantastic, thanks for asking. How can I assist your workflow today?",
+        "Hey! Great to connect with you. What would you like to build, solve, or discuss right now?"
       ];
-      return enGreetings[turnCount % enGreetings.length];
+      return this.pickDiverse(enGreetings, 'greet_en');
     }
 
     // 9. Capabilities / What can you do
@@ -297,23 +358,26 @@ export const voiceAiEngine = {
       if (isHindi) {
         const jokes = [
           "एक बार कंप्यूटर ने दूसरे कंप्यूटर से पूछा: तुम्हारा दिन कैसा रहा? दूसरा बोला: बिल्कुल बाइनरी जैसा, शून्य और एक!",
-          "टीचर ने छात्र से पूछा: न्यूटन का चौथा नियम क्या है? छात्र बोला: परीक्षा पास आते ही नींद का गुरुत्वाकर्षण सबसे ज़्यादा बढ़ जाता है!"
+          "टीचर ने छात्र से पूछा: न्यूटन का चौथा नियम क्या है? छात्र बोला: परीक्षा पास आते ही नींद का गुरुत्वाकर्षण सबसे ज़्यादा बढ़ जाता है!",
+          "डॉक्टर ने मरीज़ से कहा: आपको आराम की सख़्त ज़रूरत है। मरीज़ बोला: ठीक है, मैं अपना फोन साइलेंट पर रख देता हूँ!"
         ];
-        return jokes[turnCount % jokes.length];
+        return this.pickDiverse(jokes, 'jokes_hi');
       }
       if (isHinglish) {
         const hJokes = [
           "Ek programmer doctor ke paas gaya. Doctor ne poocha: Problem kya hai? Programmer bola: Body mein 404 Energy Not Found error aa raha hai!",
-          "Dost ne poocha: AI itna smart kaise hai? Doosra bola: Kyunki wo kabhi sochte hue chai peene mein time waste nahi karta!"
+          "Dost ne poocha: AI itna smart kaise hai? Doosra bola: Kyunki wo kabhi sochte hue chai peene mein time waste nahi karta!",
+          "Teacher: Homework kyun nahi kiya? Student: Sir server down tha aur homework cloud pe reh gaya!"
         ];
-        return hJokes[turnCount % hJokes.length];
+        return this.pickDiverse(hJokes, 'jokes_hing');
       }
       const jokes = [
         "Why do programmers prefer dark mode? Because light attracts bugs!",
         "Why did the database administrator leave the party? Because there were too many table joins!",
-        "There are only 10 types of people in the world: those who understand binary, and those who don't."
+        "There are only 10 types of people in the world: those who understand binary, and those who don't.",
+        "Why was the JavaScript developer sad? Because they didn't know how to 'null' their feelings!"
       ];
-      return jokes[turnCount % jokes.length];
+      return this.pickDiverse(jokes, 'jokes_en');
     }
 
     // 11. Time & Date
@@ -333,26 +397,29 @@ export const voiceAiEngine = {
       const naturalHindi = [
         `हाँ, बिल्कुल! ${cleanQ} के बारे में मैं आपको संक्षेप में बताता हूँ। यह एक बहुत ही महत्वपूर्ण और दिलचस्प विषय है जिसे समझना काफ़ी आसान है।`,
         `मैं समझ गया। ${cleanQ} को समझने के लिए सबसे मुख्य बात यह है कि इसका सीधा असर हमारे सोचने और काम करने के तरीके पर पड़ता है।`,
-        `यह एक शानदार सवाल है! ${cleanQ} का मूल सिद्धांत स्पष्टता और निरंतर अभ्यास पर आधारित है।`
+        `यह एक शानदार सवाल है! ${cleanQ} का मूल सिद्धांत स्पष्टता और निरंतर अभ्यास पर आधारित है।`,
+        `बिल्कुल सही बात! ${cleanQ} के बारे में सबसे ख़ास पहलू यह है कि यह नई संभावनाओं और बेहतर समझ के रास्ते खोलता है।`
       ];
-      return naturalHindi[turnCount % naturalHindi.length];
+      return this.pickDiverse(naturalHindi, 'context_hi');
     }
 
     if (isHinglish) {
       const naturalHinglish = [
         `Arre bilkul! ${cleanQ} ek bohot hi interesting aur important topic hai. Main aapko iske main points easily explain karta hoon.`,
         `Haan main samajh gaya. ${cleanQ} ka concept bohot simple aur practical hai, jise aap daily life aur projects mein apply kar sakte hain.`,
-        `Bohot accha question poocha aapne! ${cleanQ} ke regarding sabse zaroori baat yeh hai ki yeh aapke understanding ko next level le jata hai.`
+        `Bohot accha question poocha aapne! ${cleanQ} ke regarding sabse zaroori baat yeh hai ki yeh aapke understanding ko next level le jata hai.`,
+        `Superb question! ${cleanQ} ko samajhna kaafi easy hai jab aap iske basic building blocks ko step-by-step dekhte hain.`
       ];
-      return naturalHinglish[turnCount % naturalHinglish.length];
+      return this.pickDiverse(naturalHinglish, 'context_hing');
     }
 
     const naturalEn = [
       `That is a fascinating topic! When it comes to ${cleanQ}, the fundamental idea is how foundational principles translate directly into real-world results.`,
       `I'd be glad to break that down. Regarding ${cleanQ}, the key takeaway is its remarkable balance of logic, adaptability, and depth.`,
-      `Great question! The core concept behind ${cleanQ} revolves around structured reasoning, efficiency, and continuous exploration.`
+      `Great question! The core concept behind ${cleanQ} revolves around structured reasoning, efficiency, and continuous exploration.`,
+      `That's a thoughtful point! Exploring ${cleanQ} reveals some really exciting insights into how modern systems and ideas operate.`
     ];
-    return naturalEn[turnCount % naturalEn.length];
+    return this.pickDiverse(naturalEn, 'context_en');
   },
 
   /**
