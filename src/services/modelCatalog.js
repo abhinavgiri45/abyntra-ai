@@ -90,19 +90,20 @@ export const TITAN_AI_MODELS = [
 export const AI_MODELS = [
   {
     id: "girionix-universal-auto",
-    name: "⚡ Universal Auto-Frontier",
-    provider: "Dynamic Universal AI Engine",
-    category: "universal-auto",
-    tag: "⚡ Auto-Upgrades to Newest Models",
+    name: "⚡ Girionix Pro",
+    provider: "Girionix Dynamic Neural Core",
+    category: "reasoning",
+    tag: "⚡ Flagship Frontier Intelligence",
     badgeColor: "cyan",
-    description: "Autonomous Universal Model Router. Continuously checks for newly released AI weights and automatically upgrades to the newest frontier generation.",
+    description: "Flagship intelligence engine. Autonomous model router combining deep chain-of-thought reasoning, Olympiad mathematics, superhuman code architecture, and multi-modal synthesis.",
     contextWindow: 200000,
     speed: "⚡ Dynamic Peak Velocity",
-    pricing: "Universal Auto-Sync",
+    pricing: "Universal Flagship",
     supportsReasoning: true,
     supportsVision: true,
+    isPro: true,
     isAutoUpgrade: true,
-    recommendedFor: ["Always-Latest Models", "Autonomous Upgrades", "Superhuman Frontier Intelligence"]
+    recommendedFor: ["Superhuman Reasoning", "Complex Coding & Architecture", "Math Olympiad Proofs", "Always-Latest Frontier Intelligence"]
   },
   {
     id: "girionix-pro",

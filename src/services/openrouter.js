@@ -84,7 +84,7 @@ export const openrouter = {
    * Neural Gateway Fallback Handler
    */
   async streamFreeNeuralAI({ messages, onChunk, onReasoningChunk, signal }) {
-    const errorNotice = `⚠️ **Neural Inference Notice**\n\nThe neural model did not return a response or the network connection was interrupted.\n\n* **How to resolve**:\n  1. Click retry or send your prompt again.\n  2. Verify your internet connection.\n  3. You can select another high-performance AI model in the bottom engine selector (e.g. *Universal Auto-Frontier*, *Claude 3.7*, *DeepSeek R1*, or *Titan Offline*).`;
+    const errorNotice = `⚠️ **Neural Inference Notice**\n\nThe neural model did not return a response or the network connection was interrupted.\n\n* **How to resolve**:\n  1. Click retry or send your prompt again.\n  2. Verify your internet connection.\n  3. You can select another high-performance AI model in the bottom engine selector (e.g. *Girionix Pro*, *Claude 3.7*, *DeepSeek R1*, or *Titan Offline*).`;
     
     if (onChunk) {
       onChunk(errorNotice, errorNotice);
