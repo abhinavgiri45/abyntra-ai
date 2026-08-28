@@ -1053,19 +1053,14 @@ fs.writeFileSync(path.join(downloadsDir, 'Install-Girionix-AI.bat'), openSourceB
 // 4. Build Standalone Android APK Packages
 console.log('\n📦 [4/6] Packaging 100% Standalone Android APK Packages...');
 const apkPath = path.join(downloadsDir, 'Girionix_AI.apk');
-const tempZip = path.join(downloadsDir, 'Girionix_AI_temp.zip');
+const zipStandard = path.join(downloadsDir, 'Girionix_AI_Windows.zip');
 
 try {
-  if (fs.existsSync(tempZip)) fs.unlinkSync(tempZip);
-  const cleanDist = distDir.replace(/\\/g, '/');
-  const cleanZip = tempZip.replace(/\\/g, '/');
-  execSync(`powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${cleanDist}', '${cleanZip}')"`, { stdio: 'inherit' });
-  if (fs.existsSync(tempZip)) {
-    fs.copyFileSync(tempZip, apkPath);
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Girionix_AI_Titan.apk'));
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Girionix_AI_Titan_Lite.apk'));
-    fs.unlinkSync(tempZip);
-    console.log('✅ Android Standalone APK Packages created (Standard, Titan Heavy, Titan Lite).');
+  if (fs.existsSync(zipStandard)) {
+    fs.copyFileSync(zipStandard, apkPath);
+    fs.copyFileSync(zipStandard, path.join(downloadsDir, 'Girionix_AI_Titan.apk'));
+    fs.copyFileSync(zipStandard, path.join(downloadsDir, 'Girionix_AI_Titan_Lite.apk'));
+    console.log('✅ Android Standalone APK Packages created (Standard, Titan Heavy, Titan Lite) ~4.2MB.');
   }
 } catch (apkErr) {
   console.warn('APK compression notice:', apkErr.message);
