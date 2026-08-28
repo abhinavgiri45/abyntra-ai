@@ -6,6 +6,8 @@ echo  VEDIC AI - VERIFIED DESKTOP WORKSTATION INSTALLER
 echo  Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 echo ========================================================
 echo.
+echo [*] Automatically unblocking downloaded files...
+powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%~dp0' | Unblock-File -ErrorAction SilentlyContinue"
 echo [*] Installing to: %LocalAppData%\Vedic AI
 powershell -NoProfile -ExecutionPolicy Bypass -Command "& {
   $installDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Vedic AI')
@@ -16,8 +18,8 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "& {
   $exePath = [System.IO.Path]::Combine($installDir, 'VedicAI.exe')
   $icoPath = [System.IO.Path]::Combine($installDir, 'app.ico')
   
-  if (Test-Path 'VedicAI.exe') { Copy-Item 'VedicAI.exe' -Destination $exePath -Force }
-  if (Test-Path 'app.ico') { Copy-Item 'app.ico' -Destination $icoPath -Force }
+  if (Test-Path '%~dp0VedicAI.exe') { Copy-Item '%~dp0VedicAI.exe' -Destination $exePath -Force; Unblock-File $exePath -ErrorAction SilentlyContinue }
+  if (Test-Path '%~dp0app.ico') { Copy-Item '%~dp0app.ico' -Destination $icoPath -Force }
   
   $desktop = [System.Environment]::GetFolderPath('Desktop')
   $shortcutPath = [System.IO.Path]::Combine($desktop, 'Vedic AI.lnk')
