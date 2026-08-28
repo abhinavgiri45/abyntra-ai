@@ -76,6 +76,11 @@ export const imageGenerator = {
     // Check if the prompt is human portrait / person
     const isHuman = /\b(man|woman|person|guy|girl|boy|face|portrait|model|character|warrior|king|queen|human|actor|actress|headshot|avatar|beard|handsome|beautiful)\b/i.test(lower);
 
+    // Check if the prompt is a logo / icon / brand identity
+    if (/\b(logo|icon|badge|emblem|symbol|brand identity|mascot|vector logo)\b/i.test(lower)) {
+      return `${clean}, modern minimalist vector logo design, clean geometry, sacred ancient and futuristic elements, high contrast, professional brand identity, award-winning logo, flat design, vector art on dark background, 8k resolution, centered composition`;
+    }
+
     if (stylePreset === 'Anime Masterpiece' || /ghibli|anime|miyazaki|makoto shinkai/i.test(lower)) {
       return `${clean}, Studio Ghibli and Makoto Shinkai masterpiece, exquisite hand-painted Japanese anime art, vibrant sky and clouds, sharp clean lines, 8k anime wallpaper, high aesthetic quality`;
     }

@@ -88,6 +88,32 @@ export const openrouter = {
   generateLocalSmartAnswer(prompt) {
     const p = (prompt || '').toLowerCase().trim();
 
+    // 0. Visual / Image / Logo Generation in Local Smart Engine
+    if (/\b(logo|image|picture|photo|illustration|drawing|sketch|artwork|wallpaper|avatar|badge|emblem|icon)\b/i.test(p) ||
+        /\b(create|generate|make|design|draw)\s+(a|an|the|ai)?\s*(logo|image|picture|icon|artwork|badge|wallpaper)\b/i.test(p)) {
+      const cleanSubject = prompt
+        .replace(/^(create|generate|make|design|draw|show me)\s+(an?|the)?\s*(ai)?\s*(logo|image|picture|artwork|icon|badge|wallpaper)?\s*(of|for)?/i, '')
+        .trim() || prompt;
+      
+      const encoded = encodeURIComponent(`${cleanSubject} modern minimalist vector logo design, professional brand identity, clean lines, award winning 8k on dark background`);
+      const imageUrl = `https://image.pollinations.ai/prompt/${encoded}?width=1024&height=1024&model=flux&nologo=true&enhance=true&t=${Date.now()}`;
+      
+      return `### 🎨 AI Generated Artwork & Logo: "${cleanSubject}"
+
+Here is your custom high-fidelity visual render for **"${cleanSubject}"**:
+
+![${cleanSubject}](${imageUrl})
+
+---
+
+### 💡 Visual Concept & Brand Philosophy:
+- **Symbolism**: Harmoniously unites sacred ancient aesthetics with cutting-edge computational intelligence.
+- **Color Palette & Aesthetics**: High-contrast modern vector art with deep celestial undertones and vibrant luminous accents.
+- **Resolution**: 1024×1024 High-Resolution Vector Masterpiece (FLUX AI Engine).
+
+*Click the image or right-click to download your high-res logo!*`;
+    }
+
     // 1. Identity & Creator Questions
     if (/which country|where are you from|country|kaha se ho|kahan se ho|origin|desh|nation|where do you live|where were you made|where was you made/i.test(p)) {
       if (/kaha|kahan|desh|bharat|aap/i.test(p)) {

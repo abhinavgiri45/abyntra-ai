@@ -320,15 +320,25 @@ export default function ChatView({
   const isImageRequest = (prompt) => {
     const p = prompt.toLowerCase();
     if (isVideoRequest(prompt)) return false;
-    return /\b(image|picture|photo|photograph|drawing|draw|sketch|illustration|portrait|wallpaper|ghibli|gilbhli|art of|render)\b/i.test(p) ||
+    return /\b(image|picture|photo|photograph|drawing|draw|sketch|illustration|portrait|wallpaper|ghibli|gilbhli|art of|render|logo|icon|badge|emblem|symbol|vector|graphic|poster|avatar|mascot|artwork|clipart)\b/i.test(p) ||
+           /\b(create|generate|make|design|draw|show|render)\s+(a|an|the|ai)?\s*(logo|icon|badge|image|picture|photo|drawing|illustration|sketch|wallpaper|poster|vector|art|graphic|mascot|avatar)\b/i.test(p) ||
            p.includes('create a image') ||
            p.includes('create an image') ||
+           p.includes('create a logo') ||
+           p.includes('create an ai logo') ||
+           p.includes('create an logo') ||
+           p.includes('generate a logo') ||
+           p.includes('generate logo') ||
+           p.includes('design a logo') ||
+           p.includes('make a logo') ||
            p.includes('make an image') ||
            p.includes('make a image') ||
            p.includes('generate image') ||
            p.includes('picture of') ||
            p.includes('image of') ||
-           /^(make|draw|show|generate)\s+(a|an)?\s*(dog|cat|car|house|sunset|lion|robot|city|anime|tree|person|girl|boy)/i.test(p);
+           p.includes('logo of') ||
+           p.includes('logo for') ||
+           /^(make|draw|show|generate|design|render)\s+(a|an)?\s*(dog|cat|car|house|sunset|lion|robot|city|anime|tree|person|girl|boy|logo|icon|poster|badge)/i.test(p);
   };
 
   const isMindMapRequest = (prompt) => {
@@ -444,11 +454,11 @@ export default function ChatView({
       return;
     }
 
-    // 4. Direct Image Generation Intent
+    // 4. Direct Image & Logo Generation Intent
     if (isImageRequest(promptToSend)) {
       try {
         const cleanPrompt = promptToSend
-          .replace(/^(generate an image of|generate image of|create an image of|create image of|make an image of|make image of|draw a|draw an|draw|picture of|show me an image of|show me a picture of|make a picture of|image of|picture of)/i, '')
+          .replace(/^(generate an image of|generate image of|create an image of|create image of|make an image of|make image of|create an ai logo of|create a logo of|create a logo for|generate a logo for|generate a logo of|design a logo for|design a logo of|draw a logo of|make a logo for|make a logo of|create logo for|create logo of|draw a|draw an|draw|picture of|show me an image of|show me a picture of|make a picture of|image of|picture of|logo of|logo for)/i, '')
           .replace(/\b(image|picture|photo)\b/gi, '')
           .trim();
 
@@ -463,7 +473,7 @@ export default function ChatView({
           model: autoModel
         });
 
-        const imageReplyContent = `Here is your high-fidelity 8K artwork of **"${targetPrompt}"** (${autoDims.ratioLabel} • ${autoModel.toUpperCase()}):\n\n![${targetPrompt}](${imgResult.url})`;
+        const imageReplyContent = `Here is your high-fidelity 8K visual design of **"${targetPrompt}"** (${autoDims.ratioLabel} • ${autoModel.toUpperCase()}):\n\n![${targetPrompt}](${imgResult.url})`;
 
         setSessions(prev => prev.map(s => s.id === activeSessionId ? {
           ...s,
