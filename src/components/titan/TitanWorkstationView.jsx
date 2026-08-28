@@ -38,7 +38,7 @@ export default function TitanWorkstationView({ onExitTitanMode, userName = '' })
   // Profile: 'heavy' (16GB+ RAM / GPU) vs 'lite' (2GB-8GB RAM / Battery Saver)
   const [profile, setProfile] = useState(() => {
     try {
-      return localStorage.getItem('abyntra_titan_profile') || 'heavy';
+      return localStorage.getItem('vedic_titan_profile') || 'heavy';
     } catch (_) { return 'heavy'; }
   });
 
@@ -49,7 +49,7 @@ export default function TitanWorkstationView({ onExitTitanMode, userName = '' })
   const [messages, setMessages] = useState([
     {
       role: 'assistant',
-      content: `⚡ **Abyntra Titan Sovereign Workstation Initialized**\n\n- **Execution Mode**: 100% Air-Gapped Physical On-Device Compute\n- **Cloud Network Traffic**: 0 KB (Zero Outbound Requests)\n- **Active Profile**: ${profile === 'heavy' ? '⚡ Titan Heavy (High-End Workstation)' : '🌱 Titan Lite (Low-End & Battery Saver)'}\n- **Data Security**: All sessions encrypted in your local machine disk vault.\n\nType any query, request fullstack code, or derive complex mathematical proofs. Every single token is synthesized locally on your physical CPU & GPU shaders.`,
+      content: `⚡ **Vedic Titan Sovereign Workstation Initialized**\n\n- **Execution Mode**: 100% Air-Gapped Physical On-Device Compute\n- **Cloud Network Traffic**: 0 KB (Zero Outbound Requests)\n- **Active Profile**: ${profile === 'heavy' ? '⚡ Titan Heavy (High-End Workstation)' : '🌱 Titan Lite (Low-End & Battery Saver)'}\n- **Data Security**: All sessions encrypted in your local machine disk vault.\n\nType any query, request fullstack code, or derive complex mathematical proofs. Every single token is synthesized locally on your physical CPU & GPU shaders.`,
       telemetry: {
         cores: (typeof navigator !== 'undefined' && navigator.hardwareConcurrency) || 8,
         ram: profile === 'heavy' ? '16 GB Allocated' : '350 MB Footprint',
@@ -143,7 +143,7 @@ draw();
     setProfile(newProfile);
     localNeuralEngine.setProfile(newProfile === 'heavy' ? 'ultra' : 'lite');
     try {
-      localStorage.setItem('abyntra_titan_profile', newProfile);
+      localStorage.setItem('vedic_titan_profile', newProfile);
     } catch (_) {}
 
     setMessages(prev => [
@@ -296,7 +296,7 @@ draw();
             </div>
             <div>
               <div className="flex items-center gap-1.5 font-mono text-xs font-black tracking-wider text-white">
-                <span>ABYNTRA</span>
+                <span>VEDIC</span>
                 <span className="text-emerald-400">TITAN WORKSTATION</span>
               </div>
               <div className="flex items-center gap-1 text-[9px] font-mono text-emerald-400/80">

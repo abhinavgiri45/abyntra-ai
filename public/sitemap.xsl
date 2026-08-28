@@ -8,7 +8,7 @@
   <xsl:template match="/">
     <html xmlns="http://www.w3.org/1999/xhtml" lang="en">
       <head>
-        <title>XML Sitemap — Abyntra AI</title>
+        <title>XML Sitemap — Vedic AI</title>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
         <style>
           * { box-sizing: border-box; }
@@ -109,8 +109,8 @@
       <body>
         <div class="container">
           <div class="header">
-            <h1>⚡ Abyntra AI — XML Sitemap</h1>
-            <p>This XML sitemap is indexed by Google, Bing, and other search engines to discover all URLs on <strong>https://abyntra-ai.pages.dev/</strong>.</p>
+            <h1>⚡ Vedic AI — XML Sitemap</h1>
+            <p>This XML sitemap is indexed by Google, Bing, and other search engines to discover all URLs on <strong>https://vedic-ai.pages.dev/</strong>.</p>
             <div class="stats">
               Total Indexable URLs: <strong><xsl:value-of select="count(sitemap:urlset/sitemap:url)"/></strong>
             </div>

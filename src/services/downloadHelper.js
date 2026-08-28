@@ -1,11 +1,11 @@
 /**
- * Abyntra AI Bulletproof File Downloader
+ * Vedic AI Bulletproof File Downloader
  * Supports direct Stream, Blob memory buffering, and Anchor fallback.
  * Prevents "Network Error" or "Check internet connection" errors in Chrome, Android, macOS, and iOS.
  */
 
 export async function triggerFileDownload(url, fileName, onProgress) {
-  const targetFileName = fileName || url.split('/').pop() || 'Abyntra_AI_Package';
+  const targetFileName = fileName || url.split('/').pop() || 'Vedic_AI_Package';
 
   try {
     if (onProgress) onProgress('connecting');

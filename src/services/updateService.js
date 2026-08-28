@@ -1,5 +1,5 @@
 /**
- * Abyntra AI Real-Time Over-The-Air (OTA) Code & System Update Service
+ * Vedic AI Real-Time Over-The-Air (OTA) Code & System Update Service
  * Enables instant update delivery, version synchronization, and hot-patching across all platforms.
  */
 
@@ -49,7 +49,7 @@ class UpdateService {
         (remoteData.buildTimestamp && remoteData.buildTimestamp > (CURRENT_APP_VERSION.buildTimestamp || 0));
 
       this.hasUpdate = isNewer;
-      localStorage.setItem('abyntra_last_update_check', Date.now().toString());
+      localStorage.setItem('vedic_last_update_check', Date.now().toString());
 
       return {
         hasUpdate: this.hasUpdate,

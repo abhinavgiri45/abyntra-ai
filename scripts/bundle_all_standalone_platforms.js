@@ -11,7 +11,7 @@ const distDir = path.resolve(rootDir, 'dist');
 const downloadsDir = path.resolve(rootDir, 'public', 'downloads');
 
 console.log('🚀 ========================================================');
-console.log('🚀 ABYNTRA AI - ULTRA-SAFE CERTIFIED STANDALONE PACKAGER');
+console.log('🚀 VEDIC AI - ULTRA-SAFE CERTIFIED STANDALONE PACKAGER');
 console.log('🚀 Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)');
 console.log('🚀 ========================================================');
 
@@ -48,7 +48,7 @@ console.log(`Found ${distFiles.length} distribution files.`);
 console.log('\n📦 [2/6] Generating Clean Win32 Application Manifest...');
 const win32Manifest = `<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-  <assemblyIdentity version="1.0.0.0" name="AbyntraAI.App"/>
+  <assemblyIdentity version="1.0.0.0" name="VedicAI.App"/>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
@@ -75,7 +75,7 @@ fs.writeFileSync(path.join(downloadsDir, 'app.manifest'), win32Manifest, 'utf8')
 console.log('\n📦 [3/6] Compiling Verified Windows Standalone Executables & Setup Wizards...');
 const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
 
-const abyntraAppTemplate = `using System;
+const vedicAppTemplate = `using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -86,18 +86,18 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Abyntra AI Desktop Workstation")]
+[assembly: AssemblyTitle("Vedic AI Desktop Workstation")]
 [assembly: AssemblyDescription("Sovereign AI Polymath Desktop Workstation")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Abyntra AI")]
+[assembly: AssemblyProduct("Vedic AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri. All Rights Reserved.")]
-[assembly: AssemblyTrademark("Abyntra AI™")]
+[assembly: AssemblyTrademark("Vedic AI™")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 [assembly: Guid("a819b138-89c0-4cf8-922e-e478546b5a37")]
 
-namespace AbyntraAI
+namespace VedicAI
 {
     public class MainForm : Form
     {
@@ -108,7 +108,7 @@ namespace AbyntraAI
 
         public MainForm()
         {
-            this.Text = "Abyntra AI — Sovereign Polymath Workspace";
+            this.Text = "Vedic AI — Sovereign Polymath Workspace";
             this.Size = new Size(1366, 850);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(7, 8, 14);
@@ -235,9 +235,9 @@ namespace AbyntraAI
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'AbyntraApp.cs'), abyntraAppTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'VedicApp.cs'), vedicAppTemplate, 'utf8');
 
-const abyntraUninstallerTemplate = `using System;
+const vedicUninstallerTemplate = `using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -246,14 +246,14 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("Uninstall Abyntra AI")]
+[assembly: AssemblyTitle("Uninstall Vedic AI")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Abyntra AI")]
+[assembly: AssemblyProduct("Vedic AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 
-namespace AbyntraAI
+namespace VedicAI
 {
     public class UninstallerForm : Form
     {
@@ -263,7 +263,7 @@ namespace AbyntraAI
 
         public UninstallerForm()
         {
-            this.Text = "Uninstall Abyntra AI";
+            this.Text = "Uninstall Vedic AI";
             this.Size = new Size(480, 240);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -279,7 +279,7 @@ namespace AbyntraAI
             }
 
             lblMsg = new Label();
-            lblMsg.Text = "Are you sure you want to completely uninstall Abyntra AI from your computer?";
+            lblMsg.Text = "Are you sure you want to completely uninstall Vedic AI from your computer?";
             lblMsg.Location = new Point(30, 30);
             lblMsg.Size = new Size(410, 60);
             this.Controls.Add(lblMsg);
@@ -310,20 +310,20 @@ namespace AbyntraAI
             try
             {
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string installDir = Path.Combine(localAppData, "Abyntra AI");
-                string desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Abyntra AI.lnk");
-                string startMenuShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "Abyntra AI.lnk");
+                string installDir = Path.Combine(localAppData, "Vedic AI");
+                string desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Vedic AI.lnk");
+                string startMenuShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "Vedic AI.lnk");
 
                 if (File.Exists(desktopShortcut)) File.Delete(desktopShortcut);
                 if (File.Exists(startMenuShortcut)) File.Delete(startMenuShortcut);
 
                 try
                 {
-                    Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AbyntraAI", false);
+                    Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VedicAI", false);
                 }
                 catch { }
 
-                MessageBox.Show("Abyntra AI has been cleanly uninstalled.", "Uninstallation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                MessageBox.Show("Vedic AI has been cleanly uninstalled.", "Uninstallation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c timeout /t 1 & rd /s /q \\\"" + installDir + "\\\"");
                 psi.CreateNoWindow = true;
@@ -348,16 +348,16 @@ namespace AbyntraAI
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'AbyntraUninstaller.cs'), abyntraUninstallerTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'VedicUninstaller.cs'), vedicUninstallerTemplate, 'utf8');
 
-// Compile AbyntraAI.exe with manifest & assembly info
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:AbyntraAI.exe AbyntraApp.cs`, {
+// Compile VedicAI.exe with manifest & assembly info
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:VedicAI.exe VedicApp.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
 
-// Compile Uninstall_Abyntra_AI.exe
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:Uninstall_Abyntra_AI.exe AbyntraUninstaller.cs`, {
+// Compile Uninstall_Vedic_AI.exe
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:Uninstall_Vedic_AI.exe VedicUninstaller.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
@@ -370,7 +370,7 @@ for (const file of distFiles) {
   payloadMap[file.relPath] = compressed.toString('base64');
 }
 
-const binaryFiles = ['AbyntraAI.exe', 'Uninstall_Abyntra_AI.exe', 'app.ico'];
+const binaryFiles = ['VedicAI.exe', 'Uninstall_Vedic_AI.exe', 'app.ico'];
 for (const binName of binaryFiles) {
   const binPath = path.join(downloadsDir, binName);
   if (fs.existsSync(binPath)) {
@@ -397,14 +397,14 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("Abyntra AI Setup Wizard")]
+[assembly: AssemblyTitle("Vedic AI Setup Wizard")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Abyntra AI")]
+[assembly: AssemblyProduct("Vedic AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
 [assembly: AssemblyVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 
-namespace AbyntraAIInstaller
+namespace VedicAIInstaller
 {
     public class SetupForm : Form
     {
@@ -421,7 +421,7 @@ namespace AbyntraAIInstaller
 
         public SetupForm()
         {
-            this.Text = "Abyntra AI — Verified Standalone Setup";
+            this.Text = "Vedic AI — Verified Standalone Setup";
             this.Size = new Size(580, 420);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -436,7 +436,7 @@ namespace AbyntraAIInstaller
                 try { this.Icon = new Icon(icoPath); } catch { }
             }
 
-            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Abyntra AI");
+            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Vedic AI");
 
             InitializeComponents();
         }
@@ -449,7 +449,7 @@ namespace AbyntraAIInstaller
             pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
 
             Label lblTitle = new Label();
-            lblTitle.Text = "Abyntra AI Desktop Workstation Setup";
+            lblTitle.Text = "Vedic AI Desktop Workstation Setup";
             lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(0, 240, 255);
             lblTitle.Location = new Point(22, 16);
@@ -489,7 +489,7 @@ namespace AbyntraAIInstaller
             this.Controls.Add(chkDesktopShortcut);
 
             chkLaunchAfter = new CheckBox();
-            chkLaunchAfter.Text = "Launch Abyntra AI immediately after installation";
+            chkLaunchAfter.Text = "Launch Vedic AI immediately after installation";
             chkLaunchAfter.Checked = true;
             chkLaunchAfter.Location = new Point(25, 200);
             chkLaunchAfter.AutoSize = true;
@@ -502,7 +502,7 @@ namespace AbyntraAIInstaller
             this.Controls.Add(progressBar);
 
             lblStatus = new Label();
-            lblStatus.Text = "Ready to install standalone Abyntra AI application.";
+            lblStatus.Text = "Ready to install standalone Vedic AI application.";
             lblStatus.Location = new Point(25, 265);
             lblStatus.AutoSize = true;
             lblStatus.ForeColor = Color.FromArgb(0, 229, 255);
@@ -650,31 +650,31 @@ namespace AbyntraAIInstaller
                     }
                 }
 
-                string exePath = Path.Combine(installDir, "AbyntraAI.exe");
-                string uninstallerPath = Path.Combine(installDir, "Uninstall_Abyntra_AI.exe");
+                string exePath = Path.Combine(installDir, "VedicAI.exe");
+                string uninstallerPath = Path.Combine(installDir, "Uninstall_Vedic_AI.exe");
                 string icoPath = Path.Combine(installDir, "app.ico");
 
                 if (chkDesktopShortcut.Checked)
                 {
                     string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    string lnkPath = Path.Combine(desktopDir, "Abyntra AI.lnk");
-                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Abyntra AI Desktop Workstation");
+                    string lnkPath = Path.Combine(desktopDir, "Vedic AI.lnk");
+                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Vedic AI Desktop Workstation");
 
                     string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
                     if (Directory.Exists(startMenuDir))
                     {
-                        string startLnkPath = Path.Combine(startMenuDir, "Abyntra AI.lnk");
-                        CreateWindowsShortcut(startLnkPath, exePath, icoPath, "Abyntra AI");
+                        string startLnkPath = Path.Combine(startMenuDir, "Vedic AI.lnk");
+                        CreateWindowsShortcut(startLnkPath, exePath, icoPath, "Vedic AI");
                     }
                 }
 
                 try
                 {
-                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\AbyntraAI"))
+                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\VedicAI"))
                     {
                         if (uninstKey != null)
                         {
-                            uninstKey.SetValue("DisplayName", "Abyntra AI Desktop Workstation");
+                            uninstKey.SetValue("DisplayName", "Vedic AI Desktop Workstation");
                             uninstKey.SetValue("DisplayVersion", "2.0.0");
                             uninstKey.SetValue("Publisher", "Abhinav Giri (@abhinavgiri45)");
                             uninstKey.SetValue("DisplayIcon", icoPath);
@@ -685,7 +685,7 @@ namespace AbyntraAIInstaller
                 }
                 catch { }
 
-                lblStatus.Text = "✅ Installation Complete! Abyntra AI is ready.";
+                lblStatus.Text = "✅ Installation Complete! Vedic AI is ready.";
                 btnInstall.Text = "Finish";
                 btnInstall.BackColor = Color.FromArgb(0, 229, 255);
                 btnInstall.Enabled = true;
@@ -720,82 +720,82 @@ namespace AbyntraAIInstaller
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupWizard.cs'), setupWizardTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'VedicSetupWizard.cs'), setupWizardTemplate, 'utf8');
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Abyntra_AI_Setup.exe AbyntraSetupWizard.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Vedic_AI_Setup.exe VedicSetupWizard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
-console.log('✅ Standard Setup Wizard compiled with Win32 Manifest & Assembly Info (Abyntra_AI_Setup.exe).');
+console.log('✅ Standard Setup Wizard compiled with Win32 Manifest & Assembly Info (Vedic_AI_Setup.exe).');
 
 // Compile Titan and Titan Lite Setup Wizards
-fs.copyFileSync(path.join(downloadsDir, 'Abyntra_AI_Setup.exe'), path.join(downloadsDir, 'Abyntra_AI_Titan_Setup.exe'));
-fs.copyFileSync(path.join(downloadsDir, 'Abyntra_AI_Setup.exe'), path.join(downloadsDir, 'Abyntra_AI_Titan_Lite_Setup.exe'));
+fs.copyFileSync(path.join(downloadsDir, 'Vedic_AI_Setup.exe'), path.join(downloadsDir, 'Vedic_AI_Titan_Setup.exe'));
+fs.copyFileSync(path.join(downloadsDir, 'Vedic_AI_Setup.exe'), path.join(downloadsDir, 'Vedic_AI_Titan_Lite_Setup.exe'));
 console.log('✅ Titan Heavy & Titan Lite Setup Wizards compiled.');
 
 // 4. Generate 100% Open-Source Verified PowerShell Windows Installer (.bat & .ps1)
 console.log('\n📦 [4/6] Creating 100% Open-Source Auditable Windows Installers...');
 const openSourceBatchInstaller = `@echo off
-title Installing Abyntra AI Desktop Workstation (Verified Setup)
+title Installing Vedic AI Desktop Workstation (Verified Setup)
 color 0b
 echo ========================================================
-echo  ABYNTRA AI - VERIFIED DESKTOP WORKSTATION INSTALLER
+echo  VEDIC AI - VERIFIED DESKTOP WORKSTATION INSTALLER
 echo  Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 echo ========================================================
 echo.
-echo [*] Installing to: %LocalAppData%\\Abyntra AI
+echo [*] Installing to: %LocalAppData%\\Vedic AI
 powershell -NoProfile -ExecutionPolicy Bypass -Command "& {
-  $installDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Abyntra AI')
+  $installDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Vedic AI')
   $appDir = [System.IO.Path]::Combine($installDir, 'app')
   if (!(Test-Path $appDir)) { New-Item -ItemType Directory -Path $appDir -Force | Out-Null }
   
   Write-Host '[*] Extracting standalone web components...' -ForegroundColor Cyan
-  $exePath = [System.IO.Path]::Combine($installDir, 'AbyntraAI.exe')
+  $exePath = [System.IO.Path]::Combine($installDir, 'VedicAI.exe')
   $icoPath = [System.IO.Path]::Combine($installDir, 'app.ico')
   
-  if (Test-Path 'AbyntraAI.exe') { Copy-Item 'AbyntraAI.exe' -Destination $exePath -Force }
+  if (Test-Path 'VedicAI.exe') { Copy-Item 'VedicAI.exe' -Destination $exePath -Force }
   if (Test-Path 'app.ico') { Copy-Item 'app.ico' -Destination $icoPath -Force }
   
   $desktop = [System.Environment]::GetFolderPath('Desktop')
-  $shortcutPath = [System.IO.Path]::Combine($desktop, 'Abyntra AI.lnk')
+  $shortcutPath = [System.IO.Path]::Combine($desktop, 'Vedic AI.lnk')
   $WshShell = New-Object -ComObject WScript.Shell
   $Shortcut = $WshShell.CreateShortcut($shortcutPath)
   $Shortcut.TargetPath = $exePath
   $Shortcut.IconLocation = $icoPath
-  $Shortcut.Description = 'Abyntra AI Desktop Workstation'
+  $Shortcut.Description = 'Vedic AI Desktop Workstation'
   $Shortcut.Save()
   
-  Write-Host '✅ Abyntra AI successfully installed!' -ForegroundColor Green
-  Write-Host '[*] Launching Abyntra AI...' -ForegroundColor Cyan
+  Write-Host '✅ Vedic AI successfully installed!' -ForegroundColor Green
+  Write-Host '[*] Launching Vedic AI...' -ForegroundColor Cyan
   Start-Process $exePath
 }"
 timeout /t 3 >nul
 exit
 `;
-fs.writeFileSync(path.join(downloadsDir, 'Install-Abyntra-AI.bat'), openSourceBatchInstaller, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Install-Vedic-AI.bat'), openSourceBatchInstaller, 'utf8');
 
 // 5. Generate Safe macOS Bundle, DMG, and 1-Click Gatekeeper Cleaner
 console.log('\n📦 [5/6] Packaging Safe macOS Universal Bundle & Gatekeeper Notarization Helper...');
 const macInstallerScript = `#!/bin/bash
 # ==========================================================
-# Abyntra AI Pro - macOS 1-Click Verified Installer
+# Vedic AI Pro - macOS 1-Click Verified Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Abyntra AI for macOS..."
+echo "🚀 Installing Vedic AI for macOS..."
 DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_PATH="$HOME/Applications/Abyntra AI.app"
-DATA_DIR="$HOME/Library/Application Support/Abyntra AI/Data"
+APP_PATH="$HOME/Applications/Vedic AI.app"
+DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
 
 mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources"
 mkdir -p "$DATA_DIR"
 
 # Copy Launcher
-cat << 'EOF' > "$APP_PATH/Contents/MacOS/AbyntraAI"
+cat << 'EOF' > "$APP_PATH/Contents/MacOS/VedicAI"
 #!/bin/bash
 PORT=49153
 DIR="$(cd "$(dirname "$0")/../Resources" && pwd)"
-DATA_DIR="$HOME/Library/Application Support/Abyntra AI/Data"
+DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
 if command -v python3 &>/dev/null; then
   (cd "$DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
@@ -810,37 +810,37 @@ else
 fi
 EOF
 
-chmod +x "$APP_PATH/Contents/MacOS/AbyntraAI"
+chmod +x "$APP_PATH/Contents/MacOS/VedicAI"
 
 # Remove macOS Gatekeeper Quarantine Flag
 xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
 xattr -cr "$APP_PATH" 2>/dev/null
 
-echo "✅ Abyntra AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching Abyntra AI..."
+echo "✅ Vedic AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
+echo "🚀 Launching Vedic AI..."
 open "$APP_PATH"
 `;
-fs.writeFileSync(path.join(downloadsDir, 'Install_Abyntra_Mac.command'), macInstallerScript, 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Mac_Launcher.command'), macInstallerScript, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Install_Vedic_Mac.command'), macInstallerScript, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Vedic_AI_Mac_Launcher.command'), macInstallerScript, 'utf8');
 
 const macUninstallerScript = `#!/bin/bash
-echo "Removing Abyntra AI from macOS..."
-killall "Abyntra AI" 2>/dev/null
-rm -rf "$HOME/Applications/Abyntra AI.app"
-rm -rf "$HOME/Library/Application Support/Abyntra AI"
-echo "✅ Abyntra AI has been cleanly uninstalled from macOS."
+echo "Removing Vedic AI from macOS..."
+killall "Vedic AI" 2>/dev/null
+rm -rf "$HOME/Applications/Vedic AI.app"
+rm -rf "$HOME/Library/Application Support/Vedic AI"
+echo "✅ Vedic AI has been cleanly uninstalled from macOS."
 `;
-fs.writeFileSync(path.join(downloadsDir, 'Uninstall_Abyntra_Mac.command'), macUninstallerScript, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Uninstall_Vedic_Mac.command'), macUninstallerScript, 'utf8');
 
 // 6. Generate Safe Linux AppImage & 1-Click Desktop Installer
 console.log('\n📦 [6/6] Packaging Safe Linux Standalone AppImage & Desktop Shortcuts...');
 const linuxInstallerScript = `#!/bin/bash
 # ==========================================================
-# Abyntra AI Pro - Linux 1-Click Native Desktop Installer
+# Vedic AI Pro - Linux 1-Click Native Desktop Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Abyntra AI for Linux..."
-INSTALL_DIR="$HOME/.local/share/abyntra-ai"
+echo "🚀 Installing Vedic AI for Linux..."
+INSTALL_DIR="$HOME/.local/share/vedic-ai"
 BIN_DIR="$HOME/.local/bin"
 DESKTOP_DIR="$HOME/.local/share/applications"
 
@@ -848,11 +848,11 @@ mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 mkdir -p "$DESKTOP_DIR"
 
-cat << 'EOF' > "$INSTALL_DIR/abyntra-ai"
+cat << 'EOF' > "$INSTALL_DIR/vedic-ai"
 #!/bin/bash
 PORT=49154
 HERE="$(dirname "$(readlink -f "\${0}")")"
-DATA_DIR="$HOME/.local/share/abyntra-ai/data"
+DATA_DIR="$HOME/.local/share/vedic-ai/data"
 mkdir -p "$DATA_DIR"
 if command -v python3 &>/dev/null; then
   (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
@@ -870,52 +870,52 @@ else
 fi
 EOF
 
-chmod +x "$INSTALL_DIR/abyntra-ai"
-ln -sf "$INSTALL_DIR/abyntra-ai" "$BIN_DIR/abyntra-ai"
+chmod +x "$INSTALL_DIR/vedic-ai"
+ln -sf "$INSTALL_DIR/vedic-ai" "$BIN_DIR/vedic-ai"
 
 # Create .desktop entry
-cat << EOF > "$DESKTOP_DIR/abyntra-ai.desktop"
+cat << EOF > "$DESKTOP_DIR/vedic-ai.desktop"
 [Desktop Entry]
-Name=Abyntra AI
+Name=Vedic AI
 Comment=Sovereign AI Polymath Desktop Workstation
-Exec=$INSTALL_DIR/abyntra-ai
+Exec=$INSTALL_DIR/vedic-ai
 Terminal=false
 Type=Application
 Categories=Development;Education;Graphics;AudioVideo;
 StartupNotify=true
 EOF
 
-chmod +x "$DESKTOP_DIR/abyntra-ai.desktop"
+chmod +x "$DESKTOP_DIR/vedic-ai.desktop"
 
-echo "✅ Abyntra AI installed successfully with native application menu launcher."
-echo "🚀 Launching Abyntra AI..."
-"$INSTALL_DIR/abyntra-ai" &
+echo "✅ Vedic AI installed successfully with native application menu launcher."
+echo "🚀 Launching Vedic AI..."
+"$INSTALL_DIR/vedic-ai" &
 `;
-fs.writeFileSync(path.join(downloadsDir, 'install_abyntra_linux.sh'), linuxInstallerScript, 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Linux.AppImage'), linuxInstallerScript, 'utf8');
-fs.copyFileSync(path.join(downloadsDir, 'Abyntra_AI_Linux.AppImage'), path.join(downloadsDir, 'Abyntra_AI_Titan_Linux.AppImage'));
-fs.copyFileSync(path.join(downloadsDir, 'Abyntra_AI_Linux.AppImage'), path.join(downloadsDir, 'Abyntra_AI_Titan_Lite_Linux.AppImage'));
+fs.writeFileSync(path.join(downloadsDir, 'install_vedic_linux.sh'), linuxInstallerScript, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Vedic_AI_Linux.AppImage'), linuxInstallerScript, 'utf8');
+fs.copyFileSync(path.join(downloadsDir, 'Vedic_AI_Linux.AppImage'), path.join(downloadsDir, 'Vedic_AI_Titan_Linux.AppImage'));
+fs.copyFileSync(path.join(downloadsDir, 'Vedic_AI_Linux.AppImage'), path.join(downloadsDir, 'Vedic_AI_Titan_Lite_Linux.AppImage'));
 
 const linuxUninstallerScript = `#!/bin/bash
-echo "Uninstalling Abyntra AI from Linux..."
-rm -rf "$HOME/.local/share/abyntra-ai"
-rm -f "$HOME/.local/bin/abyntra-ai"
-rm -f "$HOME/.local/share/applications/abyntra-ai.desktop"
-echo "✅ Abyntra AI completely removed from Linux."
+echo "Uninstalling Vedic AI from Linux..."
+rm -rf "$HOME/.local/share/vedic-ai"
+rm -f "$HOME/.local/bin/vedic-ai"
+rm -f "$HOME/.local/share/applications/vedic-ai.desktop"
+echo "✅ Vedic AI completely removed from Linux."
 `;
-fs.writeFileSync(path.join(downloadsDir, 'uninstall_abyntra_linux.sh'), linuxUninstallerScript, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'uninstall_vedic_linux.sh'), linuxUninstallerScript, 'utf8');
 
 // Build Safe Android Packages
 try {
-  const tempZip = path.join(downloadsDir, 'Abyntra_AI_temp.zip');
+  const tempZip = path.join(downloadsDir, 'Vedic_AI_temp.zip');
   if (fs.existsSync(tempZip)) fs.unlinkSync(tempZip);
   const cleanDist = distDir.replace(/\\/g, '/');
   const cleanZip = tempZip.replace(/\\/g, '/');
   execSync(`powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${cleanDist}', '${cleanZip}')"`, { stdio: 'inherit' });
   if (fs.existsSync(tempZip)) {
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Abyntra_AI.apk'));
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Abyntra_AI_Titan.apk'));
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Abyntra_AI_Titan_Lite.apk'));
+    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Vedic_AI.apk'));
+    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Vedic_AI_Titan.apk'));
+    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Vedic_AI_Titan_Lite.apk'));
     fs.unlinkSync(tempZip);
     console.log('✅ Safe Android Packages synchronized (Standard, Titan Heavy, Titan Lite).');
   }
@@ -924,7 +924,7 @@ try {
 }
 
 // Clean up temporary C# files
-const tempCs = ['AbyntraApp.cs', 'AbyntraUninstaller.cs', 'AbyntraSetupWizard.cs', 'app.manifest'];
+const tempCs = ['VedicApp.cs', 'VedicUninstaller.cs', 'VedicSetupWizard.cs', 'app.manifest'];
 for (const f of tempCs) {
   const p = path.join(downloadsDir, f);
   if (fs.existsSync(p)) {

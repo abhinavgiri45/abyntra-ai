@@ -26,7 +26,7 @@ export default function SlashCommandMenu({ isOpen, onSelectCommand, filterText }
     { cmd: '/web', desc: 'Toggle real-time web search grounding', icon: <Globe className="w-3.5 h-3.5 text-blue-400" /> },
     { cmd: '/enhance', desc: 'Expand prompt into master instructions', icon: <Wand2 className="w-3.5 h-3.5 text-cyan-300" /> },
     { cmd: '/incognito', desc: 'Enable Ephemeral session mode (unsaved)', icon: <ShieldAlert className="w-3.5 h-3.5 text-rose-300" /> },
-    { cmd: '/founder', desc: 'Learn about founder Abhinav Giri & Abyntra vision', icon: <Sparkles className="w-3.5 h-3.5 text-amber-300" /> }
+    { cmd: '/founder', desc: 'Learn about founder Abhinav Giri & Vedic vision', icon: <Sparkles className="w-3.5 h-3.5 text-amber-300" /> }
   ];
 
   const filtered = commands.filter(c => 

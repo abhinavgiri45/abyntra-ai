@@ -7,7 +7,7 @@ import ToolsModal from './components/tools/ToolsModal';
 import VoiceOrbModal from './components/chat/VoiceOrbModal';
 import ShortcutsModal from './components/common/ShortcutsModal';
 import WelcomeNameModal from './components/common/WelcomeNameModal';
-import IntroducingAbyntraPage from './components/common/IntroducingAbyntraPage';
+import IntroducingVedicPage from './components/common/IntroducingVedicPage';
 import ScratchpadModal from './components/common/ScratchpadModal';
 import DownloadAppsModal from './components/common/DownloadAppsModal';
 import ProAppStatusModal from './components/common/ProAppStatusModal';
@@ -25,12 +25,12 @@ export default function App() {
   const [isAppInstalled, setIsAppInstalled] = useState(() => storage.isAppInstalled());
   const [isTitanMode, setIsTitanMode] = useState(() => {
     try {
-      return localStorage.getItem('abyntra_titan_mode') === 'true' || (typeof window !== 'undefined' && window.location.search.includes('titan=true'));
+      return localStorage.getItem('vedic_titan_mode') === 'true' || (typeof window !== 'undefined' && window.location.search.includes('titan=true'));
     } catch (_) { return false; }
   });
   const [isTitanWorkstationOpen, setIsTitanWorkstationOpen] = useState(false);
   const [activeModel, setActiveModel] = useState(() => {
-    const isTitan = typeof window !== 'undefined' && (localStorage.getItem('abyntra_titan_mode') === 'true' || window.location.search.includes('titan=true'));
+    const isTitan = typeof window !== 'undefined' && (localStorage.getItem('vedic_titan_mode') === 'true' || window.location.search.includes('titan=true'));
     const isLite = typeof window !== 'undefined' && window.location.search.includes('profile=lite');
     if (isTitan) return isLite ? TITAN_AI_MODELS[1] : TITAN_AI_MODELS[0];
     const installed = storage.isAppInstalled();
@@ -76,7 +76,7 @@ export default function App() {
   const handleToggleTitanMode = (enableTitan, targetModelId = null) => {
     setIsTitanMode(enableTitan);
     try {
-      localStorage.setItem('abyntra_titan_mode', enableTitan ? 'true' : 'false');
+      localStorage.setItem('vedic_titan_mode', enableTitan ? 'true' : 'false');
     } catch (_) {}
     if (enableTitan) {
       const selected = targetModelId ? (TITAN_AI_MODELS.find(m => m.id === targetModelId) || TITAN_AI_MODELS[0]) : TITAN_AI_MODELS[0];
@@ -356,8 +356,8 @@ export default function App() {
         onOpenLocalEngine={() => setIsLocalModalOpen(true)}
       />
 
-      {/* Official OpenAI-Style Introducing Abyntra AI Landing & Announcement Page */}
-      <IntroducingAbyntraPage
+      {/* Official OpenAI-Style Introducing Vedic AI Landing & Announcement Page */}
+      <IntroducingVedicPage
         isOpen={isAboutOpen}
         initialTab={introTab}
         onClose={handleCloseIntro}
@@ -401,7 +401,7 @@ export default function App() {
         onClose={() => setIsLocalModalOpen(false)}
         activeModel={activeModel}
         onActivateLocalModel={() => {
-          const localModel = AI_MODELS.find(m => m.id === 'abyntra-local-core') || AI_MODELS[0];
+          const localModel = AI_MODELS.find(m => m.id === 'vedic-local-core') || AI_MODELS[0];
           setActiveModel(localModel);
         }}
       />

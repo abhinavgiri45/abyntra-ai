@@ -13,15 +13,15 @@ const downloadsDir = path.resolve(rootDir, 'public', 'downloads');
 console.log('📦 Step 1: Building production bundle with Vite...');
 execSync('npm.cmd run build', { cwd: rootDir, stdio: 'inherit' });
 
-console.log('📦 Step 2: Compiling AbyntraAI.exe and Uninstall_Abyntra_AI.exe...');
+console.log('📦 Step 2: Compiling VedicAI.exe and Uninstall_Vedic_AI.exe...');
 const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:AbyntraAI.exe AbyntraApp.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:VedicAI.exe VedicApp.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Uninstall_Abyntra_AI.exe AbyntraUninstaller.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Uninstall_Vedic_AI.exe VedicUninstaller.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
@@ -55,8 +55,8 @@ for (const file of distFiles) {
   payloadMap[file.relPath] = compressed.toString('base64');
 }
 
-// Add AbyntraAI.exe, Uninstall_Abyntra_AI.exe and app.ico to payloadMap
-const binaryFiles = ['AbyntraAI.exe', 'Uninstall_Abyntra_AI.exe', 'app.ico'];
+// Add VedicAI.exe, Uninstall_Vedic_AI.exe and app.ico to payloadMap
+const binaryFiles = ['VedicAI.exe', 'Uninstall_Vedic_AI.exe', 'app.ico'];
 for (const binName of binaryFiles) {
   const binPath = path.join(downloadsDir, binName);
   if (fs.existsSync(binPath)) {
@@ -88,7 +88,7 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-namespace AbyntraAIInstaller
+namespace VedicAIInstaller
 {
     public class SetupForm : Form
     {
@@ -106,7 +106,7 @@ namespace AbyntraAIInstaller
 
         public SetupForm()
         {
-            this.Text = "Abyntra AI Pro — 100% Standalone Setup Wizard";
+            this.Text = "Vedic AI Pro — 100% Standalone Setup Wizard";
             this.Size = new Size(580, 420);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -122,7 +122,7 @@ namespace AbyntraAIInstaller
                 try { this.Icon = new Icon(icoPath); } catch { }
             }
 
-            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Abyntra AI");
+            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Vedic AI");
             dataDir = Path.Combine(installDir, "Data");
 
             InitializeComponents();
@@ -137,7 +137,7 @@ namespace AbyntraAIInstaller
             pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
 
             Label lblTitle = new Label();
-            lblTitle.Text = "Abyntra AI Pro Standalone Setup";
+            lblTitle.Text = "Vedic AI Pro Standalone Setup";
             lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(0, 240, 255);
             lblTitle.Location = new Point(22, 16);
@@ -181,7 +181,7 @@ namespace AbyntraAIInstaller
             this.Controls.Add(chkDesktopShortcut);
 
             chkLaunchAfter = new CheckBox();
-            chkLaunchAfter.Text = "Launch Abyntra AI Pro standalone app immediately";
+            chkLaunchAfter.Text = "Launch Vedic AI Pro standalone app immediately";
             chkLaunchAfter.Checked = true;
             chkLaunchAfter.Location = new Point(25, 200);
             chkLaunchAfter.AutoSize = true;
@@ -196,7 +196,7 @@ namespace AbyntraAIInstaller
             this.Controls.Add(progressBar);
 
             lblStatus = new Label();
-            lblStatus.Text = "Ready to install 100% standalone Abyntra AI Pro with embedded engine.";
+            lblStatus.Text = "Ready to install 100% standalone Vedic AI Pro with embedded engine.";
             lblStatus.Location = new Point(25, 270);
             lblStatus.AutoSize = true;
             lblStatus.ForeColor = Color.FromArgb(0, 229, 255);
@@ -274,7 +274,7 @@ namespace AbyntraAIInstaller
                 if (installProgress == 30)
                     lblStatus.Text = "Unpacking standalone HTML5/JS engine and neural UI...";
                 else if (installProgress == 60)
-                    lblStatus.Text = @"Configuring Local Disk Vault at %LocalAppData%\Abyntra AI\Data...";
+                    lblStatus.Text = @"Configuring Local Disk Vault at %LocalAppData%\Vedic AI\Data...";
                 else if (installProgress == 80)
                     lblStatus.Text = "Creating Start Menu folder and Desktop shortcuts...";
                 else if (installProgress >= 100)
@@ -386,38 +386,38 @@ ${csharpChunks}
                     idx = valEnd + 1;
                 }
 
-                string exePath = Path.Combine(installDir, "AbyntraAI.exe");
-                string uninstallerPath = Path.Combine(installDir, "Uninstall_Abyntra_AI.exe");
+                string exePath = Path.Combine(installDir, "VedicAI.exe");
+                string uninstallerPath = Path.Combine(installDir, "Uninstall_Vedic_AI.exe");
                 string icoPath = Path.Combine(installDir, "app.ico");
 
                 // Clean up any old HTML/BAT shortcuts
                 string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                string oldUrlShortcut = Path.Combine(desktopDir, "Abyntra AI.url");
-                string oldBatShortcut = Path.Combine(desktopDir, "Abyntra AI.bat");
+                string oldUrlShortcut = Path.Combine(desktopDir, "Vedic AI.url");
+                string oldBatShortcut = Path.Combine(desktopDir, "Vedic AI.bat");
                 try { if (File.Exists(oldUrlShortcut)) File.Delete(oldUrlShortcut); } catch { }
                 try { if (File.Exists(oldBatShortcut)) File.Delete(oldBatShortcut); } catch { }
 
                 string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
-                string oldStartUrl = Path.Combine(startMenuDir, "Abyntra AI.url");
-                string oldStartBat = Path.Combine(startMenuDir, "Abyntra AI.bat");
+                string oldStartUrl = Path.Combine(startMenuDir, "Vedic AI.url");
+                string oldStartBat = Path.Combine(startMenuDir, "Vedic AI.bat");
                 try { if (File.Exists(oldStartUrl)) File.Delete(oldStartUrl); } catch { }
                 try { if (File.Exists(oldStartBat)) File.Delete(oldStartBat); } catch { }
 
                 // Create REAL .lnk Windows Application Shortcuts
                 if (chkDesktopShortcut.Checked)
                 {
-                    string lnkPath = Path.Combine(desktopDir, "Abyntra AI.lnk");
-                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Abyntra AI Pro • Think • Create • Explore");
+                    string lnkPath = Path.Combine(desktopDir, "Vedic AI.lnk");
+                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Vedic AI Pro • Think • Create • Explore");
                 }
 
                 if (Directory.Exists(startMenuDir))
                 {
                     // 1. Root Start Menu Shortcut
-                    string startLnkPath = Path.Combine(startMenuDir, "Abyntra AI.lnk");
-                    CreateWindowsShortcut(startLnkPath, exePath, icoPath, "Abyntra AI Pro • Think • Create • Explore");
+                    string startLnkPath = Path.Combine(startMenuDir, "Vedic AI.lnk");
+                    CreateWindowsShortcut(startLnkPath, exePath, icoPath, "Vedic AI Pro • Think • Create • Explore");
 
-                    // 2. Dedicated Start Menu Folder: "Abyntra AI" containing "Abyntra AI" and "Uninstall Abyntra AI"
-                    string startMenuFolder = Path.Combine(startMenuDir, "Abyntra AI");
+                    // 2. Dedicated Start Menu Folder: "Vedic AI" containing "Vedic AI" and "Uninstall Vedic AI"
+                    string startMenuFolder = Path.Combine(startMenuDir, "Vedic AI");
                     try
                     {
                         if (!Directory.Exists(startMenuFolder))
@@ -425,11 +425,11 @@ ${csharpChunks}
                             Directory.CreateDirectory(startMenuFolder);
                         }
 
-                        string folderAppLnk = Path.Combine(startMenuFolder, "Abyntra AI.lnk");
-                        CreateWindowsShortcut(folderAppLnk, exePath, icoPath, "Abyntra AI Pro");
+                        string folderAppLnk = Path.Combine(startMenuFolder, "Vedic AI.lnk");
+                        CreateWindowsShortcut(folderAppLnk, exePath, icoPath, "Vedic AI Pro");
 
-                        string folderUninstLnk = Path.Combine(startMenuFolder, "Uninstall Abyntra AI.lnk");
-                        CreateWindowsShortcut(folderUninstLnk, uninstallerPath, icoPath, "Uninstall Abyntra AI Pro");
+                        string folderUninstLnk = Path.Combine(startMenuFolder, "Uninstall Vedic AI.lnk");
+                        CreateWindowsShortcut(folderUninstLnk, uninstallerPath, icoPath, "Uninstall Vedic AI Pro");
                     }
                     catch { }
                 }
@@ -437,11 +437,11 @@ ${csharpChunks}
                 // Register in Windows Add/Remove Programs (Control Panel / Settings)
                 try
                 {
-                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\AbyntraAI"))
+                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\Microsoft\Windows\CurrentVersion\Uninstall\VedicAI"))
                     {
                         if (uninstKey != null)
                         {
-                            uninstKey.SetValue("DisplayName", "Abyntra AI Pro");
+                            uninstKey.SetValue("DisplayName", "Vedic AI Pro");
                             uninstKey.SetValue("DisplayVersion", "2.0.0");
                             uninstKey.SetValue("Publisher", "Abhinav Giri (@abhinavgiri45)");
                             uninstKey.SetValue("DisplayIcon", icoPath);
@@ -495,10 +495,10 @@ ${csharpChunks}
 }
 `;
 
-fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupWizard.cs'), setupWizardTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'VedicSetupWizard.cs'), setupWizardTemplate, 'utf8');
 
-console.log('📦 Step 4: Compiling 100% Standalone Abyntra_AI_Setup.exe...');
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Abyntra_AI_Setup.exe AbyntraSetupWizard.cs`, {
+console.log('📦 Step 4: Compiling 100% Standalone Vedic_AI_Setup.exe...');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /out:Vedic_AI_Setup.exe VedicSetupWizard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });

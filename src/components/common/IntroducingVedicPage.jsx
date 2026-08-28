@@ -90,7 +90,7 @@ const GithubIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, onOpenDownload, initialTab = 'overview' }) {
+export default function IntroducingVedicPage({ isOpen, onClose, onLaunchApp, onOpenDownload, initialTab = 'overview' }) {
   const [activeTab, setActiveTab] = useState(initialTab || 'overview'); // 'overview' | 'requirements' | 'comparison' | 'creator'
   const [selectedPlatform, setSelectedPlatform] = useState(() => detectUserOS());
   const [comparisonFilter, setComparisonFilter] = useState('all'); // 'all' | 'coding' | 'math' | 'visual' | 'privacy'
@@ -193,16 +193,16 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
     {
       os: 'Windows 10 / 11 / 12',
       format: '.EXE Setup Wizard',
-      file: 'Abyntra_AI_Setup.exe',
+      file: 'Vedic_AI_Setup.exe',
       size: '2.99 MB',
       architecture: 'x64 / Snapdragon X ARM64',
-      storagePath: '%LocalAppData%\\Abyntra AI\\Data',
+      storagePath: '%LocalAppData%\\Vedic AI\\Data',
       uninstaller: 'Start Menu & Windows Control Panel Add/Remove Programs'
     },
     {
       os: 'Android 10 to 15+',
       format: '.APK Standalone Package',
-      file: 'Abyntra_AI.apk',
+      file: 'Vedic_AI.apk',
       size: '714 KB',
       architecture: 'Universal ARM64-v8a / armeabi-v7a / x86_64',
       storagePath: 'Isolated Android App Sandbox Data',
@@ -211,25 +211,25 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
     {
       os: 'macOS (Apple Silicon & Intel)',
       format: '.DMG Universal Bundle',
-      file: 'Abyntra_AI_macOS.dmg',
+      file: 'Vedic_AI_macOS.dmg',
       size: '715 KB',
       architecture: 'Universal Binary (Apple M1-M4 & Intel Core)',
-      storagePath: '~/Library/Application Support/Abyntra AI/Data',
-      uninstaller: 'Included Uninstall_Abyntra_Mac.command runner'
+      storagePath: '~/Library/Application Support/Vedic AI/Data',
+      uninstaller: 'Included Uninstall_Vedic_Mac.command runner'
     },
     {
       os: 'Linux (Ubuntu / Arch / Fedora)',
       format: '.AppImage Executable',
-      file: 'Abyntra_AI_Linux.AppImage',
+      file: 'Vedic_AI_Linux.AppImage',
       size: '714 KB',
       architecture: 'x86_64 Universal Linux',
-      storagePath: '~/.local/share/abyntra-ai/data',
-      uninstaller: 'Included uninstall_abyntra_linux.sh script'
+      storagePath: '~/.local/share/vedic-ai/data',
+      uninstaller: 'Included uninstall_vedic_linux.sh script'
     },
     {
       os: 'iOS / iPadOS 15 to 18+',
       format: '.MobileConfig / WebClip',
-      file: 'Abyntra_AI_iOS.mobileconfig',
+      file: 'Vedic_AI_iOS.mobileconfig',
       size: '1.2 KB',
       architecture: 'Apple A-Series & M-Series Bionic / Silicon',
       storagePath: 'Isolated iOS Sandboxed App Container',
@@ -241,7 +241,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
     <div 
       ref={scrollContainerRef}
       onScroll={handleScroll}
-      className="fixed inset-0 z-[9999] bg-[#000000] text-[#FFFFFF] abyntra-custom-scroll font-sans antialiased animate-fadeIn selection:bg-white selection:text-black"
+      className="fixed inset-0 z-[9999] bg-[#000000] text-[#FFFFFF] vedic-custom-scroll font-sans antialiased animate-fadeIn selection:bg-white selection:text-black"
     >
       {/* Top Minimalist Navbar */}
       <nav className="h-14 sm:h-16 px-3 sm:px-10 flex items-center justify-between border-b border-white/[0.08] bg-black/90 sticky top-0 z-50 backdrop-blur-md">
@@ -249,11 +249,11 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
           <div className="flex items-center gap-2 cursor-pointer shrink-0" onClick={onClose}>
             <img
               src="/logo.png"
-              alt="Abyntra AI"
+              alt="Vedic AI"
               className="w-6 h-6 sm:w-7 sm:h-7 rounded-lg object-contain shadow-glow-cyan/50"
             />
             <span className="font-extrabold text-sm sm:text-base tracking-tight text-white">
-              Abyntra<span className="text-cyan-400">AI</span>
+              Vedic<span className="text-cyan-400">AI</span>
             </span>
           </div>
 
@@ -384,7 +384,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
 
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-cyan-500/30 text-xs font-mono text-cyan-300 backdrop-blur-md shadow-glow-cyan/20">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-              <span>ABYNTRA AI • THE OMNIPOTENT SOVEREIGN POLYMATH</span>
+              <span>VEDIC AI • THE OMNIPOTENT SOVEREIGN POLYMATH</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
@@ -395,7 +395,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
             </h1>
 
             <p className="max-w-3xl mx-auto text-base sm:text-lg text-gray-300 font-normal leading-relaxed font-sans">
-              Stop paying <span className="text-rose-400 font-bold underline decoration-rose-500/40">$120+/month ($1,440/yr)</span> across fragmented subscriptions for ChatGPT, Midjourney, Claude, Runway, and ElevenLabs. <strong>Abyntra AI</strong> unifies fullstack live code compilation, Olympiad mathematical proofs, 8K photorealistic art, 4K/8K Hollywood cinema video, and 48kHz neural voice into <strong>one private, lightning-fast sovereign powerhouse</strong>.
+              Stop paying <span className="text-rose-400 font-bold underline decoration-rose-500/40">$120+/month ($1,440/yr)</span> across fragmented subscriptions for ChatGPT, Midjourney, Claude, Runway, and ElevenLabs. <strong>Vedic AI</strong> unifies fullstack live code compilation, Olympiad mathematical proofs, 8K photorealistic art, 4K/8K Hollywood cinema video, and 48kHz neural voice into <strong>one private, lightning-fast sovereign powerhouse</strong>.
             </p>
 
             {/* Action CTAs */}
@@ -444,7 +444,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
           </section>
 
           {/* ========================================================================= */}
-          {/* INTERACTIVE LIVE PLAYGROUND (TEST ABYNTRA AI RIGHT HERE ON THE PAGE!)      */}
+          {/* INTERACTIVE LIVE PLAYGROUND (TEST VEDIC AI RIGHT HERE ON THE PAGE!)      */}
           {/* ========================================================================= */}
           <section className="max-w-6xl mx-auto px-6 space-y-6">
             <div className="text-center space-y-2">
@@ -497,7 +497,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra CodeMaster Ultra (70B Coder)</span>
+                          <span>Vedic CodeMaster Ultra (70B Coder)</span>
                           <span className="px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 text-[10px] font-mono border border-cyan-500/30">
                             98.4% HumanEval
                           </span>
@@ -531,7 +531,7 @@ export default function NeuralPulseSphere() {
   return (
     <div className="flex flex-col items-center justify-center p-6 bg-[#04060C] rounded-2xl border border-cyan-500/30">
       <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-rose-500 animate-pulse shadow-glow-cyan flex items-center justify-center">
-        <span className="text-black font-black text-xs">ABYNTRA</span>
+        <span className="text-black font-black text-xs">VEDIC</span>
       </div>
       <p className="mt-4 text-xs font-mono text-cyan-300">⚡ 60 FPS AST Hardware Renderer</p>
     </div>
@@ -544,7 +544,7 @@ export default function NeuralPulseSphere() {
                     <div className="lg:col-span-5 p-5 rounded-2xl bg-black/60 border border-cyan-500/20 flex flex-col items-center justify-center text-center space-y-4 shadow-inner">
                       <span className="text-[10px] font-mono uppercase text-gray-400">Live Virtual DOM Output:</span>
                       <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-rose-500 animate-pulse shadow-glow-cyan flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-                        <span className="text-black font-black text-xs font-mono tracking-wider">ABYNTRA</span>
+                        <span className="text-black font-black text-xs font-mono tracking-wider">VEDIC</span>
                       </div>
                       <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4" />
@@ -565,7 +565,7 @@ export default function NeuralPulseSphere() {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra ScriptMaster Cinema (Screenplay & Story)</span>
+                          <span>Vedic ScriptMaster Cinema (Screenplay & Story)</span>
                           <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono border border-indigo-500/30">
                             Fountain & FDX
                           </span>
@@ -605,7 +605,7 @@ export default function NeuralPulseSphere() {
                           <span>AI Voice Actor Integration</span>
                         </div>
                         <div className="text-[11px] text-gray-300">
-                          Automated pacing, dialogue cues, and character emotion delivery powered by Abyntra Neural Voice.
+                          Automated pacing, dialogue cues, and character emotion delivery powered by Vedic Neural Voice.
                         </div>
                         <div className="text-[10px] text-cyan-400 font-mono">1 Page ≈ 1 Min Screen Time</div>
                       </div>
@@ -624,7 +624,7 @@ export default function NeuralPulseSphere() {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra Math-X Olympiad (72B Reasoning)</span>
+                          <span>Vedic Math-X Olympiad (72B Reasoning)</span>
                           <span className="px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 text-[10px] font-mono border border-purple-500/30">
                             96.8% MATH Gold
                           </span>
@@ -678,7 +678,7 @@ export default function NeuralPulseSphere() {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra VisionForge 8K Pro (FLUX.1 Cinema Ultra)</span>
+                          <span>Vedic VisionForge 8K Pro (FLUX.1 Cinema Ultra)</span>
                           <span className="px-2 py-0.5 rounded-full bg-rose-500/20 text-rose-300 text-[10px] font-mono border border-rose-500/30">
                             8K HDR Optical Engine
                           </span>
@@ -728,7 +728,7 @@ export default function NeuralPulseSphere() {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra CineMotion 4K/8K Max</span>
+                          <span>Vedic CineMotion 4K/8K Max</span>
                           <span className="px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-300 text-[10px] font-mono border border-amber-500/30">
                             60/120 FPS Fluid Engine
                           </span>
@@ -775,7 +775,7 @@ export default function NeuralPulseSphere() {
                       </div>
                       <div>
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
-                          <span>Abyntra AudioCraft & NeuralVoice HD</span>
+                          <span>Vedic AudioCraft & NeuralVoice HD</span>
                           <span className="px-2 py-0.5 rounded-full bg-teal-500/20 text-teal-300 text-[10px] font-mono border border-teal-500/30">
                             48kHz Studio Quality
                           </span>
@@ -822,7 +822,7 @@ export default function NeuralPulseSphere() {
           </section>
 
           {/* ========================================================================= */}
-          {/* 6 SOVEREIGN TRUST & PRIVACY PILLARS (WHY MILLIONS TRUST ABYNTRA)          */}
+          {/* 6 SOVEREIGN TRUST & PRIVACY PILLARS (WHY MILLIONS TRUST VEDIC)          */}
           {/* ========================================================================= */}
           <section className="max-w-6xl mx-auto px-6 py-8 space-y-8 border-t border-white/10">
             <div className="text-center space-y-2">
@@ -831,7 +831,7 @@ export default function NeuralPulseSphere() {
                 <span>UNSHAKABLE INTEGRITY & USER AUTONOMY</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-white">
-                Why You Can Trust Abyntra AI Completely
+                Why You Can Trust Vedic AI Completely
               </h2>
               <p className="text-xs sm:text-sm text-gray-400 max-w-2xl mx-auto font-sans">
                 Engineered from day one with the core philosophy that true intelligence belongs to the user — not corporate data harvesters.
@@ -846,7 +846,7 @@ export default function NeuralPulseSphere() {
                 </div>
                 <h3 className="text-base font-bold text-white">0 Logins & Zero Data Harvesting</h3>
                 <p className="text-xs text-gray-400 leading-relaxed font-sans">
-                  No email required, no password to remember, no phone verification, and no ad trackers. You can use Abyntra AI completely anonymously right now.
+                  No email required, no password to remember, no phone verification, and no ad trackers. You can use Vedic AI completely anonymously right now.
                 </p>
                 <div className="text-[10px] font-mono text-emerald-400">✅ 100% Anonymous Entry</div>
               </div>
@@ -894,7 +894,7 @@ export default function NeuralPulseSphere() {
                 </div>
                 <h3 className="text-base font-bold text-white">Top-Tier Verified Benchmarks</h3>
                 <p className="text-xs text-gray-400 leading-relaxed font-sans">
-                  Scoring 98.4% on HumanEval coding and 96.8% on MATH Olympiad problems, Abyntra AI matches and surpasses expensive proprietary competitors.
+                  Scoring 98.4% on HumanEval coding and 96.8% on MATH Olympiad problems, Vedic AI matches and surpasses expensive proprietary competitors.
                 </p>
                 <div className="text-[10px] font-mono text-amber-400">✅ Gold Medal Rigor</div>
               </div>
@@ -930,7 +930,7 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <div className="p-3 rounded-2xl bg-emerald-500/20 border border-emerald-500/40 text-right shrink-0">
-                  <span className="text-[10px] font-mono text-gray-400">Abyntra AI Cost:</span>
+                  <span className="text-[10px] font-mono text-gray-400">Vedic AI Cost:</span>
                   <div className="text-2xl font-black text-emerald-400">$0 / Free Forever</div>
                 </div>
               </div>
@@ -948,7 +948,7 @@ export default function NeuralPulseSphere() {
                         <th className="py-2.5 font-bold min-w-[140px]">Proprietary Paid Tool</th>
                         <th className="py-2.5 font-bold min-w-[100px]">Typical Price</th>
                         <th className="py-2.5 font-bold min-w-[100px]">Annual Cost</th>
-                        <th className="py-2.5 font-bold text-cyan-400 min-w-[140px]">Included in Abyntra AI?</th>
+                        <th className="py-2.5 font-bold text-cyan-400 min-w-[140px]">Included in Vedic AI?</th>
                       </tr>
                     </thead>
                   <tbody className="divide-y divide-white/5 text-gray-300">
@@ -1012,7 +1012,7 @@ export default function NeuralPulseSphere() {
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <div className="p-5 rounded-2xl bg-white/[0.02] border border-white/10 space-y-3 flex flex-col justify-between">
                 <p className="text-xs text-gray-300 leading-relaxed font-sans italic">
-                  "Abyntra's live React 18 sandbox and AST auto-fixer replaced three separate tools for our team. The instant compilation speed is unreal."
+                  "Vedic's live React 18 sandbox and AST auto-fixer replaced three separate tools for our team. The instant compilation speed is unreal."
                 </p>
                 <div className="pt-2 border-t border-white/5 flex items-center gap-2.5">
                   <div className="w-7 h-7 rounded-full bg-cyan-500/20 text-cyan-400 font-bold text-xs flex items-center justify-center">AK</div>
@@ -1081,7 +1081,7 @@ export default function NeuralPulseSphere() {
             <div className="space-y-3">
               {[
                 {
-                  q: "Is Abyntra AI really 100% free with zero mandatory logins?",
+                  q: "Is Vedic AI really 100% free with zero mandatory logins?",
                   a: "Yes! You do not need to create an account, enter a credit card, or provide your phone number. You can immediately launch the web app or install the standalone native app and access coding, math, 8K visuals, video, and audio."
                 },
                 {
@@ -1094,11 +1094,11 @@ export default function NeuralPulseSphere() {
                 },
                 {
                   q: "Can I install it on Windows, Android, macOS, Linux, and iOS?",
-                  a: "Yes. Abyntra AI provides dedicated standalone installers for Windows (.EXE), Android (.APK), macOS (.DMG), Linux (.AppImage), and iOS (.mobileconfig) that install as true standalone applications."
+                  a: "Yes. Vedic AI provides dedicated standalone installers for Windows (.EXE), Android (.APK), macOS (.DMG), Linux (.AppImage), and iOS (.mobileconfig) that install as true standalone applications."
                 },
                 {
-                  q: "Who is behind Abyntra AI and what is the mission?",
-                  a: "Abyntra AI was envisioned, architected, and engineered in India 🇮🇳 by Abhinav Giri (@abhinavgiri45). The mission is to build a sovereign, world-class unified AI powerhouse that makes superhuman intelligence accessible to everyone without paywalls."
+                  q: "Who is behind Vedic AI and what is the mission?",
+                  a: "Vedic AI was envisioned, architected, and engineered in India 🇮🇳 by Abhinav Giri (@abhinavgiri45). The mission is to build a sovereign, world-class unified AI powerhouse that makes superhuman intelligence accessible to everyone without paywalls."
                 }
               ].map((faq, idx) => (
                 <div
@@ -1144,7 +1144,7 @@ export default function NeuralPulseSphere() {
               </div>
 
               <blockquote className="text-xs sm:text-sm text-gray-200 leading-relaxed font-sans italic border-l-2 border-cyan-400 pl-4">
-                "I engineered Abyntra AI with an unwavering conviction: the highest peak of human discovery occurs when the walls between code engineering, mathematical proofs, visual art, cinematic direction, and speech intelligence are dismantled into one sovereign polymath. I personally guarantee that Abyntra AI will remain dedicated to user privacy, transparent architecture, and accessible superhuman capability."
+                "I engineered Vedic AI with an unwavering conviction: the highest peak of human discovery occurs when the walls between code engineering, mathematical proofs, visual art, cinematic direction, and speech intelligence are dismantled into one sovereign polymath. I personally guarantee that Vedic AI will remain dedicated to user privacy, transparent architecture, and accessible superhuman capability."
               </blockquote>
 
               <div className="flex items-center justify-between flex-wrap gap-4 pt-2 border-t border-white/10">
@@ -1184,7 +1184,7 @@ export default function NeuralPulseSphere() {
                   onClick={handleLaunch}
                   className="px-6 py-2.5 rounded-full bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-black text-xs shadow-glow-cyan hover:scale-105 transition-all flex items-center gap-1.5"
                 >
-                  <span>Launch Abyntra AI Free</span>
+                  <span>Launch Vedic AI Free</span>
                   <ArrowRight className="w-3.5 h-3.5" />
                 </button>
               </div>
@@ -1196,7 +1196,7 @@ export default function NeuralPulseSphere() {
           <div className="fixed bottom-3 sm:bottom-4 left-1/2 -translate-x-1/2 z-50 px-3 sm:px-4 py-2 sm:py-2.5 rounded-full bg-black/95 border border-cyan-500/40 shadow-2xl backdrop-blur-xl flex items-center gap-2 sm:gap-3 max-w-[96vw] overflow-x-auto no-scrollbar pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]">
             <div className="flex items-center gap-2 text-xs font-mono text-white pr-2 border-r border-white/15 whitespace-nowrap">
               <img src="/logo.png" alt="Logo" className="w-5 h-5 rounded-md object-contain" />
-              <span className="font-extrabold hidden sm:inline">Abyntra AI</span>
+              <span className="font-extrabold hidden sm:inline">Vedic AI</span>
             </div>
 
             <div className="flex items-center gap-1.5 text-xs font-mono">
@@ -1575,7 +1575,7 @@ export default function NeuralPulseSphere() {
                       <th className="p-4 sm:p-5 min-w-[160px]">Component / Hardware Category</th>
                       <th className="p-4 sm:p-5 text-gray-400 min-w-[160px]">Minimum Specification</th>
                       <th className="p-4 sm:p-5 text-cyan-400 font-black min-w-[180px]">Recommended Spec (Optimal 60fps & 8K)</th>
-                      <th className="p-4 sm:p-5 text-purple-300 min-w-[180px]">Abyntra AI Engine Optimization</th>
+                      <th className="p-4 sm:p-5 text-purple-300 min-w-[180px]">Vedic AI Engine Optimization</th>
                     </tr>
                   </thead>
                 <tbody className="divide-y divide-white/5 text-gray-300 font-sans">
@@ -1587,7 +1587,7 @@ export default function NeuralPulseSphere() {
                       </td>
                       <td className="p-4 text-gray-400 text-xs font-mono leading-relaxed">{row.minimum}</td>
                       <td className="p-4 text-cyan-300 font-bold text-xs font-mono leading-relaxed">{row.recommended}</td>
-                      <td className="p-4 text-gray-300 text-xs leading-relaxed font-sans">{row.abyntraOptimization}</td>
+                      <td className="p-4 text-gray-300 text-xs leading-relaxed font-sans">{row.vedicOptimization}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -1606,7 +1606,7 @@ export default function NeuralPulseSphere() {
                   <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px]">On-Device Engine</span>
                 </span>
                 <p className="text-gray-300 leading-relaxed font-sans text-[11px]">
-                  Running completely offline using 100% physical system resources (Local CPU, GPU Shaders, and RAM) is an advanced capability specifically supported on <strong>High-End Systems</strong> that meet or exceed the Recommended System Requirements (Multi-Core CPU, 8GB–16GB+ RAM, and Dedicated GPU). On standard or entry-level devices, Abyntra AI seamlessly utilizes high-speed cloud intelligence to deliver full polymath power with zero hardware strain.
+                  Running completely offline using 100% physical system resources (Local CPU, GPU Shaders, and RAM) is an advanced capability specifically supported on <strong>High-End Systems</strong> that meet or exceed the Recommended System Requirements (Multi-Core CPU, 8GB–16GB+ RAM, and Dedicated GPU). On standard or entry-level devices, Vedic AI seamlessly utilizes high-speed cloud intelligence to deliver full polymath power with zero hardware strain.
                 </p>
               </div>
             </div>
@@ -1683,10 +1683,10 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <ol className="space-y-2 text-xs text-gray-300 list-decimal pl-4 leading-relaxed font-sans">
-                  <li>Download <code className="text-cyan-300 font-mono">Abyntra_AI_Setup.exe</code> (or Titan Edition).</li>
+                  <li>Download <code className="text-cyan-300 font-mono">Vedic_AI_Setup.exe</code> (or Titan Edition).</li>
                   <li>Run the Setup Wizard; it auto-checks hardware specs and extracts files in under 1 second.</li>
-                  <li>Launches with desktop shortcut, Start Menu folder, and local disk vault at <code className="text-cyan-300 font-mono text-[10px]">%LocalAppData%\Abyntra AI\Data</code>.</li>
-                  <li>Cleanly uninstalls via Windows Control Panel or <code className="text-rose-300 font-mono text-[10px]">Uninstall_Abyntra_AI.exe</code>.</li>
+                  <li>Launches with desktop shortcut, Start Menu folder, and local disk vault at <code className="text-cyan-300 font-mono text-[10px]">%LocalAppData%\Vedic AI\Data</code>.</li>
+                  <li>Cleanly uninstalls via Windows Control Panel or <code className="text-rose-300 font-mono text-[10px]">Uninstall_Vedic_AI.exe</code>.</li>
                 </ol>
               </div>
 
@@ -1706,7 +1706,7 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <ol className="space-y-2 text-xs text-gray-300 list-decimal pl-4 leading-relaxed font-sans">
-                  <li>Download <code className="text-emerald-300 font-mono">Abyntra_AI.apk</code> (or Titan Flagship APK).</li>
+                  <li>Download <code className="text-emerald-300 font-mono">Vedic_AI.apk</code> (or Titan Flagship APK).</li>
                   <li>Tap the downloaded file in your notifications or Files app and confirm install.</li>
                   <li>Runs in standalone hardware-accelerated WebView with 90-day offline sandbox persistence.</li>
                   <li>Uninstall anytime via standard Android long-press ➔ "Uninstall" or App Settings.</li>
@@ -1729,10 +1729,10 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <ol className="space-y-2 text-xs text-gray-300 list-decimal pl-4 leading-relaxed font-sans">
-                  <li>Download <code className="text-purple-300 font-mono">Abyntra_AI_macOS.dmg</code> (or Titan Edition).</li>
-                  <li>Open the DMG image and drag the Abyntra AI application to your Applications folder.</li>
-                  <li>Runs with embedded local loopback server and vault at <code className="text-purple-300 font-mono text-[10px]">~/Library/Application Support/Abyntra AI</code>.</li>
-                  <li>Includes 1-click removal script: <code className="text-rose-300 font-mono text-[10px]">Uninstall_Abyntra_Mac.command</code>.</li>
+                  <li>Download <code className="text-purple-300 font-mono">Vedic_AI_macOS.dmg</code> (or Titan Edition).</li>
+                  <li>Open the DMG image and drag the Vedic AI application to your Applications folder.</li>
+                  <li>Runs with embedded local loopback server and vault at <code className="text-purple-300 font-mono text-[10px]">~/Library/Application Support/Vedic AI</code>.</li>
+                  <li>Includes 1-click removal script: <code className="text-rose-300 font-mono text-[10px]">Uninstall_Vedic_Mac.command</code>.</li>
                 </ol>
               </div>
 
@@ -1752,10 +1752,10 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <ol className="space-y-2 text-xs text-gray-300 list-decimal pl-4 leading-relaxed font-sans">
-                  <li>Download <code className="text-amber-300 font-mono">Abyntra_AI_Linux.AppImage</code>.</li>
-                  <li>Make executable: <code className="text-amber-300 font-mono text-[10px]">chmod +x Abyntra_AI_Linux.AppImage</code></li>
-                  <li>Execute directly; runs standalone with local vault at <code className="text-amber-300 font-mono text-[10px]">~/.local/share/abyntra-ai/data</code>.</li>
-                  <li>Clean removal via provided script: <code className="text-rose-300 font-mono text-[10px]">uninstall_abyntra_linux.sh</code>.</li>
+                  <li>Download <code className="text-amber-300 font-mono">Vedic_AI_Linux.AppImage</code>.</li>
+                  <li>Make executable: <code className="text-amber-300 font-mono text-[10px]">chmod +x Vedic_AI_Linux.AppImage</code></li>
+                  <li>Execute directly; runs standalone with local vault at <code className="text-amber-300 font-mono text-[10px]">~/.local/share/vedic-ai/data</code>.</li>
+                  <li>Clean removal via provided script: <code className="text-rose-300 font-mono text-[10px]">uninstall_vedic_linux.sh</code>.</li>
                 </ol>
               </div>
 
@@ -1775,7 +1775,7 @@ export default function NeuralPulseSphere() {
                 </div>
 
                 <ol className="space-y-2 text-xs text-gray-300 list-decimal pl-4 leading-relaxed font-sans">
-                  <li>Download <code className="text-rose-300 font-mono">Abyntra_AI_iOS.mobileconfig</code>.</li>
+                  <li>Download <code className="text-rose-300 font-mono">Vedic_AI_iOS.mobileconfig</code>.</li>
                   <li>Go to <strong>Settings ➔ Profile Downloaded</strong> and tap <strong>Install</strong>.</li>
                   <li>Launches directly from your Home Screen in full-screen standalone mode with zero browser address bar clutter.</li>
                   <li>Remove anytime via <strong>Settings ➔ General ➔ VPN & Device Management</strong>.</li>
@@ -1798,10 +1798,10 @@ export default function NeuralPulseSphere() {
               <span>UNCOMPROMISING VALUE & ARCHITECTURAL COMPARISON</span>
             </div>
             <h2 className="text-3xl sm:text-5xl font-black text-white tracking-tight">
-              Why Creators, Engineers & Researchers Choose Abyntra AI
+              Why Creators, Engineers & Researchers Choose Vedic AI
             </h2>
             <p className="text-gray-300 text-sm max-w-2xl mx-auto leading-relaxed">
-              Stop paying fragmented monthly subscriptions across ChatGPT, Midjourney, Claude, and Runway. Discover how Abyntra AI replaces an entire $100+/month software stack with one sovereign, lightning-fast workspace.
+              Stop paying fragmented monthly subscriptions across ChatGPT, Midjourney, Claude, and Runway. Discover how Vedic AI replaces an entire $100+/month software stack with one sovereign, lightning-fast workspace.
             </p>
           </section>
 
@@ -1841,7 +1841,7 @@ export default function NeuralPulseSphere() {
                 <span className="text-[10px] text-gray-500">($35 / month)</span>
               </div>
               <div className="p-3.5 rounded-2xl bg-emerald-950/30 border border-emerald-500/40 space-y-1">
-                <span className="text-emerald-300 font-bold">Abyntra AI Pro</span>
+                <span className="text-emerald-300 font-bold">Vedic AI Pro</span>
                 <div className="text-base font-black text-emerald-400">$0 / yr</div>
                 <span className="text-[10px] text-emerald-400/80">(100% Free Forever)</span>
               </div>
@@ -1883,7 +1883,7 @@ export default function NeuralPulseSphere() {
                 <thead>
                   <tr className="border-b border-white/10 bg-white/[0.04] text-gray-300 font-mono">
                     <th className="p-4 sm:p-5 min-w-[180px]">Core Capability & Studio Discipline</th>
-                    <th className="p-4 sm:p-5 text-cyan-300 font-black min-w-[180px]">Abyntra AI (Universal Workspace)</th>
+                    <th className="p-4 sm:p-5 text-cyan-300 font-black min-w-[180px]">Vedic AI (Universal Workspace)</th>
                     <th className="p-4 sm:p-5 text-gray-400 min-w-[160px]">ChatGPT Plus / Claude Pro</th>
                     <th className="p-4 sm:p-5 text-gray-400 min-w-[160px]">Midjourney / Runway / Gen-3</th>
                   </tr>
@@ -2115,7 +2115,7 @@ export default function NeuralPulseSphere() {
                 </div>
               </div>
               <p className="text-xs text-gray-300 leading-relaxed font-sans">
-                Build production software in real-time. Abyntra's Superhuman Dev Studio compiles components on the fly, calculates runtime time/space complexity ($O(n)$ metrics), and fixes build errors with 1-click Auto-Fix intelligence.
+                Build production software in real-time. Vedic's Superhuman Dev Studio compiles components on the fly, calculates runtime time/space complexity ($O(n)$ metrics), and fixes build errors with 1-click Auto-Fix intelligence.
               </p>
             </div>
 
@@ -2207,7 +2207,7 @@ export default function NeuralPulseSphere() {
         </h3>
 
         <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-          "Abyntra AI was engineered with the conviction that true human creativity reaches its peak when the barriers between programming, mathematical rigor, visual art, cinema, and conversational intelligence dissolve into one unified, sovereign polymath."
+          "Vedic AI was engineered with the conviction that true human creativity reaches its peak when the barriers between programming, mathematical rigor, visual art, cinema, and conversational intelligence dissolve into one unified, sovereign polymath."
         </p>
 
         {/* Creator Social Channels */}
@@ -2247,8 +2247,8 @@ export default function NeuralPulseSphere() {
       {/* Footer */}
       <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-gray-500 space-y-2">
         <div className="flex items-center justify-center gap-2">
-          <img src="/logo.png" alt="Abyntra AI" className="w-5 h-5 rounded" />
-          <span className="font-extrabold text-white">Abyntra AI</span>
+          <img src="/logo.png" alt="Vedic AI" className="w-5 h-5 rounded" />
+          <span className="font-extrabold text-white">Vedic AI</span>
         </div>
         <p>© 2026 Abhinav Giri • Think • Create • Explore • All Rights Reserved</p>
       </footer>

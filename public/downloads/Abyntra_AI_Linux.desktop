@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Abyntra AI Pro
-Comment=Omnipotent AI Polymath • Created by Abhinav Giri
-Exec=sh -c 'google-chrome --app="http://localhost:3000/?app=true" --user-data-dir="$HOME/.local/share/abyntra-ai/data" || xdg-open "http://localhost:3000/?app=true"'
-Icon=http://localhost:3000/logo.png
-Terminal=false
-Type=Application
-Categories=Utility;Development;AudioVideo;Science;

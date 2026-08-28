@@ -107,6 +107,7 @@
 }
 
 /* Dedicated Flawless Scrollbar for Large Modals and Introduction Page */
+.vedic-custom-scroll,
 .abyntra-custom-scroll {
   overflow-y: auto !important;
   overflow-x: hidden !important;
@@ -117,22 +118,26 @@
   scrollbar-color: rgba(0, 240, 255, 0.55) rgba(6, 8, 16, 0.9) !important;
 }
 
+.vedic-custom-scroll::-webkit-scrollbar,
 .abyntra-custom-scroll::-webkit-scrollbar {
   width: 9px !important;
   height: 9px !important;
 }
 
+.vedic-custom-scroll::-webkit-scrollbar-track,
 .abyntra-custom-scroll::-webkit-scrollbar-track {
   background: rgba(6, 8, 16, 0.9) !important;
   border-left: 1px solid rgba(255, 255, 255, 0.08) !important;
 }
 
+.vedic-custom-scroll::-webkit-scrollbar-thumb,
 .abyntra-custom-scroll::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, rgba(0, 240, 255, 0.5), rgba(168, 85, 247, 0.5)) !important;
   border-radius: 9999px !important;
   border: 1.5px solid rgba(6, 8, 16, 0.9) !important;
 }
 
+.vedic-custom-scroll::-webkit-scrollbar-thumb:hover,
 .abyntra-custom-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, rgba(0, 240, 255, 0.9), rgba(168, 85, 247, 0.9)) !important;
   box-shadow: 0 0 12px rgba(0, 240, 255, 0.6) !important;

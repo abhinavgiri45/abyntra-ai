@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
     <key>PayloadDisplayName</key>
-    <string>Abyntra AI Pro</string>
+    <string>Vedic AI Pro</string>
     <key>PayloadIdentifier</key>
-    <string>ai.abyntra.app</string>
+    <string>ai.vedic.app</string>
     <key>PayloadType</key>
     <string>Configuration</string>
     <key>PayloadUUID</key>
@@ -18,13 +18,13 @@
             <key>PayloadType</key>
             <string>com.apple.webClip.managed</string>
             <key>PayloadIdentifier</key>
-            <string>ai.abyntra.app.webclip</string>
+            <string>ai.vedic.app.webclip</string>
             <key>PayloadUUID</key>
             <string>4B859124-029D-4E91-9D65-9FA45197F234</string>
             <key>PayloadVersion</key>
             <integer>1</integer>
             <key>Label</key>
-            <string>Abyntra AI Pro</string>
+            <string>Vedic AI Pro</string>
             <key>URL</key>
             <string>http://localhost:3000/?app=true</string>
             <key>IsRemovable</key>

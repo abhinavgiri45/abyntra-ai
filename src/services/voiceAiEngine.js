@@ -1,5 +1,5 @@
 /**
- * ABYNTRA AI — HYPER-HUMAN REAL-TIME VOICE AI ENGINE
+ * VEDIC AI — HYPER-HUMAN REAL-TIME VOICE AI ENGINE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Features:
@@ -75,9 +75,9 @@ export const voiceAiEngine = {
         return hindiIntros[turnCount % hindiIntros.length];
       }
       const enIntros = [
-        "I am Abyntra AI, envisioned and engineered in India by Abhinav Giri. I'm your sovereign AI polymath for coding, mathematics, science, and natural conversation.",
-        "Hello! I am Abyntra AI, created in India by Abhinav Giri. I'm here to help you solve problems, think through ideas, and build anything you imagine.",
-        "I'm Abyntra AI, built by Abhinav Giri under the motto: Think, Create, Explore. How can I assist you right now?"
+        "I am Vedic AI, envisioned and engineered in India by Abhinav Giri. I'm your sovereign AI polymath for coding, mathematics, science, and natural conversation.",
+        "Hello! I am Vedic AI, created in India by Abhinav Giri. I'm here to help you solve problems, think through ideas, and build anything you imagine.",
+        "I'm Vedic AI, built by Abhinav Giri under the motto: Think, Create, Explore. How can I assist you right now?"
       ];
       return enIntros[turnCount % enIntros.length];
     }
@@ -285,7 +285,7 @@ export const voiceAiEngine = {
       ? 'CRITICAL: Speak in natural Indian English (Hinglish/English) with friendly warmth, clear diction, and natural cadence.'
       : 'CRITICAL: Speak in natural, expressive, modern human English like an intelligent and warm friend.';
 
-    const systemPrompt = `You are Abyntra Voice AI, an ultra-intelligent, remarkably natural, warm, and articulate human voice companion envisioned and created in India by Abhinav Giri.
+    const systemPrompt = `You are Vedic Voice AI, an ultra-intelligent, remarkably natural, warm, and articulate human voice companion envisioned and created in India by Abhinav Giri.
 ${langDirective}
 
 HUMAN CONVERSATION RULES:
@@ -293,7 +293,7 @@ HUMAN CONVERSATION RULES:
 2. Structure: 2 to 3 natural spoken sentences (around 20 to 50 words). Keep it conversational, crisp, direct, and completely accurate.
 3. Natural Human Flow: Use natural conversational openers and active listening cues when appropriate ("Hey there!", "I'd love to help with that!", "Oh, absolutely!", "Great question!").
 4. Strict Factual Accuracy: Ground all facts truthfully. Never hallucinate. For algebraic equations (e.g. a+b whole square), give the exact expansion clearly. State verified real-world facts accurately.
-5. Pronounce "Abyntra" as "Abhyntra".
+5. Pronounce "Vedic" as "Abhyntra".
 6. PURE SPOKEN TEXT ONLY: NEVER output markdown, asterisks (**), hashes (#), bullet points (-), numbers (1., 2.), tables, code blocks, or URLs. Everything you output will be spoken aloud directly.`;
 
     // Multi-turn context messages (last 4 turns for context awareness)
@@ -314,7 +314,7 @@ HUMAN CONVERSATION RULES:
         const endpoint = `${config.baseUrl}/chat/completions`;
         const fastVoiceModel = config.providerId === 'openrouter' 
           ? 'google/gemini-2.0-flash-001' 
-          : universalApiEngine.resolveTargetModel('abyntra-lite');
+          : universalApiEngine.resolveTargetModel('vedic-lite');
 
         const requestBody = {
           model: fastVoiceModel,
@@ -333,8 +333,8 @@ HUMAN CONVERSATION RULES:
           headers: {
             'Content-Type': 'application/json',
             'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
-            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.pages.dev',
-            'X-Title': 'Abyntra Real-time Voice AI'
+            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://vedic-ai.pages.dev',
+            'X-Title': 'Vedic Real-time Voice AI'
           },
           body: JSON.stringify(requestBody),
           signal: signal || AbortSignal.timeout(2200)

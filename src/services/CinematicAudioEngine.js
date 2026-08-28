@@ -1,5 +1,5 @@
 /**
- * Abyntra AI Cinematic Sound & Score Synthesizer
+ * Vedic AI Cinematic Sound & Score Synthesizer
  * Generates dynamic multi-layer cinematic soundtracks and foley audio via Web Audio API
  * Ready for both live playback and WebM video stream multiplexing
  */

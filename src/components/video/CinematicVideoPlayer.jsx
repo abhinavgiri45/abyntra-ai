@@ -324,7 +324,7 @@ export default function CinematicVideoPlayer({
         ctx.fillStyle = '#00F0FF';
         ctx.font = 'bold 13px monospace';
         ctx.textAlign = 'center';
-        ctx.fillText(`⚡ ABYNTRA TITAN CINE-ENGINE • SHOT ${currentShotIndex + 1}/4`, width / 2, height / 2 - 15);
+        ctx.fillText(`⚡ VEDIC TITAN CINE-ENGINE • SHOT ${currentShotIndex + 1}/4`, width / 2, height / 2 - 15);
         ctx.fillStyle = '#E2E8F0';
         ctx.font = '11px monospace';
         ctx.fillText(`${shots[currentShotIndex]?.name || 'Synthesizing Scene Motion'}`, width / 2, height / 2 + 10);
@@ -377,7 +377,7 @@ export default function CinematicVideoPlayer({
       ctx.fillText(`SHOT ${currentShotIndex + 1}/4: ${currentShot.name.toUpperCase()}`, 16, height - 6);
       ctx.textAlign = 'right';
       ctx.fillStyle = '#F59E0B';
-      ctx.fillText(`ABYNTRA MOTIONLAB ULTRA`, width - 16, height - 6);
+      ctx.fillText(`VEDIC MOTIONLAB ULTRA`, width - 16, height - 6);
 
       animFrameRef.current = requestAnimationFrame(render);
     };
@@ -421,7 +421,7 @@ export default function CinematicVideoPlayer({
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `Abyntra_${resolution.toUpperCase()}_Cinema_${Date.now()}.${format === 'mp4' ? 'mp4' : 'webm'}`;
+        a.download = `Vedic_${resolution.toUpperCase()}_Cinema_${Date.now()}.${format === 'mp4' ? 'mp4' : 'webm'}`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);

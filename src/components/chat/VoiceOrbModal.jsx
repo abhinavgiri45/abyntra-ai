@@ -406,7 +406,7 @@ export default function VoiceOrbModal({ isOpen, onClose, onExportToChat }) {
           ) : aiResponse ? (
             <div className="p-3 rounded-2xl bg-white/[0.04] border border-white/10 space-y-1 max-h-28 overflow-y-auto touch-scroll text-left">
               <span className="text-[10px] font-mono text-purple-300 uppercase font-bold flex items-center gap-1">
-                <Sparkles className="w-3 h-3 text-cyan-400" /> Abyntra Voice AI:
+                <Sparkles className="w-3 h-3 text-cyan-400" /> Vedic Voice AI:
               </span>
               <p className="text-xs font-sans text-gray-200 leading-relaxed">
                 {aiResponse}
@@ -419,7 +419,7 @@ export default function VoiceOrbModal({ isOpen, onClose, onExportToChat }) {
                 <span>Continuous Hands-Free Voice Active</span>
               </p>
               <p className="text-[11px] font-sans text-gray-400">
-                Speak freely in {voiceLang === 'hi-IN' ? 'Hindi' : voiceLang === 'en-IN' ? 'Hinglish' : 'English'}. Abyntra listens & responds continuously turn after turn.
+                Speak freely in {voiceLang === 'hi-IN' ? 'Hindi' : voiceLang === 'en-IN' ? 'Hinglish' : 'English'}. Vedic listens & responds continuously turn after turn.
               </p>
             </div>
           )}

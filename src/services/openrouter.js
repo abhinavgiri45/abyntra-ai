@@ -1,5 +1,5 @@
 /**
- * ABYNTRA AI — HYPER-INTELLIGENT UNIVERSAL CHAT & CODE GENERATION SERVICE
+ * VEDIC AI — HYPER-INTELLIGENT UNIVERSAL CHAT & CODE GENERATION SERVICE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Capabilities:
@@ -10,7 +10,7 @@
  * - Web Search Grounding with Real-Time Fact Verification
  */
 
-import { storage, ABYNTRA_SYSTEM_PROMPT } from './storage';
+import { storage, VEDIC_SYSTEM_PROMPT } from './storage';
 import { localNeuralEngine } from './localNeuralEngine';
 import { universalApiEngine } from './universalApiEngine';
 
@@ -31,8 +31,8 @@ export const openrouter = {
       }
 
       const headers = {
-        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.pages.dev',
-        'X-Title': 'Abyntra AI',
+        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://vedic-ai.pages.dev',
+        'X-Title': 'Vedic AI',
       };
       if (key) headers['Authorization'] = `Bearer ${key}`;
 
@@ -61,7 +61,7 @@ export const openrouter = {
    * Free Zero-Config Neural AI Fallback Gateway
    */
   async streamFreeNeuralAI({ messages, onChunk, onReasoningChunk, signal }) {
-    const systemPrompt = messages.find(m => m.role === 'system')?.content || ABYNTRA_SYSTEM_PROMPT;
+    const systemPrompt = messages.find(m => m.role === 'system')?.content || VEDIC_SYSTEM_PROMPT;
     const userPrompt = messages.filter(m => m.role !== 'system').map(m => `${m.role}: ${m.content}`).join('\n');
 
     // Smart Dynamic Local Polymath Engine with Full Python & Code Synthesis (<5ms instant response)
@@ -117,16 +117,16 @@ Here is your custom high-fidelity visual render for **"${cleanSubject}"**:
     // 1. Identity & Creator Questions
     if (/which country|where are you from|country|kaha se ho|kahan se ho|origin|desh|nation|where do you live|where were you made|where was you made/i.test(p)) {
       if (/kaha|kahan|desh|bharat|aap/i.test(p)) {
-        return "मैं **अब्यंतरा एआई (Abyntra AI)** हूँ, और मेरा निर्माण **भारत 🇮🇳 (Bharat)** में **अभिनव गिरी (@abhinavgiri45)** द्वारा किया गया है। मेरा आदर्श वाक्य है: **THINK • CREATE • EXPLORE**।";
+        return "मैं **अब्यंतरा एआई (Vedic AI)** हूँ, और मेरा निर्माण **भारत 🇮🇳 (Bharat)** में **अभिनव गिरी (@abhinavgiri45)** द्वारा किया गया है। मेरा आदर्श वाक्य है: **THINK • CREATE • EXPLORE**।";
       }
-      return "I am **Abyntra AI**, proudly envisioned and engineered in **India 🇮🇳 (Bharat)** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). My foundational mission is: **THINK • CREATE • EXPLORE**!";
+      return "I am **Vedic AI**, proudly envisioned and engineered in **India 🇮🇳 (Bharat)** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). My foundational mission is: **THINK • CREATE • EXPLORE**!";
     }
 
     if (/who created you|who made you|founder|creator|kisne banaya|what is your name|who are you|naam kya hai|kya naam hai|tell me your name/i.test(p)) {
       if (/kisne|naam|aap/i.test(p)) {
-        return "मेरा नाम **अब्यंतरा एआई (Abyntra AI)** है। मेरा निर्माण **अभिनव गिरी (@abhinavgiri45)** ने **भारत 🇮🇳** में किया है। मैं कोडिंग, गणित, कला और आवाज़ का एक सुपरह्यूमन एआई पॉलीमैथ हूँ।";
+        return "मेरा नाम **अब्यंतरा एआई (Vedic AI)** है। मेरा निर्माण **अभिनव गिरी (@abhinavgiri45)** ने **भारत 🇮🇳** में किया है। मैं कोडिंग, गणित, कला और आवाज़ का एक सुपरह्यूमन एआई पॉलीमैथ हूँ।";
       }
-      return "I am **Abyntra AI**, envisioned and created in **India 🇮🇳** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). I am an omnipotent AI polymath designed for high-speed coding, Olympiad mathematics, 8K visuals, cinema direction, and speech synthesis!";
+      return "I am **Vedic AI**, envisioned and created in **India 🇮🇳** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). I am an omnipotent AI polymath designed for high-speed coding, Olympiad mathematics, 8K visuals, cinema direction, and speech synthesis!";
     }
 
     // 2. Specific Institutions & Real-World Facts
@@ -146,7 +146,7 @@ Here is your custom high-fidelity visual render for **"${cleanSubject}"**:
       if (/kaise|namaste/i.test(p)) {
         return "नमस्ते! मैं **अब्यंतरा एआई** हूँ। मैं बिल्कुल तैयार हूँ—बताइए आज हम क्या नया बनाने या हल करने वाले हैं?";
       }
-      return "Greetings! I am **Abyntra AI**, your sovereign AI polymath from India 🇮🇳. What would you like to build, code, or explore today?";
+      return "Greetings! I am **Vedic AI**, your sovereign AI polymath from India 🇮🇳. What would you like to build, code, or explore today?";
     }
 
     // 4. PYTHON CODE SYNTHESIS
@@ -176,7 +176,7 @@ HIGH_SCORE = 0
 
 # 1. Screen Setup
 screen = turtle.Screen()
-screen.title("Abyntra AI — Python Snake Game")
+screen.title("Vedic AI — Python Snake Game")
 screen.bgcolor("#0B0F19")
 screen.setup(width=600, height=600)
 screen.tracer(0)  # Turn off screen updates for smooth rendering
@@ -338,7 +338,7 @@ FOOD_COLOR = (255, 51, 102)
 TEXT_COLOR = (255, 255, 255)
 
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
-pygame.display.set_caption("Abyntra AI — Pygame Snake")
+pygame.display.set_caption("Vedic AI — Pygame Snake")
 clock = pygame.time.Clock()
 font = pygame.font.SysFont("Courier", 20, bold=True)
 
@@ -415,10 +415,10 @@ if __name__ == "__main__":
 \`\`\`python
 import tkinter as tk
 
-class AbyntraCalculator:
+class VedicCalculator:
     def __init__(self, root):
         self.root = root
-        self.root.title("Abyntra AI — Calculator")
+        self.root.title("Vedic AI — Calculator")
         self.root.geometry("340x460")
         self.root.configure(bg="#0B0F19")
         self.expression = ""
@@ -470,7 +470,7 @@ class AbyntraCalculator:
 
 if __name__ == "__main__":
     root = tk.Tk()
-    app = AbyntraCalculator(root)
+    app = VedicCalculator(root)
     root.mainloop()
 \`\`\``;
       }
@@ -483,7 +483,7 @@ Here is the robust, modular Python implementation tailored for: **"${prompt}"**
 \`\`\`python
 #!/usr/bin/env python3
 """
-Abyntra AI — Autonomous Python Module
+Vedic AI — Autonomous Python Module
 Envisioned & Engineered for: ${prompt}
 """
 
@@ -492,7 +492,7 @@ import time
 from typing import Any, List, Dict, Optional
 
 class SolutionEngine:
-    def __init__(self, name: str = "Abyntra Core"):
+    def __init__(self, name: str = "Vedic Core"):
         self.name = name
         self.execution_log: List[Dict[str, Any]] = []
 
@@ -701,7 +701,7 @@ If you would like to explore specific technical derivations, step-by-step algori
    */
   async streamChat({
     messages,
-    model = 'abyntra-pro',
+    model = 'vedic-pro',
     temperature = 0.6,
     maxTokens = 4096,
     webSearchEnabled = false,
@@ -710,7 +710,7 @@ If you would like to explore specific technical derivations, step-by-step algori
     signal
   }) {
     // 100% On-Device Physical Local Neural Engine execution
-    if (model === 'abyntra-local-core') {
+    if (model === 'vedic-local-core') {
       const userPrompt = messages.filter(m => m.role !== 'system').pop()?.content || '';
       const text = await localNeuralEngine.streamLocalResponse({
         prompt: userPrompt,
@@ -736,7 +736,7 @@ If you would like to explore specific technical derivations, step-by-step algori
       if (m.role === 'system') {
         return {
           ...m,
-          content: `${ABYNTRA_SYSTEM_PROMPT}\n\n${m.content}`
+          content: `${VEDIC_SYSTEM_PROMPT}\n\n${m.content}`
         };
       }
       return m;
@@ -745,7 +745,7 @@ If you would like to explore specific technical derivations, step-by-step algori
     if (!enrichedMessages.some(m => m.role === 'system')) {
       enrichedMessages.unshift({
         role: 'system',
-        content: ABYNTRA_SYSTEM_PROMPT
+        content: VEDIC_SYSTEM_PROMPT
       });
     }
 
@@ -758,8 +758,8 @@ If you would like to explore specific technical derivations, step-by-step algori
       const endpoint = `${config.baseUrl}/chat/completions`;
       const requestHeaders = {
         'Content-Type': 'application/json',
-        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://abyntra-ai.pages.dev',
-        'X-Title': 'Abyntra AI Polymath Workstation',
+        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://vedic-ai.pages.dev',
+        'X-Title': 'Vedic AI Polymath Workstation',
       };
       if (apiKey) {
         requestHeaders['Authorization'] = `Bearer ${apiKey}`;

@@ -3,7 +3,7 @@
   "versionCode": 210,
   "releaseDate": "2026-08-26",
   "buildTimestamp": 1787732200000,
-  "title": "Abyntra AI Pro — 100% Standalone & Hollywood Video Release",
+  "title": "Vedic AI Pro — 100% Standalone & Hollywood Video Release",
   "channel": "stable",
   "critical": false,
   "changelog": [
@@ -15,10 +15,10 @@
     "📱 Multi-Platform Standalone Builds: Native executables for Windows, Android, macOS, Linux, & iOS."
   ],
   "platformDownloads": {
-    "windows": "/downloads/Abyntra_AI_Setup.exe",
-    "android": "/downloads/Abyntra_AI_v2.0.apk",
-    "mac": "/downloads/Abyntra_AI_macOS.dmg",
-    "linux": "/downloads/Abyntra_AI_Linux.AppImage",
-    "ios": "/downloads/Abyntra_AI_iOS.mobileconfig"
+    "windows": "/downloads/Vedic_AI_Setup.exe",
+    "android": "/downloads/Vedic_AI_v2.0.apk",
+    "mac": "/downloads/Vedic_AI_macOS.dmg",
+    "linux": "/downloads/Vedic_AI_Linux.AppImage",
+    "ios": "/downloads/Vedic_AI_iOS.mobileconfig"
   }
 }

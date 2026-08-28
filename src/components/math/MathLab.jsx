@@ -122,11 +122,11 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
           messages: [
             {
               role: 'system',
-              content: 'You are the Abyntra Deep Math Lab. Solve with maximum analytical rigor, step-by-step proofs, and formatted KaTeX equations ($$ ... $$).'
+              content: 'You are the Vedic Deep Math Lab. Solve with maximum analytical rigor, step-by-step proofs, and formatted KaTeX equations ($$ ... $$).'
             },
             { role: 'user', content: `Solve with step-by-step derivations:\n\n${customEquation}` }
           ],
-          model: 'abyntra-titan-math',
+          model: 'vedic-titan-math',
           onChunk: (chunk, acc) => {
             setSolvedDerivation(acc);
           }
@@ -137,7 +137,7 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
           messages: [
             {
               role: 'system',
-              content: 'You are the Abyntra Deep Math Lab. Solve with maximum analytical rigor, step-by-step proofs, and formatted KaTeX equations ($$ ... $$).'
+              content: 'You are the Vedic Deep Math Lab. Solve with maximum analytical rigor, step-by-step proofs, and formatted KaTeX equations ($$ ... $$).'
             },
             { role: 'user', content: `Solve with step-by-step derivations:\n\n${customEquation}` }
           ],

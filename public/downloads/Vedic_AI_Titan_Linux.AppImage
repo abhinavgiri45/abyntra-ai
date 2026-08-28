@@ -1,10 +1,10 @@
 #!/bin/bash
 # ==========================================================
-# Abyntra AI Pro - Linux 1-Click Native Desktop Installer
+# Vedic AI Pro - Linux 1-Click Native Desktop Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Abyntra AI for Linux..."
-INSTALL_DIR="$HOME/.local/share/abyntra-ai"
+echo "🚀 Installing Vedic AI for Linux..."
+INSTALL_DIR="$HOME/.local/share/vedic-ai"
 BIN_DIR="$HOME/.local/bin"
 DESKTOP_DIR="$HOME/.local/share/applications"
 
@@ -12,11 +12,11 @@ mkdir -p "$INSTALL_DIR"
 mkdir -p "$BIN_DIR"
 mkdir -p "$DESKTOP_DIR"
 
-cat << 'EOF' > "$INSTALL_DIR/abyntra-ai"
+cat << 'EOF' > "$INSTALL_DIR/vedic-ai"
 #!/bin/bash
 PORT=49154
 HERE="$(dirname "$(readlink -f "${0}")")"
-DATA_DIR="$HOME/.local/share/abyntra-ai/data"
+DATA_DIR="$HOME/.local/share/vedic-ai/data"
 mkdir -p "$DATA_DIR"
 if command -v python3 &>/dev/null; then
   (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
@@ -34,23 +34,23 @@ else
 fi
 EOF
 
-chmod +x "$INSTALL_DIR/abyntra-ai"
-ln -sf "$INSTALL_DIR/abyntra-ai" "$BIN_DIR/abyntra-ai"
+chmod +x "$INSTALL_DIR/vedic-ai"
+ln -sf "$INSTALL_DIR/vedic-ai" "$BIN_DIR/vedic-ai"
 
 # Create .desktop entry
-cat << EOF > "$DESKTOP_DIR/abyntra-ai.desktop"
+cat << EOF > "$DESKTOP_DIR/vedic-ai.desktop"
 [Desktop Entry]
-Name=Abyntra AI
+Name=Vedic AI
 Comment=Sovereign AI Polymath Desktop Workstation
-Exec=$INSTALL_DIR/abyntra-ai
+Exec=$INSTALL_DIR/vedic-ai
 Terminal=false
 Type=Application
 Categories=Development;Education;Graphics;AudioVideo;
 StartupNotify=true
 EOF
 
-chmod +x "$DESKTOP_DIR/abyntra-ai.desktop"
+chmod +x "$DESKTOP_DIR/vedic-ai.desktop"
 
-echo "✅ Abyntra AI installed successfully with native application menu launcher."
-echo "🚀 Launching Abyntra AI..."
-"$INSTALL_DIR/abyntra-ai" &
+echo "✅ Vedic AI installed successfully with native application menu launcher."
+echo "🚀 Launching Vedic AI..."
+"$INSTALL_DIR/vedic-ai" &

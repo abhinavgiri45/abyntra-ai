@@ -9,12 +9,12 @@ export const replicate = {
   },
 
   /**
-   * Generate an image using Abyntra Lite (FLUX.1 Schnell on Replicate)
+   * Generate an image using Vedic Lite (FLUX.1 Schnell on Replicate)
    */
   async generateImage({ prompt, aspectRatio = '16:9', numOutputs = 1 }) {
     const token = this.getToken();
     if (!token) {
-      throw new Error('Replicate API Token (Abyntra Lite) is not configured.');
+      throw new Error('Replicate API Token (Vedic Lite) is not configured.');
     }
 
     // Try proxy endpoint first to bypass browser CORS, fallback to direct

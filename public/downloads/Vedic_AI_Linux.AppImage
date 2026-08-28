@@ -1,0 +1,9 @@
+#!/bin/sh
+# Vedic AI Pro - Linux Standalone Launcher with Local Disk Storage
+DATA_DIR="$HOME/.local/share/vedic-ai/data"
+mkdir -p "$DATA_DIR"
+
+google-chrome --app="http://localhost:3000/?app=true" --user-data-dir="$DATA_DIR" --window-size=1366,850 2>/dev/null || \
+chromium --app="http://localhost:3000/?app=true" --user-data-dir="$DATA_DIR" --window-size=1366,850 2>/dev/null || \
+xdg-open "http://localhost:3000/?app=true" 2>/dev/null || \
+sensible-browser "http://localhost:3000/?app=true"

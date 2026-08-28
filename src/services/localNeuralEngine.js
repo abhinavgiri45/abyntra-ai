@@ -1,5 +1,5 @@
 /**
- * Abyntra AI — 100% On-Device Sovereign Neural Engine
+ * Vedic AI — 100% On-Device Sovereign Neural Engine
  * Executes completely offline using physical CPU, GPU, RAM, and WebGPU/WASM resources.
  * Supports both Titan Heavy/Ultra (16GB+ RAM / 8+ Cores) and Titan Lite (2GB-8GB RAM / Dual-Core).
  * 100% Air-Gapped Physical Execution (Zero Internet / Zero Network Traffic).
@@ -222,17 +222,17 @@ class LocalNeuralEngine {
   /**
    * Synthesize on-device intelligent response offline without any cloud or internet.
    */
-  synthesizeOfflineResponse(prompt, modelId = 'abyntra-titan-70b', isTitanLite = false) {
+  synthesizeOfflineResponse(prompt, modelId = 'vedic-titan-70b', isTitanLite = false) {
     const p = prompt.trim();
     const lp = p.toLowerCase();
-    const isLite = isTitanLite || modelId === 'abyntra-titan-lite' || this.activeProfile === 'lite';
+    const isLite = isTitanLite || modelId === 'vedic-titan-lite' || this.activeProfile === 'lite';
     const tag = isLite ? '🌱 Titan Lite (On-Device Lightweight)' : '⚡ Titan 70B Heavy Core (On-Device Workstation)';
 
     // 1. Creator & Identity Query
-    if (lp.includes('who made') || lp.includes('who created') || lp.includes('who are you') || lp.includes('about abyntra') || lp.includes('abhinav') || lp.includes('founder')) {
-      return `### ⚡ Abyntra AI — Sovereign On-Device Intelligence
+    if (lp.includes('who made') || lp.includes('who created') || lp.includes('who are you') || lp.includes('about vedic') || lp.includes('abhinav') || lp.includes('founder')) {
+      return `### ⚡ Vedic AI — Sovereign On-Device Intelligence
 
-**Abyntra AI** is envisioned, architected, and engineered by **Abhinav Giri** from **India 🇮🇳 (Bharat)**.
+**Vedic AI** is envisioned, architected, and engineered by **Abhinav Giri** from **India 🇮🇳 (Bharat)**.
 
 - **Guiding Vision**: **\`THINK • CREATE • EXPLORE\`**
 - **Architecture**: 100% Air-Gapped Sovereign Neural Engine running directly on your physical hardware.
@@ -269,7 +269,7 @@ HIGH_SCORE = 0
 
 # 1. Screen Setup
 screen = turtle.Screen()
-screen.title("Abyntra AI — Python Snake Game")
+screen.title("Vedic AI — Python Snake Game")
 screen.bgcolor("#0B0F19")
 screen.setup(width=600, height=600)
 screen.tracer(0)
@@ -394,7 +394,7 @@ Here is the complete, modular Python implementation tailored for: **"${prompt}"*
 \`\`\`python
 #!/usr/bin/env python3
 """
-Abyntra AI — On-Device Python Solution
+Vedic AI — On-Device Python Solution
 Execution Mode: ${tag}
 """
 
@@ -583,7 +583,7 @@ export default function TitanEngineDashboard() {
             <Cpu className="w-6 h-6 animate-pulse" />
           </div>
           <div>
-            <h3 className="font-bold text-base text-white tracking-wide">Abyntra Titan On-Device Core</h3>
+            <h3 className="font-bold text-base text-white tracking-wide">Vedic Titan On-Device Core</h3>
             <p className="text-xs text-emerald-400/80 font-mono">100% Offline Physical Execution</p>
           </div>
         </div>
@@ -700,12 +700,12 @@ If you would like executable code (Python / React / C++), formal mathematical de
   /**
    * 100% On-Device Local Inference Generator with streaming tokens
    */
-  async streamLocalResponse({ prompt, history = [], model = 'abyntra-titan-70b', isTitanLite = false, onToken, onReasoning }) {
+  async streamLocalResponse({ prompt, history = [], model = 'vedic-titan-70b', isTitanLite = false, onToken, onReasoning }) {
     if (!this.hardwareReport) {
       await this.auditSystemHardware();
     }
 
-    const isLite = isTitanLite || model === 'abyntra-titan-lite' || this.activeProfile === 'lite';
+    const isLite = isTitanLite || model === 'vedic-titan-lite' || this.activeProfile === 'lite';
 
     if (onReasoning) {
       if (isLite) {

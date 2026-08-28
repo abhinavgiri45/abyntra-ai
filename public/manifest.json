@@ -1,6 +1,6 @@
 {
-  "name": "Abyntra AI",
-  "short_name": "Abyntra AI",
+  "name": "Vedic AI",
+  "short_name": "Vedic AI",
   "description": "Omnipotent AI Powerhouse • Superhuman Code, Olympiad Math, 8K Art & Voice Intelligence",
   "start_url": "/",
   "id": "/",
@@ -24,7 +24,7 @@
     {
       "name": "New Chat",
       "url": "/?action=new_chat",
-      "description": "Start a fresh Abyntra AI session"
+      "description": "Start a fresh Vedic AI session"
     },
     {
       "name": "Code Studio IDE",

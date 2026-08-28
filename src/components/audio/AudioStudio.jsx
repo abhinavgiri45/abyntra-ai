@@ -28,7 +28,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
   const [volume, setVolume] = useState(75);
 
   // Voice TTS State
-  const [voiceText, setVoiceText] = useState('Welcome to Abyntra AI Studio. Envisioned and engineered by Abhinav Giri to empower polymath thinkers, creators, and developers worldwide.');
+  const [voiceText, setVoiceText] = useState('Welcome to Vedic AI Studio. Envisioned and engineered by Abhinav Giri to empower polymath thinkers, creators, and developers worldwide.');
   const [selectedVoice, setSelectedVoice] = useState('titan-deep');
   const [voicePitch, setVoicePitch] = useState(1.0);
   const [voiceRate, setVoiceRate] = useState(1.0);
@@ -241,7 +241,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
             </div>
             <div>
               <h2 className="text-base font-bold text-white flex items-center gap-2">
-                <span>Abyntra AudioCraft & Neural Voice Studio</span>
+                <span>Vedic AudioCraft & Neural Voice Studio</span>
                 <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono border border-emerald-500/30">
                   48kHz Master Studio
                 </span>

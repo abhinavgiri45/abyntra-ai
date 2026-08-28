@@ -15,7 +15,7 @@ export default {
           300: "#0B0D16",
           DEFAULT: "#0F111C",
         },
-        abyntra: {
+        vedic: {
           cyan: "#00F0FF",
           purple: "#9D4EDD",
           neon: "#7928CA",

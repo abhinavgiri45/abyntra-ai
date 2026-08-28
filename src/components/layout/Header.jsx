@@ -69,18 +69,18 @@ export default function Header({
         <div 
           className="flex items-center gap-2.5 cursor-pointer group" 
           onClick={onOpenAbout} 
-          title="Introducing Abyntra AI • Envisioned & Built by Abhinav Giri"
+          title="Introducing Vedic AI • Envisioned & Built by Abhinav Giri"
         >
           <img
             src="/logo.png"
-            alt="Abyntra AI Logo"
+            alt="Vedic AI Logo"
             className={`w-7 h-7 sm:w-8 sm:h-8 rounded-xl object-contain group-hover:scale-105 transition-transform ${
               isTitanMode ? 'shadow-glow-emerald' : 'shadow-glow-cyan'
             }`}
           />
           <div className="flex flex-col">
             <span className="font-extrabold text-sm sm:text-base tracking-wider text-white leading-tight flex items-center gap-1">
-              <span>ABYNTRA</span>
+              <span>VEDIC</span>
               <span className={isTitanMode ? 'text-emerald-400 font-black' : 'text-cyan-400'}>
                 {isTitanMode ? 'TITAN' : 'AI'}
               </span>
@@ -178,7 +178,7 @@ export default function Header({
           <button
             onClick={onOpenWhySwitch}
             className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 text-xs font-bold transition-all hover:scale-[1.02] cursor-pointer"
-            title="Why Switch to Abyntra AI? (Model Benchmarks & Comparison)"
+            title="Why Switch to Vedic AI? (Model Benchmarks & Comparison)"
           >
             <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
             <span className="hidden xs:inline">Why Switch?</span>
@@ -237,7 +237,7 @@ export default function Header({
                   </div>
                   <div>
                     <div className="font-semibold text-white flex items-center gap-1">
-                      <span>Why Switch to Abyntra?</span>
+                      <span>Why Switch to Vedic?</span>
                       <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">Compare</span>
                     </div>
                     <div className="text-[10px] text-gray-400">Model benchmarks vs ChatGPT & Claude</div>
@@ -304,7 +304,7 @@ export default function Header({
                     <Award className="w-4 h-4" />
                   </div>
                   <div>
-                    <div className="font-semibold text-white">Introducing Abyntra AI</div>
+                    <div className="font-semibold text-white">Introducing Vedic AI</div>
                     <div className="text-[10px] text-gray-400">Envisioned & Built by Abhinav Giri</div>
                   </div>
                 </button>

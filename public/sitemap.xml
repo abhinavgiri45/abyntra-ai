@@ -7,22 +7,22 @@
   
   <!-- 1. Primary Sovereign AI Workspace -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/</loc>
-    <xhtml:link rel="alternate" hreflang="x-default" href="https://abyntra-ai.pages.dev/" />
-    <xhtml:link rel="alternate" hreflang="en" href="https://abyntra-ai.pages.dev/" />
+    <loc>https://vedic-ai.pages.dev/</loc>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://vedic-ai.pages.dev/" />
+    <xhtml:link rel="alternate" hreflang="en" href="https://vedic-ai.pages.dev/" />
     <lastmod>2026-08-27</lastmod>
     <changefreq>always</changefreq>
     <priority>1.0</priority>
     <image:image>
-      <image:loc>https://abyntra-ai.pages.dev/logo.png</image:loc>
-      <image:title>Abyntra AI - Think • Create • Explore</image:title>
-      <image:caption>Official Logo of Abyntra AI - Envisioned and Engineered by Abhinav Giri</image:caption>
+      <image:loc>https://vedic-ai.pages.dev/logo.png</image:loc>
+      <image:title>Vedic AI - Think • Create • Explore</image:title>
+      <image:caption>Official Logo of Vedic AI - Envisioned and Engineered by Abhinav Giri</image:caption>
     </image:image>
   </url>
 
   <!-- 2. Official Introduction & Polymath Overview -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?action=overview</loc>
+    <loc>https://vedic-ai.pages.dev/?action=overview</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
@@ -30,7 +30,7 @@
 
   <!-- 3. Superhuman Dev Studio & React 18 Sandbox IDE -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=code</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=code</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -38,7 +38,7 @@
 
   <!-- 4. Hollywood Screenplay & Script Writing Studio -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=script</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=script</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -46,7 +46,7 @@
 
   <!-- 5. Olympiad Math Lab & 3D Surface Plotter -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=math</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=math</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -54,7 +54,7 @@
 
   <!-- 6. 8K VisionForge Photorealistic FLUX Studio -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=image</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=image</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -62,7 +62,7 @@
 
   <!-- 7. MotionLab 4K/8K 60FPS Cinema Video Studio -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=video</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=video</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -70,7 +70,7 @@
 
   <!-- 8. Real-Time Neural Voice & Sound Studio -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?studio=audio</loc>
+    <loc>https://vedic-ai.pages.dev/?studio=audio</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.90</priority>
@@ -78,7 +78,7 @@
 
   <!-- 9. Titan Heavy & Titan Lite Sovereign Offline Workstation -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?titan=true</loc>
+    <loc>https://vedic-ai.pages.dev/?titan=true</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>daily</changefreq>
     <priority>0.95</priority>
@@ -86,7 +86,7 @@
 
   <!-- 10. Downloads for All OS Platforms -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?action=download</loc>
+    <loc>https://vedic-ai.pages.dev/?action=download</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>
@@ -94,7 +94,7 @@
 
   <!-- 11. Hardware Audit & System Compatibility Matrix -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?action=specs</loc>
+    <loc>https://vedic-ai.pages.dev/?action=specs</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.80</priority>
@@ -102,7 +102,7 @@
 
   <!-- 12. Founder & Creator Official Attribution (Abhinav Giri) -->
   <url>
-    <loc>https://abyntra-ai.pages.dev/?action=founder</loc>
+    <loc>https://vedic-ai.pages.dev/?action=founder</loc>
     <lastmod>2026-08-27</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.85</priority>

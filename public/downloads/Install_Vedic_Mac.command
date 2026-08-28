@@ -1,23 +1,23 @@
 #!/bin/bash
 # ==========================================================
-# Abyntra AI Pro - macOS 1-Click Verified Installer
+# Vedic AI Pro - macOS 1-Click Verified Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Abyntra AI for macOS..."
+echo "🚀 Installing Vedic AI for macOS..."
 DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_PATH="$HOME/Applications/Abyntra AI.app"
-DATA_DIR="$HOME/Library/Application Support/Abyntra AI/Data"
+APP_PATH="$HOME/Applications/Vedic AI.app"
+DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
 
 mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources"
 mkdir -p "$DATA_DIR"
 
 # Copy Launcher
-cat << 'EOF' > "$APP_PATH/Contents/MacOS/AbyntraAI"
+cat << 'EOF' > "$APP_PATH/Contents/MacOS/VedicAI"
 #!/bin/bash
 PORT=49153
 DIR="$(cd "$(dirname "$0")/../Resources" && pwd)"
-DATA_DIR="$HOME/Library/Application Support/Abyntra AI/Data"
+DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
 if command -v python3 &>/dev/null; then
   (cd "$DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
@@ -32,12 +32,12 @@ else
 fi
 EOF
 
-chmod +x "$APP_PATH/Contents/MacOS/AbyntraAI"
+chmod +x "$APP_PATH/Contents/MacOS/VedicAI"
 
 # Remove macOS Gatekeeper Quarantine Flag
 xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
 xattr -cr "$APP_PATH" 2>/dev/null
 
-echo "✅ Abyntra AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching Abyntra AI..."
+echo "✅ Vedic AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
+echo "🚀 Launching Vedic AI..."
 open "$APP_PATH"

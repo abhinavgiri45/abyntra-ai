@@ -1,5 +1,5 @@
 /**
- * Next-Gen Human-Grade Speech Recognition and Natural Neural Synthesis Service for Abyntra AI
+ * Next-Gen Human-Grade Speech Recognition and Natural Neural Synthesis Service for Vedic AI
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Key Highlights:
@@ -422,14 +422,14 @@ class SpeechService {
 
     if (targetLang === 'hi-IN' || this.hasDevanagari(t)) {
       t = t
-        .replace(/\bAbyntra AI\b/gi, 'अब्यंतरा एआई')
-        .replace(/\bAbyntra\b/gi, 'अब्यंतरा')
+        .replace(/\bVedic AI\b/gi, 'अब्यंतरा एआई')
+        .replace(/\bVedic\b/gi, 'अब्यंतरा')
         .replace(/\bAbhinav Giri\b/gi, 'अभिनव गिरी')
         .replace(/\bIndia\b/gi, 'भारत');
     } else {
       t = t
-        .replace(/\bAbyntra AI\b/g, 'Abhyntra AI')
-        .replace(/\bAbyntra\b/g, 'Abhyntra');
+        .replace(/\bVedic AI\b/g, 'Abhyntra AI')
+        .replace(/\bVedic\b/g, 'Abhyntra');
     }
 
     return t.replace(/\s+/g, ' ').trim();
