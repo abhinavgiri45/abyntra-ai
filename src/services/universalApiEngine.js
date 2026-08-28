@@ -279,41 +279,84 @@ export const universalApiEngine = {
     const config = this.getProviderConfig();
     const registry = this.getDynamicRegistry();
 
-    // If auto-upgrade is disabled, use static baseline mappings
+    // 1. Google Gemini Direct
+    if (config.providerId === 'google') {
+      if (requestedModelId === 'girionix-pro' || requestedModelId === 'girionix-universal-auto') return 'gemini-2.0-flash';
+      if (requestedModelId === 'girionix-lite') return 'gemini-2.0-flash';
+      if (requestedModelId === 'girionix-codemaster-ultra') return 'gemini-2.0-flash';
+      if (requestedModelId === 'girionix-mathx-olympiad') return 'gemini-2.0-flash';
+      return requestedModelId.includes('/') ? requestedModelId.split('/').pop() : requestedModelId;
+    }
+
+    // 2. Groq Cloud Direct
+    if (config.providerId === 'groq') {
+      if (requestedModelId === 'girionix-pro' || requestedModelId === 'girionix-universal-auto') return 'llama-3.3-70b-versatile';
+      if (requestedModelId === 'girionix-lite') return 'llama-3.1-8b-instant';
+      if (requestedModelId === 'girionix-codemaster-ultra') return 'qwen-2.5-coder-32b';
+      if (requestedModelId === 'girionix-mathx-olympiad') return 'deepseek-r1-distill-llama-70b';
+      return requestedModelId.includes('/') ? requestedModelId.split('/').pop() : requestedModelId;
+    }
+
+    // 3. DeepSeek Direct
+    if (config.providerId === 'deepseek') {
+      if (requestedModelId === 'girionix-pro' || requestedModelId === 'girionix-mathx-olympiad') return 'deepseek-reasoner';
+      return 'deepseek-chat';
+    }
+
+    // 4. OpenAI Direct
+    if (config.providerId === 'openai') {
+      if (requestedModelId === 'girionix-pro' || requestedModelId === 'girionix-universal-auto') return 'gpt-4o';
+      if (requestedModelId === 'girionix-lite') return 'gpt-4o-mini';
+      if (requestedModelId === 'girionix-mathx-olympiad') return 'o3-mini';
+      return requestedModelId.includes('/') ? requestedModelId.split('/').pop() : requestedModelId;
+    }
+
+    // 5. Anthropic Direct
+    if (config.providerId === 'anthropic') {
+      if (requestedModelId === 'girionix-lite') return 'claude-3-5-haiku-20241022';
+      return 'claude-3-7-sonnet-20250219';
+    }
+
+    // 6. Custom OpenAI-Compatible (Ollama, LM Studio)
+    if (config.providerId === 'custom') {
+      return requestedModelId.includes('/') ? requestedModelId.split('/').pop() : requestedModelId;
+    }
+
+    // 7. OpenRouter (Default Universal Provider)
     if (!config.autoUpgradeEnabled) {
-      if (requestedModelId === 'girionix-pro') return 'deepseek/deepseek-r1';
-      if (requestedModelId === 'girionix-lite') return 'google/gemini-2.0-flash-001';
+      if (requestedModelId === 'girionix-pro') return 'minimax/minimax-m3:free';
+      if (requestedModelId === 'girionix-lite') return 'minimax/minimax-m3:free';
       return requestedModelId;
     }
 
     // Auto-Frontier / Universal Flagship
     if (requestedModelId === 'girionix-universal-auto' || requestedModelId === 'girionix-pro') {
-      return registry.frontier?.currentId || 'deepseek/deepseek-r1';
+      return registry.frontier?.currentId || 'minimax/minimax-m3:free';
     }
 
     // High-Speed / Visual Engine
     if (requestedModelId === 'girionix-lite') {
-      return registry.fast?.currentId || 'google/gemini-2.0-flash-001';
+      return registry.fast?.currentId || 'minimax/minimax-m3:free';
     }
 
     // Dedicated Coding Studio
     if (requestedModelId === 'girionix-codemaster-ultra' || requestedModelId === 'anthropic/claude-3.7-sonnet') {
-      return registry.coding?.currentId || 'anthropic/claude-3.7-sonnet';
+      return registry.coding?.currentId || 'cohere/north-mini-code:free';
     }
 
     // Math Lab Olympiad
     if (requestedModelId === 'girionix-mathx-olympiad' || requestedModelId === 'openai/o3-mini') {
-      return registry.math?.currentId || 'openai/o3-mini';
+      return registry.math?.currentId || 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free';
     }
 
     // Screenplay & Script Studio
     if (requestedModelId === 'girionix-scriptmaster-cinema') {
-      return registry.script?.currentId || 'anthropic/claude-3.7-sonnet';
+      return registry.script?.currentId || 'minimax/minimax-m3:free';
     }
 
     // Multimodal Omni
     if (requestedModelId === 'openai/gpt-4o') {
-      return registry.multimodal?.currentId || 'openai/gpt-4o';
+      return registry.multimodal?.currentId || 'minimax/minimax-m3:free';
     }
 
     return requestedModelId;

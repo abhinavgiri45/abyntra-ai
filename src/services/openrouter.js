@@ -18,40 +18,63 @@ export const openrouter = {
   /**
    * Verify an API Key against Universal Provider
    */
-  async verifyKey(apiKey) {
-    const config = universalApiEngine.getProviderConfig();
-    const key = apiKey || config.apiKey;
+  async verifyKey(apiKey, overrideConfig = null) {
+    const baseConfig = universalApiEngine.getProviderConfig();
+    const config = overrideConfig ? { ...baseConfig, ...overrideConfig } : baseConfig;
+    const key = apiKey !== undefined ? apiKey.trim() : config.apiKey;
 
     try {
-      let endpoint = `${config.baseUrl}/auth/key`;
-      if (config.providerId === 'openrouter') {
-        endpoint = 'https://openrouter.ai/api/v1/auth/key';
-      } else if (config.providerId === 'custom' || config.providerId === 'openai') {
-        endpoint = `${config.baseUrl}/models`;
-      }
-
+      let endpoint = '';
       const headers = {
         'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
         'X-Title': 'Girionix AI',
       };
-      if (key) headers['Authorization'] = `Bearer ${key}`;
+
+      if (config.providerId === 'openrouter') {
+        endpoint = 'https://openrouter.ai/api/v1/auth/key';
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      } else if (config.providerId === 'groq') {
+        endpoint = 'https://api.groq.com/openai/v1/models';
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      } else if (config.providerId === 'deepseek') {
+        endpoint = 'https://api.deepseek.com/v1/models';
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      } else if (config.providerId === 'openai') {
+        endpoint = 'https://api.openai.com/v1/models';
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      } else if (config.providerId === 'google') {
+        endpoint = `https://generativelanguage.googleapis.com/v1beta/openai/models`;
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      } else if (config.providerId === 'anthropic') {
+        endpoint = 'https://api.anthropic.com/v1/models';
+        if (key) {
+          headers['x-api-key'] = key;
+          headers['anthropic-version'] = '2023-06-01';
+          headers['dangerously-allow-browser'] = 'true';
+        }
+      } else {
+        // Custom OpenAI-Compatible (Ollama, LM Studio, etc.)
+        endpoint = `${config.baseUrl || 'http://localhost:11434/v1'}/models`;
+        if (key) headers['Authorization'] = `Bearer ${key}`;
+      }
 
       const response = await fetch(endpoint, {
         method: 'GET',
-        headers
+        headers,
+        signal: AbortSignal.timeout(6000)
       });
 
       const data = await response.json().catch(() => ({}));
       if (response.ok) {
         return { 
           valid: true, 
-          label: data?.data?.label || `${config.providerName} Connected`, 
+          label: data?.data?.label || `${config.providerName || config.providerId} Verified & Connected`, 
           usage: data?.data?.usage,
           limit: data?.data?.limit,
           isFreeTier: data?.data?.is_free_tier
         };
       }
-      return { valid: false, message: data?.error?.message || `Connection error (HTTP ${response.status})` };
+      return { valid: false, message: data?.error?.message || `HTTP ${response.status}: ${response.statusText || 'Authentication Failed'}` };
     } catch (err) {
       return { valid: false, message: err.message || 'Connection error to Universal Gateway' };
     }

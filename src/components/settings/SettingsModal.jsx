@@ -65,7 +65,10 @@ export default function SettingsModal({ isOpen, onClose, onApiKeyUpdated }) {
 
   const handleVerify = async () => {
     setVerificationStatus({ loading: true });
-    const result = await openrouter.verifyKey(apiKeyInput);
+    const result = await openrouter.verifyKey(apiKeyInput, {
+      providerId: selectedProvider,
+      baseUrl: customBaseUrl
+    });
     setVerificationStatus({ loading: false, ...result });
   };
 
