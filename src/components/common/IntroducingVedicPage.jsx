@@ -1219,6 +1219,54 @@ export default function NeuralPulseSphere() {
               </button>
             </div>
           </div>
+
+          {/* Creator Spotlight (Overview Exclusive) */}
+          <section id="creator" className="max-w-4xl mx-auto px-6 py-16 text-center space-y-6 border-t border-white/10 mt-8">
+            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs font-mono text-cyan-300">
+              <span>Envisioned & Engineered in India 🇮🇳</span>
+            </div>
+
+            <h3 className="text-2xl sm:text-3xl font-black text-white">
+              Crafted with Passion by Abhinav Giri
+            </h3>
+
+            <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
+              "Vedic AI was engineered with the conviction that true human creativity reaches its peak when the barriers between programming, mathematical rigor, visual art, cinema, and conversational intelligence dissolve into one unified, sovereign polymath."
+            </p>
+
+            {/* Creator Social Channels */}
+            <div className="flex items-center justify-center gap-3 pt-2">
+              <a
+                href="https://x.com/AbhinavGiri45"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all border border-white/10"
+              >
+                <XTwitterIcon className="w-3.5 h-3.5" />
+                <span>@AbhinavGiri45 on 𝕏</span>
+              </a>
+
+              <a
+                href="https://github.com/abhinavgiri45/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all border border-white/10"
+              >
+                <GithubIcon className="w-3.5 h-3.5" />
+                <span>@abhinavgiri45 on GitHub</span>
+              </a>
+
+              <a
+                href="https://instagram.com/abhinavgiri45"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="px-4 py-2 rounded-full bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 text-xs font-bold flex items-center gap-2 transition-all border border-pink-500/30"
+              >
+                <InstagramIcon className="w-3.5 h-3.5" />
+                <span>@abhinavgiri45 on Instagram</span>
+              </a>
+            </div>
+          </section>
         </div>
       )}
 
@@ -2195,54 +2243,6 @@ export default function NeuralPulseSphere() {
           </div>
         </div>
       )}
-
-      {/* Creator Spotlight */}
-      <section id="creator" className="max-w-4xl mx-auto px-6 py-16 text-center space-y-6 border-t border-white/10">
-        <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-white/10 text-xs font-mono text-cyan-300">
-          <span>Envisioned & Engineered in India 🇮🇳</span>
-        </div>
-
-        <h3 className="text-2xl sm:text-3xl font-black text-white">
-          Crafted with Passion by Abhinav Giri
-        </h3>
-
-        <p className="text-gray-400 text-xs sm:text-sm max-w-xl mx-auto leading-relaxed">
-          "Vedic AI was engineered with the conviction that true human creativity reaches its peak when the barriers between programming, mathematical rigor, visual art, cinema, and conversational intelligence dissolve into one unified, sovereign polymath."
-        </p>
-
-        {/* Creator Social Channels */}
-        <div className="flex items-center justify-center gap-3 pt-2">
-          <a
-            href="https://x.com/AbhinavGiri45"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all border border-white/10"
-          >
-            <XTwitterIcon className="w-3.5 h-3.5" />
-            <span>@AbhinavGiri45 on 𝕏</span>
-          </a>
-
-          <a
-            href="https://github.com/abhinavgiri45/"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-full bg-white/10 hover:bg-white/20 text-white text-xs font-bold flex items-center gap-2 transition-all border border-white/10"
-          >
-            <GithubIcon className="w-3.5 h-3.5" />
-            <span>@abhinavgiri45 on GitHub</span>
-          </a>
-
-          <a
-            href="https://instagram.com/abhinavgiri45"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="px-4 py-2 rounded-full bg-pink-500/20 hover:bg-pink-500/30 text-pink-300 text-xs font-bold flex items-center gap-2 transition-all border border-pink-500/30"
-          >
-            <InstagramIcon className="w-3.5 h-3.5" />
-            <span>@abhinavgiri45 on Instagram</span>
-          </a>
-        </div>
-      </section>
 
       {/* Footer */}
       <footer className="border-t border-white/[0.08] py-8 text-center text-xs text-gray-500 space-y-2">
