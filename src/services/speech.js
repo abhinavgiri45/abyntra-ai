@@ -422,14 +422,14 @@ class SpeechService {
 
     if (targetLang === 'hi-IN' || this.hasDevanagari(t)) {
       t = t
-        .replace(/\bGirionix AI\b/gi, 'गिरिऑनिक्स एआई (Girionix AI) (Girionix AI)')
-        .replace(/\bGirionix\b/gi, 'अब्यंतरा')
+        .replace(/\bGirionix AI\b/gi, 'गिरिऑनिक्स एआई')
+        .replace(/\bGirionix\b/gi, 'गिरिऑनिक्स')
         .replace(/\bAbhinav Giri\b/gi, 'अभिनव गिरी')
         .replace(/\bIndia\b/gi, 'भारत');
     } else {
       t = t
-        .replace(/\bGirionix AI\b/g, 'Abhyntra AI')
-        .replace(/\bGirionix\b/g, 'Abhyntra');
+        .replace(/\bGirionix AI\b/g, 'Girionix AI')
+        .replace(/\bGirionix\b/g, 'Girionix');
     }
 
     return t.replace(/\s+/g, ' ').trim();
