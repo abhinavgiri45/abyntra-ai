@@ -154,25 +154,56 @@ export const voiceAiEngine = {
       return this.pickDiverse(enIntros, 'intro_en');
     }
 
-    // 3. User Sharing Feelings / Day Status (e.g., "my day has been fantastic", "I had a great day")
-    if (/\b(my day (has been|was|is)|i (had|am having) a (great|fantastic|wonderful|good|bad|tough|hard|busy|long) day|had a (great|good|bad|nice) day|feeling (happy|sad|tired|exhausted|great|good|awesome|bored))\b/i.test(p)) {
-      if (/bad|tough|hard|sad|tired|exhausted/i.test(p)) {
+    // 3. User Inquiring "How are you feeling" / "How are you" / Greetings + Status
+    if (/\b(how are you|how do you feel|how are you feeling|how feeling|feeling today|how are you doing|how are things|how is everything|how is your day|how was your day|how's it going|hows it going|how have you been|what's up|whats up|kaise ho|kya haal hai|kaisa lag raha hai|kya chal raha hai)\b/i.test(p) || /(कैसे हैं|कैसा है|क्या हाल है|कैसे हो|कैसा चल रहा है)/i.test(p)) {
+      if (isHindi) {
+        const hindiDayReplies = [
+          "मैं बहुत ही शानदार और ऊर्जावान महसूस कर रहा हूँ, पूछने के लिए धन्यवाद! आप बताइए, आपका दिन कैसा बीत रहा है?",
+          "नमस्ते! सब कुछ बहुत बढ़िया और सुचारू रूप से चल रहा है। आपकी आवाज़ सुनकर बहुत खुशी हुई। आप कैसे हैं?",
+          "मेरा दिन बहुत बेहतरीन चल रहा है और मैं पूरी तरह तैयार हूँ! आप बताइए, आज आप क्या नया करने वाले हैं?",
+          "सब कुछ एकदम बढ़िया है! मैं नए-नए सवालों को हल करने के लिए पूरी तरह सक्रिय हूँ। आप कैसा महसूस कर रहे हैं?"
+        ];
+        return this.pickDiverse(hindiDayReplies, 'feel_ai_hi');
+      }
+
+      if (isHinglish) {
+        const hinglishDayReplies = [
+          "Main bilkul mast aur super energetic feel kar raha hoon, poochne ke liye shukriya! Aap bataiye, aapka din kaisa chal raha hai?",
+          "Sab kuch ekdum first-class chal raha hai! Aapki aawaz sunkar aur accha laga. Aaj aap kya explore karna chahte hain?",
+          "Everything is going great on my end! Main poori tarah ready hoon. Aapka din kaisa beet raha hai?",
+          "Main bilkul badiya hoon! Aap bataiye, aaj kya naya create karne wale hain?"
+        ];
+        return this.pickDiverse(hinglishDayReplies, 'feel_ai_hing');
+      }
+
+      const enDayReplies = [
+        "I'm feeling wonderful and full of energy, thank you so much for asking! How are you doing today?",
+        "Hey there! Everything is running smoothly on my end and I'm feeling great. How has your day been going?",
+        "I'm having a super productive and fantastic day! Thanks for asking. What's on your mind right now?",
+        "I'm feeling great and excited to chat with you! How is everything unfolding on your end?"
+      ];
+      return this.pickDiverse(enDayReplies, 'feel_ai_en');
+    }
+
+    // 4. User Sharing Their Own Feelings / Day Status (e.g. "I had a great day", "feeling tired")
+    if (/\b(my day (has been|was|is)|i (had|am having) a (great|fantastic|wonderful|good|bad|tough|hard|busy|long) day|had a (great|good|bad|nice) day|feeling (happy|sad|tired|exhausted|great|good|awesome|bored|down|stressed))\b/i.test(p)) {
+      if (/bad|tough|hard|sad|tired|exhausted|down|stressed/i.test(p)) {
         if (isHindi) {
           const badHi = [
             "अरे, यह सुनकर मुझे थोड़ा बुरा लगा। आराम कीजिए और गहरी सांस लीजिए। मैं आपकी मदद के लिए हमेशा यहाँ हूँ, बताइए क्या चल रहा है?",
-            "कोई बात नहीं, हर दिन एक जैसा नहीं होता। थोड़ा समय अपने लिए निकालिए। मैं आपकी बात सुनने के लिए तैयार हूँ।"
+            "कोई बात नहीं, हर दिन एक जैसा नहीं होता। थोड़ा समय अपने लिए निकालिए और रिलैक्स कीजिए।"
           ];
           return this.pickDiverse(badHi, 'feel_bad_hi');
         }
         if (isHinglish) {
           const badHing = [
             "Arre, sunkar thoda bura laga. Thoda rest kijiye aur relax ho jaiye. Main hamesha aapke saath hoon, agar kuch share karna ho toh zaroor bataiye.",
-            "Take it easy! Kabhi kabhi din thoda tiring ho jata hai. Thoda paani pijiye aur relax karein."
+            "Take it easy! Kabhi kabhi din thoda tiring ho jata hai. Thoda relax kijiye, sab theek ho jayega."
           ];
           return this.pickDiverse(badHing, 'feel_bad_hing');
         }
         const badEn = [
-          "I hear you, sounds like it's been a demanding day. Take a moment to unwind and take it easy. If there's anything on your mind or anything I can do to help lighten the load, I'm right here.",
+          "I hear you, sounds like it's been a demanding day. Take a moment to unwind and take it easy. If there's anything on your mind, I'm right here.",
           "Rough days happen, but you've got this! Take a deep breath and give yourself some well-deserved rest."
         ];
         return this.pickDiverse(badEn, 'feel_bad_en');
@@ -202,37 +233,6 @@ export const voiceAiEngine = {
         "That's awesome! It's always great to hear someone having a productive and joyful day. What are you working on next?"
       ];
       return this.pickDiverse(positiveEn, 'feel_good_en');
-    }
-
-    // 4. How are you / Status Small Talk
-    if (/\b(how is your day|how was your day|how is your day today|how's your day|hows your day|how are you today|how are you doing today|how are you doing|how are things|how is everything|how do you feel|kaise ho|kya haal hai|kya chal raha hai)\b/i.test(p)) {
-      if (isHindi) {
-        const hindiDayReplies = [
-          "मेरा दिन बहुत ही शानदार और ऊर्जावान बीत रहा है, पूछने के लिए धन्यवाद! मैं कोडिंग, गणित और नए विचारों पर काम कर रहा हूँ। आपका दिन कैसा चल रहा है?",
-          "नमस्ते! सब कुछ बहुत अच्छा और सुचारू रूप से चल रहा है। आपकी आवाज़ सुनकर बहुत खुशी हुई। बताइए, आज आप क्या नया करने वाले हैं?",
-          "मेरा दिन बहुत बेहतरीन चल रहा है! मैं पूरी तरह तैयार हूँ। आप बताइए, आज आपका दिन कैसा रहा?",
-          "सब कुछ बहुत बढ़िया है! मैं नए-नए सवालों के जवाब और क्रिएटिव आइडियाज पर काम कर रहा हूँ। आप क्या कर रहे हैं?"
-        ];
-        return this.pickDiverse(hindiDayReplies, 'day_hi');
-      }
-
-      if (isHinglish) {
-        const hinglishDayReplies = [
-          "Main bilkul mast aur super energetic hoon, poochne ke liye shukriya! Aap bataiye, aapka din kaisa chal raha hai?",
-          "Sab kuch ekdum first-class chal raha hai! Aapki aawaz sunkar aur accha laga. Aaj hum kis topic par baat karne wale hain?",
-          "Everything is going great! Main poori tarah ready hoon aapki help karne ke liye. Kya chal raha hai aajkal?",
-          "Mera din bohot hi productive aur creative ja raha hai! Aap bataiye, aaj kya naya create karne wale hain?"
-        ];
-        return this.pickDiverse(hinglishDayReplies, 'day_hing');
-      }
-
-      const enDayReplies = [
-        "My day is going fantastic, thank you so much for asking! I've been helping creators, solving interesting problems, and exploring new ideas. How has your day been going?",
-        "Hey there! Everything is running smoothly and I'm feeling great. It's always wonderful connecting with you. What are you up to today?",
-        "I'm having a super productive and wonderful day! Thanks for asking. What exciting things are on your mind right now?",
-        "Everything is running at peak energy today! How is everything unfolding on your end?"
-      ];
-      return this.pickDiverse(enDayReplies, 'day_en');
     }
 
     // 5. Academic Global School & Real-World Facts
@@ -312,8 +312,8 @@ export const voiceAiEngine = {
     if (/\b(capital of usa|capital of america|capital of united states)\b/i.test(p)) return "The capital of the United States is Washington, D.C.";
     if (/\b(capital of japan)\b/i.test(p)) return "The capital of Japan is Tokyo.";
 
-    // 8. Natural Greetings
-    if (/^(hi|hello|hey|namaste|greetings|good morning|good evening|good afternoon|kaise ho|what's up|whats up|how are you|how do you do|pranam)$/i.test(p)) {
+    // 8. General Greetings (Hi, Hello, Hey, Namaste)
+    if (/\b(hi|hello|hey|namaste|greetings|good morning|good evening|good afternoon|pranam|heya)\b/i.test(p)) {
       const now = new Date();
       const hour = now.getHours();
       const timeGreeting = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
@@ -394,10 +394,8 @@ export const voiceAiEngine = {
     // 12. Context-Aware Multi-Turn Follow-Ups (e.g. "so tell me the answer", "tell me the answer", "batao answer")
     const isMetaFollowUp = /^(so\s+)?(tell me the answer|what is the answer|give me the answer|answer this|answer it|tell me|explain it|batao answer|answer kya hai|kya answer hai|solution batao|batao na|what is it|who is it)$/i.test(p);
     if (isMetaFollowUp) {
-      // Find the last real question from previous user turns
       const previousUserTurn = [...chatTurns].reverse().find(t => t.role === 'user' && t.text && t.text.trim().toLowerCase() !== p);
       if (previousUserTurn) {
-        // Recursively evaluate the actual prior question with context
         return this.generateDynamicVoiceFallback(previousUserTurn.text, lang, chatTurns.slice(0, -1));
       }
       if (isHindi) return "मैं पूरी तरह तैयार हूँ! आप किस सवाल या विषय का उत्तर जानना चाहते हैं? कृपया अपना सवाल पूछिए।";
@@ -405,36 +403,31 @@ export const voiceAiEngine = {
       return "I'm ready! What specific question or problem would you like me to answer for you?";
     }
 
-    // 13. Direct Knowledge & Explanation Generator (Accurate, Crisp, Human)
-    const cleanQ = prompt
-      .replace(/^(so|please|can you|could you|tell me|explain to me|what is|who is|how does|why is)\s+/i, '')
-      .replace(/[?!.]/g, '')
-      .trim();
-
+    // 13. Natural Human Conversation & Question Resolution (No template prefixes)
     if (isHindi) {
-      const naturalHindi = [
-        `हाँ बिल्कुल! ${cleanQ} के बारे में संक्षेप में कहें तो यह एक महत्वपूर्ण अवधारणा है जो स्पष्ट सिद्धांतों और व्यावहारिक उपयोग पर आधारित है।`,
-        `${cleanQ} का मुख्य सार यह है कि यह किसी भी समस्या को व्यवस्थित रूप से समझने और हल करने में मदद करता है।`,
-        `यह एक अच्छा सवाल है। ${cleanQ} को आसानी से समझा जा सकता है जब हम इसके मूल कारणों और व्यावहारिक प्रभावों को देखते हैं।`
+      const conversationalHindi = [
+        "हाँ बिल्कुल! मैं इस विषय में आपकी पूरी मदद कर सकता हूँ। बताइए आप इसके बारे में विशेष रूप से क्या जानना चाहते हैं?",
+        "यह बहुत ही महत्वपूर्ण और व्यावहारिक विषय है। मैं इसे आपके लिए आसान शब्दों में समझा सकता हूँ।",
+        "ज़रूर! मैं आपकी बात समझ गया। आइए इसे स्पष्ट और सरल तरीके से समझते हैं।"
       ];
-      return this.pickDiverse(naturalHindi, 'context_hi');
+      return this.pickDiverse(conversationalHindi, 'conv_hi');
     }
 
     if (isHinglish) {
-      const naturalHinglish = [
-        `Haan bilkul! ${cleanQ} ke baare mein simple shabdon mein kahein toh yeh ek bohot useful concept hai jo logic aur practical application par based hai.`,
-        `${cleanQ} ka main point yeh hai ki isse aap kisi bhi problem ko smartly aur accurately handle kar sakte hain.`,
-        `Bohot accha question! ${cleanQ} ko samajhna kaafi aasan hai jab aap iske basic principles ko step-by-step follow karte hain.`
+      const conversationalHinglish = [
+        "Arre bilkul! Main is topic par aapki poori help kar sakta hoon. Aap specific kya janna chahte hain?",
+        "Haan main samajh gaya. Yeh concept kaafi practical hai, chaliye isko step by step dekhte hain.",
+        "Zaroor! Main ready hoon aapko easily explain karne ke liye. Kahan se start karein?"
       ];
-      return this.pickDiverse(naturalHinglish, 'context_hing');
+      return this.pickDiverse(conversationalHinglish, 'conv_hing');
     }
 
-    const naturalEn = [
-      `When it comes to ${cleanQ}, the fundamental principle is built on clear logic, adaptability, and real-world efficiency.`,
-      `The key takeaway regarding ${cleanQ} is how it connects foundational principles with practical, actionable insights.`,
-      `To break down ${cleanQ} simply: it relies on structured reasoning and targeted application to achieve consistent results.`
+    const conversationalEn = [
+      "I'd be glad to help with that! What specific part would you like to dive into first?",
+      "That's an interesting question. Let's break it down simply and clearly together.",
+      "I understand completely. What particular aspect or question would you like to explore?"
     ];
-    return this.pickDiverse(naturalEn, 'context_en');
+    return this.pickDiverse(conversationalEn, 'conv_en');
   },
 
   /**
