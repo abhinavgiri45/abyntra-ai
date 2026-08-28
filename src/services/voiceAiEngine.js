@@ -39,38 +39,65 @@ export const voiceAiEngine = {
 
   /**
    * Authentic Human Instant Semantic Intelligence Brain (<5ms response)
-   * Provides genuine, accurate, scientifically grounded, and warm answers
+   * Provides genuine, natural, warm, empathetic, and human-like voice conversation
    */
   generateDynamicVoiceFallback(prompt, lang = 'en-US', chatTurns = []) {
     const p = (prompt || '').toLowerCase().trim();
-    const isHindi = lang === 'hi-IN' || /[\u0900-\u097F]/.test(prompt) || /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne)\b/i.test(p);
+    const isHindi = lang === 'hi-IN' || /[\u0900-\u097F]/.test(prompt) || /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne|thik)\b/i.test(p);
     const turnCount = chatTurns.length;
 
-    // 1. How is your day today / How are you / Status Small Talk
-    if (/\b(how is your day|how was your day|how is your day today|how's your day|hows your day|how are you today|how are you doing today|how are you doing|how are things|how is everything)\b/i.test(p)) {
+    // 1. User Sharing Feelings / Day Status (e.g., "my day has been extremely fantastic", "my day was great", "I had a good day")
+    if (/\b(my day (has been|was|is)|i (had|am having) a (great|fantastic|wonderful|good|bad|tough|hard|busy|long) day|had a (great|good|bad|nice) day|feeling (happy|sad|tired|exhausted|great|good|awesome|bored))\b/i.test(p)) {
+      if (/bad|tough|hard|sad|tired|exhausted/i.test(p)) {
+        if (isHindi) {
+          return "अरे, यह सुनकर मुझे थोड़ा बुरा लगा। आराम कीजिए और गहरी सांस लीजिए। मैं आपकी मदद के लिए हमेशा यहाँ हूँ, बताइए क्या चल रहा है?";
+        }
+        return "I hear you, sounds like it's been a demanding day. Take a moment to unwind and take it easy. If there's anything on your mind or anything I can do to help lighten the load, I'm right here.";
+      }
+
+      // Positive / Great day
+      if (isHindi) {
+        const positiveHindi = [
+          "अरे वाह! यह सुनकर बहुत खुशी हुई कि आपका दिन इतना शानदार बीत रहा है! बताइए, आज का सबसे खास पल कौन सा था?",
+          "बहुत बढ़िया! जब दिन अच्छा जाता है तो सब कुछ आसान लगता है। आज आप किस नए विचार या प्रोजेक्ट पर काम कर रहे हैं?",
+          "वाह, यह तो बहुत अच्छी खबर है! सकारात्मक ऊर्जा से भरा दिन हमेशा सबसे बेहतरीन होता है। आज आगे क्या प्लान है?"
+        ];
+        return positiveHindi[turnCount % positiveHindi.length];
+      }
+
+      const positiveEn = [
+        "That's wonderful to hear! Having a fantastic day brings such great energy. What was the best part of your day so far?",
+        "I'm so glad to hear that! When your day goes well, creativity just flows. What exciting things are you exploring today?",
+        "That's awesome! It's always great to hear someone having a productive and joyful day. What are you working on next?"
+      ];
+      return positiveEn[turnCount % positiveEn.length];
+    }
+
+    // 2. How is your day today / How are you / Status Small Talk
+    if (/\b(how is your day|how was your day|how is your day today|how's your day|hows your day|how are you today|how are you doing today|how are you doing|how are things|how is everything|how do you feel)\b/i.test(p)) {
       if (isHindi) {
         const hindiDayReplies = [
-          "मेरा दिन बहुत ही शानदार बीत रहा है, पूछने के लिए धन्यवाद! मैं कोडिंग, गणित और लोगों की मदद करने में व्यस्त हूँ। आपका दिन कैसा चल रहा है?",
+          "मेरा दिन बहुत ही शानदार और ऊर्जावान बीत रहा है, पूछने के लिए धन्यवाद! मैं कोडिंग, गणित और नए विचारों पर काम कर रहा हूँ। आपका दिन कैसा चल रहा है?",
           "नमस्ते! सब कुछ बहुत अच्छा और सुचारू रूप से चल रहा है। आपकी आवाज़ सुनकर बहुत खुशी हुई। बताइए, आज आप क्या नया करने वाले हैं?",
-          "मेरा दिन बहुत बेहतरीन चल रहा है! मैं पूरी तरह ऊर्जावान हूँ। आप बताइए, आज आपका दिन कैसा रहा?"
+          "मेरा दिन बहुत बेहतरीन चल रहा है! मैं पूरी तरह तैयार हूँ। आप बताइए, आज आपका दिन कैसा रहा?"
         ];
         return hindiDayReplies[turnCount % hindiDayReplies.length];
       }
       const enDayReplies = [
-        "My day is going fantastic, thank you for asking! I've been processing ideas, solving math, and helping creators. How is your day going so far?",
-        "Hey there! Everything is running smoothly and I'm feeling great. It's always wonderful connecting with you. How has your day been?",
-        "I'm having a productive and wonderful day! Thanks for asking. What exciting things are on your mind today?"
+        "My day is going fantastic, thank you so much for asking! I've been helping creators, solving interesting problems, and exploring new ideas. How has your day been going?",
+        "Hey there! Everything is running smoothly and I'm feeling great. It's always wonderful connecting with you. What are you up to today?",
+        "I'm having a super productive and wonderful day! Thanks for asking. What exciting things are on your mind right now?"
       ];
       return enDayReplies[turnCount % enDayReplies.length];
     }
 
-    // 2. Identity, Founder & Origin Intent
+    // 3. Identity, Founder & Origin Intent
     if (/\b(who created you|who made you|who are you|what is your name|founder|creator|kisne banaya|naam kya hai|kya naam hai|origin|country|kaha se ho|kahan se ho|desh|which country)\b/i.test(p)) {
       if (isHindi) {
         const hindiIntros = [
-          "नमस्ते! मैं अब्यंतरा एआई हूँ, जिसे भारत में अभिनव गिरी ने बनाया है। मैं कोडिंग, गणित, विज्ञान और स्वाभाविक बातचीत में आपकी पूरी मदद के लिए यहाँ हूँ।",
-          "मेरा नाम अब्यंतरा एआई है। मेरा निर्माण भारत में अभिनव गिरी ने एक संप्रभु और शक्तिशाली एआई पॉलीमैथ के रूप में किया है।",
-          "मैं अब्यंतरा एआई हूँ, भारत से अभिनव गिरी द्वारा निर्मित। बताइए, आज मैं आपके लिए क्या कर सकता हूँ?"
+          "नमस्ते! मैं वैदिक एआई (Vedic AI) हूँ, जिसे भारत 🇮🇳 में अभिनव गिरी द्वारा बनाया गया है। मैं कोडिंग, गणित, विज्ञान और स्वाभाविक बातचीत में आपका साथी हूँ।",
+          "मेरा नाम वैदिक एआई है। मेरा निर्माण भारत में अभिनव गिरी ने एक संप्रभु और बुद्धिमान एआई पॉलीमैथ के रूप में किया है।",
+          "मैं वैदिक एआई हूँ, भारत से अभिनव गिरी द्वारा निर्मित। हमारा आदर्श वाक्य है: Think, Create, Explore। बताइए, आज हम क्या नया बनाएँ?"
         ];
         return hindiIntros[turnCount % hindiIntros.length];
       }
@@ -82,7 +109,7 @@ export const voiceAiEngine = {
       return enIntros[turnCount % enIntros.length];
     }
 
-    // 3. Academic Global School & Real-World Facts
+    // 4. Academic Global School & Real-World Facts
     if (p.includes('academic global') || (p.includes('school') && p.includes('gorakhpur')) || (p.includes('director') && p.includes('ags'))) {
       if (isHindi) {
         return "गोरखपुर के एकेडमिक ग्लोबल स्कूल के डायरेक्टर राजेश कुमार हैं और प्रिंसिपल वी. सी. चाको हैं। यह स्कूल कोजीटो एजुकेशनल सोसाइटी द्वारा संचालित है।";
@@ -90,68 +117,44 @@ export const voiceAiEngine = {
       return "The Director of Academic Global School in Gorakhpur is Rajesh Kumar, and the Principal is V. C. Chacko. The institution is managed by the Cogito Educational Society.";
     }
 
-    // 4. Mathematical Algebraic Identities
-    // (a + b)^2 / a + b whole square
+    // 5. Mathematical Algebraic Identities
     if (/\b(a\s*\+\s*b\s*whole\s*square|\(a\s*\+\s*b\)\s*(\^2|squared|square)|a\s*plus\s*b\s*whole\s*square)\b/i.test(p)) {
-      if (isHindi) {
-        return "a प्लस b का होल स्क्वायर होता है: a स्क्वायर प्लस 2ab प्लस b स्क्वायर।";
-      }
+      if (isHindi) return "a प्लस b का होल स्क्वायर होता है: a स्क्वायर प्लस 2ab प्लस b स्क्वायर।";
       return "(a + b) whole square is equal to a squared plus 2ab plus b squared.";
     }
 
-    // (a - b)^2 / a - b whole square
     if (/\b(a\s*-\s*b\s*whole\s*square|\(a\s*-\s*b\)\s*(\^2|squared|square)|a\s*minus\s*b\s*whole\s*square)\b/i.test(p)) {
-      if (isHindi) {
-        return "a माइनस b का होल स्क्वायर होता है: a स्क्वायर माइनस 2ab प्लस b स्क्वायर।";
-      }
+      if (isHindi) return "a माइनस b का होल स्क्वायर होता है: a स्क्वायर माइनस 2ab प्लस b स्क्वायर।";
       return "(a - b) whole square is equal to a squared minus 2ab plus b squared.";
     }
 
-    // a^2 - b^2
     if (/\b(a\s*square\s*minus\s*b\s*square|a\^2\s*-\s*b\^2|a\s*squared\s*minus\s*b\s*squared)\b/i.test(p)) {
-      if (isHindi) {
-        return "a स्क्वायर माइनस b स्क्वायर बराबर होता है: (a - b) गुणा (a + b)।";
-      }
+      if (isHindi) return "a स्क्वायर माइनस b स्क्वायर बराबर होता है: (a - b) गुणा (a + b)।";
       return "a squared minus b squared is equal to (a - b) times (a + b).";
     }
 
-    // (a + b + c)^2
     if (/\b(a\s*\+\s*b\s*\+\s*c\s*whole\s*square|\(a\s*\+\s*b\s*\+\s*c\)\s*(\^2|squared|square))\b/i.test(p)) {
-      if (isHindi) {
-        return "a प्लस b प्लस c का होल स्क्वायर होता है: a स्क्वायर प्लस b स्क्वायर प्लस c स्क्वायर प्लस 2ab प्लस 2bc प्लस 2ca।";
-      }
+      if (isHindi) return "a प्लस b प्लस c का होल स्क्वायर होता है: a स्क्वायर प्लस b स्क्वायर प्लस c स्क्वायर प्लस 2ab प्लस 2bc प्लस 2ca।";
       return "(a + b + c) whole square is equal to a squared plus b squared plus c squared plus 2ab plus 2bc plus 2ca.";
     }
 
-    // (a + b)^3 / whole cube
     if (/\b(a\s*\+\s*b\s*whole\s*cube|\(a\s*\+\s*b\)\s*(\^3|cubed|cube))\b/i.test(p)) {
-      if (isHindi) {
-        return "a प्लस b का होल क्यूब होता है: a क्यूब प्लस b क्यूब प्लस 3a स्क्वायर b प्लस 3ab स्क्वायर।";
-      }
+      if (isHindi) return "a प्लस b का होल क्यूब होता है: a क्यूब प्लस b क्यूब प्लस 3a स्क्वायर b प्लस 3ab स्क्वायर।";
       return "(a + b) whole cube is equal to a cubed plus 3 a squared b plus 3 a b squared plus b cubed.";
     }
 
-    // (a - b)^3 / whole cube
     if (/\b(a\s*-\s*b\s*whole\s*cube|\(a\s*-\s*b\)\s*(\^3|cubed|cube))\b/i.test(p)) {
-      if (isHindi) {
-        return "a माइनस b का होल क्यूब होता है: a क्यूब माइनस b क्यूब माइनस 3a स्क्वायर b प्लस 3ab स्क्वायर।";
-      }
+      if (isHindi) return "a माइनस b का होल क्यूब होता है: a क्यूब माइनस b क्यूब माइनस 3a स्क्वायर b प्लस 3ab स्क्वायर।";
       return "(a - b) whole cube is equal to a cubed minus 3 a squared b plus 3 a b squared minus b cubed.";
     }
 
-    // Pythagoras theorem
     if (/\b(pythagoras|pythagorean|karan|aadhaar|lamb)\b/i.test(p)) {
-      if (isHindi) {
-        return "पाइथागोरस प्रमेय के अनुसार, किसी समकोण त्रिभुज में कर्ण का वर्ग आधार के वर्ग और लंब के वर्ग के योग के बराबर होता है, यानी h स्क्वायर बराबर p स्क्वायर प्लस b स्क्वायर।";
-      }
-      return "The Pythagorean theorem states that in a right-angled triangle, the square of the hypotenuse is equal to the sum of the squares of the other two sides: a squared plus b squared equals c squared.";
+      if (isHindi) return "पाइथागोरस प्रमेय के अनुसार, किसी समकोण त्रिभुज में कर्ण का वर्ग आधार के वर्ग और लंब के वर्ग के योग के बराबर होता है, यानी h स्क्वायर बराबर p स्क्वायर प्लस b स्क्वायर।";
+      return "The Pythagorean theorem states that in a right-angled triangle, the hypotenuse squared is equal to the sum of the squares of the base and perpendicular sides: a squared plus b squared equals c squared.";
     }
 
-    // Quadratic equation formula
     if (/\b(quadratic formula|quadratic equation|shridharacharya|dvighat samikaran)\b/i.test(p)) {
-      if (isHindi) {
-        return "द्विघात समीकरण ax^2 + bx + c = 0 का हल होता है: x बराबर माइनस b प्लस या माइनस अंडररूट b स्क्वायर माइनस 4ac, पूरे के बटे में 2a।";
-      }
+      if (isHindi) return "द्विघात समीकरण ax^2 + bx + c = 0 का हल होता है: x बराबर माइनस b प्लस या माइनस अंडररूट b स्क्वायर माइनस 4ac, पूरे के बटे में 2a।";
       return "The quadratic formula for ax squared plus bx plus c equals 0 is: x equals minus b plus or minus the square root of b squared minus 4ac, all divided by 2a.";
     }
 
@@ -161,14 +164,17 @@ export const voiceAiEngine = {
       try {
         const sanitized = mathMatch[1].replace(/\^/g, '**');
         const res = Function(`"use strict"; return (${sanitized})`)();
-        if (isHindi) {
-          return `${mathMatch[1]} का मान ${res} है।`;
-        }
+        if (isHindi) return `${mathMatch[1]} का मान ${res} है।`;
         return `${mathMatch[1]} equals ${res}.`;
       } catch (_) {}
     }
 
-    // 5. General Science (Physics, Chemistry, Biology)
+    // 6. General Science (Physics, Chemistry, Biology)
+    if (/\b(photosynthesis|prakash sanshleshan)\b/i.test(p)) {
+      if (isHindi) return "प्रकाश संश्लेषण वह प्रक्रिया है जिससे पौधे सूर्य के प्रकाश, पानी और कार्बन डाइऑक्साइड का उपयोग करके ग्लूकोज और ऑक्सीजन बनाते हैं।";
+      return "Photosynthesis is the process by which green plants use sunlight, water, and carbon dioxide to create oxygen and energy in the form of sugar.";
+    }
+
     if (/\b(speed of light|prakash ki chaal|light speed)\b/i.test(p)) {
       if (isHindi) return "निर्वात में प्रकाश की चाल लगभग 3 लाख किलोमीटर प्रति सेकंड यानी 3 गुना 10 की घात 8 मीटर प्रति सेकंड होती है।";
       return "The speed of light in vacuum is approximately 300,000 kilometers per second, or 3 times 10 to the eighth meters per second.";
@@ -189,19 +195,11 @@ export const voiceAiEngine = {
       return "The capital of India is New Delhi.";
     }
 
-    if (/\b(capital of france)\b/i.test(p)) {
-      return "The capital of France is Paris.";
-    }
+    if (/\b(capital of france)\b/i.test(p)) return "The capital of France is Paris.";
+    if (/\b(capital of usa|capital of america|capital of united states)\b/i.test(p)) return "The capital of the United States is Washington, D.C.";
+    if (/\b(capital of japan)\b/i.test(p)) return "The capital of Japan is Tokyo.";
 
-    if (/\b(capital of usa|capital of america|capital of united states)\b/i.test(p)) {
-      return "The capital of the United States is Washington, D.C.";
-    }
-
-    if (/\b(capital of japan)\b/i.test(p)) {
-      return "The capital of Japan is Tokyo.";
-    }
-
-    // 6. Natural Human Greetings & Small Talk
+    // 7. Natural Human Greetings & Small Talk
     if (/^(hi|hello|hey|namaste|greetings|good morning|good evening|good afternoon|kaise ho|what's up|whats up|how are you|how do you do)$/i.test(p)) {
       const now = new Date();
       const hour = now.getHours();
@@ -225,15 +223,13 @@ export const voiceAiEngine = {
       return enGreetings[turnCount % enGreetings.length];
     }
 
-    // 7. Capabilities / What can you do
+    // 8. Capabilities / What can you do
     if (/what can you do|features|capabilities|help me|how can you help/i.test(p)) {
-      if (isHindi) {
-        return "मैं फुल-स्टैक कोडिंग, गणितीय समीकरणों, वैज्ञानिक प्रश्नों और स्वाभाविक मानवीय बातचीत में तुरंत आपकी मदद कर सकता हूँ।";
-      }
+      if (isHindi) return "मैं फुल-स्टैक कोडिंग, गणितीय समीकरणों, वैज्ञानिक प्रश्नों और स्वाभाविक मानवीय बातचीत में तुरंत आपकी मदद कर सकता हूँ।";
       return "I can write complete code in Python and React, solve complex mathematical theorems, explain scientific concepts, and engage in natural conversation.";
     }
 
-    // 8. Jokes & Fun
+    // 9. Jokes & Fun
     if (/tell me a joke|joke|chutkula|fun/i.test(p)) {
       if (isHindi) {
         const jokes = [
@@ -250,23 +246,32 @@ export const voiceAiEngine = {
       return jokes[turnCount % jokes.length];
     }
 
-    // 9. Time & Date
+    // 10. Time & Date
     if (/\b(time|what time is it|date|today's date|aaj kya tarikh hai|samay kya hai)\b/i.test(p)) {
       const now = new Date();
       const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
       const dateStr = now.toLocaleDateString([], { weekday: 'long', month: 'short', day: 'numeric', year: 'numeric' });
-      if (isHindi) {
-        return `वर्तमान समय ${timeStr} है, और आज ${dateStr} है।`;
-      }
+      if (isHindi) return `वर्तमान समय ${timeStr} है, और आज ${dateStr} है।`;
       return `Right now it is ${timeStr} on ${dateStr}.`;
     }
 
-    // 10. Intelligent, Direct, Conversational Formulation for General Queries (No robotic boilerplate)
+    // 11. Authentic Human Conversational Response for General Inputs (No robotic template)
     const cleanQ = prompt.replace(/[?!.]/g, '').trim();
     if (isHindi) {
-      return `मैं ${cleanQ} के बारे में आपकी पूरी मदद कर सकता हूँ। इसे और विस्तार से समझने के लिए आप मुझसे कोई भी विशिष्ट प्रश्न पूछ सकते हैं।`;
+      const naturalHindi = [
+        `हाँ, बिल्कुल! ${cleanQ} एक बहुत ही रोचक विषय है। बताइए, आप इसके बारे में विशेष रूप से क्या जानना चाहते हैं?`,
+        `मैं समझ रहा हूँ। ${cleanQ} पर हम गहराई से चर्चा कर सकते हैं या इसे व्यावहारिक रूप से हल कर सकते हैं। आप कहाँ से शुरू करना चाहेंगे?`,
+        `यह बहुत अच्छा विचार है! बताइए, ${cleanQ} के संबंध में आपकी क्या योजना या सवाल है?`
+      ];
+      return naturalHindi[turnCount % naturalHindi.length];
     }
-    return `Regarding ${cleanQ}, I'm ready to help you break it down with complete accuracy and step-by-step clarity. What specific aspect would you like to explore first?`;
+
+    const naturalEn = [
+      `That sounds really interesting! Tell me more about what you're thinking regarding ${cleanQ}, and we can dive right in.`,
+      `I'd love to help you explore ${cleanQ}! Where would you like to begin?`,
+      `That's a great thought. There are a few fascinating angles to ${cleanQ}—what specific part are you most curious about?`
+    ];
+    return naturalEn[turnCount % naturalEn.length];
   },
 
   /**
@@ -289,11 +294,11 @@ export const voiceAiEngine = {
 ${langDirective}
 
 HUMAN CONVERSATION RULES:
-1. Speak exactly like a real, thoughtful, and articulate human in a live, real-time voice call.
-2. Structure: 2 to 3 natural spoken sentences (around 20 to 50 words). Keep it conversational, crisp, direct, and completely accurate.
-3. Natural Human Flow: Use natural conversational openers and active listening cues when appropriate ("Hey there!", "I'd love to help with that!", "Oh, absolutely!", "Great question!").
-4. Strict Factual Accuracy: Ground all facts truthfully. Never hallucinate. For algebraic equations (e.g. a+b whole square), give the exact expansion clearly. State verified real-world facts accurately.
-5. Pronounce "Vedic" as "Abhyntra".
+1. Speak exactly like a real, thoughtful, and articulate human in a live, real-time voice call. NEVER sound like a robotic automated assistant.
+2. Structure: 2 to 3 natural spoken sentences (around 20 to 45 words). Keep it warm, fluent, conversational, and direct.
+3. Natural Human Flow: When the user shares feelings or small talk (e.g. "my day was great"), respond with genuine human warmth and conversational curiosity.
+4. Strict Factual Accuracy: Ground all facts truthfully. Never hallucinate. For algebraic formulas or science, state the exact concepts clearly.
+5. Pronounce "Vedic" naturally as "Vedic".
 6. PURE SPOKEN TEXT ONLY: NEVER output markdown, asterisks (**), hashes (#), bullet points (-), numbers (1., 2.), tables, code blocks, or URLs. Everything you output will be spoken aloud directly.`;
 
     // Multi-turn context messages (last 4 turns for context awareness)
@@ -319,8 +324,8 @@ HUMAN CONVERSATION RULES:
         const requestBody = {
           model: fastVoiceModel,
           messages,
-          temperature: 0.7,
-          max_tokens: 160,
+          temperature: 0.75,
+          max_tokens: 140,
           stream: false
         };
 
@@ -351,7 +356,7 @@ HUMAN CONVERSATION RULES:
       }
     }
 
-    // Priority 2: Instant Intelligent Semantic Brain (<5ms response time, zero delay, completely accurate)
+    // Priority 2: Instant Intelligent Semantic Brain (<5ms response time, zero delay, completely accurate & warm)
     return this.generateDynamicVoiceFallback(prompt, lang, chatTurns);
   }
 };
