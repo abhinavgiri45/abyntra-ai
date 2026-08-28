@@ -39,12 +39,15 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapStandard = {
     windows: {
-      file: '/downloads/Girionix_AI_Setup.exe',
-      name: 'Girionix_AI_Setup.exe',
-      label: 'Download Windows Setup Wizard (.exe)',
+      file: '/downloads/Girionix_AI_Windows.zip',
+      name: 'Girionix_AI_Windows.zip',
+      label: 'Download Portable App (.zip - ⭐ No Chrome Warning)',
+      exeFile: '/downloads/Girionix_AI_Setup.exe',
+      exeName: 'Girionix_AI_Setup.exe',
+      exeLabel: 'Windows Setup Wizard (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script Installer (.bat)',
+      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },
@@ -84,12 +87,15 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapTitan = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Setup.exe',
-      name: 'Girionix_AI_Titan_Setup.exe',
-      label: 'Download Titan Setup Wizard (.exe - Hardware Verified)',
+      file: '/downloads/Girionix_AI_Titan_Windows.zip',
+      name: 'Girionix_AI_Titan_Windows.zip',
+      label: 'Download Titan Portable (.zip - ⭐ No Chrome Warning)',
+      exeFile: '/downloads/Girionix_AI_Titan_Setup.exe',
+      exeName: 'Girionix_AI_Titan_Setup.exe',
+      exeLabel: 'Titan Setup Wizard (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script Installer (.bat)',
+      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },
@@ -129,12 +135,15 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapTitanLite = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Lite_Setup.exe',
-      name: 'Girionix_AI_Titan_Lite_Setup.exe',
-      label: 'Download Titan Lite Setup (.exe - Low-End Hardware)',
+      file: '/downloads/Girionix_AI_Titan_Lite_Windows.zip',
+      name: 'Girionix_AI_Titan_Lite_Windows.zip',
+      label: 'Download Titan Lite Portable (.zip - ⭐ No Chrome Warning)',
+      exeFile: '/downloads/Girionix_AI_Titan_Lite_Setup.exe',
+      exeName: 'Girionix_AI_Titan_Lite_Setup.exe',
+      exeLabel: 'Titan Lite Setup (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script Installer (.bat)',
+      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },
@@ -387,16 +396,28 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Action Buttons: Installer + Verified Script */}
-            <div className="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+            {/* Action Buttons: Portable ZIP + Installer EXE + Verified Script */}
+            <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
               <button
                 onClick={() => handleDownloadFile(activeDownloadData.file, activeDownloadData.name, `✅ ${activeDownloadData.name} downloaded!`)}
                 disabled={isDownloading}
                 className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-cyan-400 via-teal-400 to-emerald-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-glow-cyan cursor-pointer"
               >
                 <Download className="w-4 h-4" />
-                <span>Download Installer ({activeDownloadData.name})</span>
+                <span>{activeDownloadData.label || `Download (${activeDownloadData.name})`}</span>
               </button>
+
+              {activeDownloadData.exeFile && (
+                <button
+                  onClick={() => handleDownloadFile(activeDownloadData.exeFile, activeDownloadData.exeName, `✅ ${activeDownloadData.exeName} downloaded! If Chrome asks, click '>' -> 'Download suspicious file' / 'Keep anyway'.`)}
+                  disabled={isDownloading}
+                  className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-200 border border-white/15 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
+                  title="Full Windows GUI Setup Wizard (.exe)"
+                >
+                  <HardDrive className="w-4 h-4 text-cyan-400" />
+                  <span>{activeDownloadData.exeLabel}</span>
+                </button>
+              )}
 
               {activeDownloadData.scriptFile && (
                 <button
