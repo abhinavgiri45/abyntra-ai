@@ -80,6 +80,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
+using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -92,43 +93,137 @@ using System.Windows.Forms;
 [assembly: AssemblyProduct("Girionix AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri. All Rights Reserved.")]
 [assembly: AssemblyTrademark("Girionix AI™")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyFileVersion("2.0.0.0")]
 [assembly: ComVisible(false)]
 [assembly: Guid("a819b138-89c0-4cf8-922e-e478546b5a37")]
 
 namespace GirionixAI
 {
-    public class MainForm : Form
+    public class AppRunner : ApplicationContext
     {
         private HttpListener listener;
         private Thread serverThread;
         private string appDir;
-        private int port = 3000;
+        private int port = 3456;
+        private Process browserProcess;
+        private NotifyIcon trayIcon;
 
-        public MainForm()
+        public AppRunner()
         {
-            this.Text = "Girionix AI — Sovereign Polymath Workspace";
-            this.Size = new Size(1366, 850);
-            this.StartPosition = FormStartPosition.CenterScreen;
-            this.BackColor = Color.FromArgb(7, 8, 14);
-
-            string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
-            if (File.Exists(icoPath))
-            {
-                try { this.Icon = new Icon(icoPath); } catch { }
-            }
-
             appDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
             if (!Directory.Exists(appDir)) appDir = AppDomain.CurrentDomain.BaseDirectory;
 
+            port = FindAvailablePort(3456);
             StartLocalServer();
+            SetupTrayIcon();
+            LaunchChromiumApp();
+        }
 
-            WebBrowser browser = new WebBrowser();
-            browser.Dock = DockStyle.Fill;
-            browser.ScriptErrorsSuppressed = true;
-            browser.Navigate("http://127.0.0.1:" + port + "/");
-            this.Controls.Add(browser);
+        private int FindAvailablePort(int startingPort)
+        {
+            for (int p = startingPort; p < startingPort + 100; p++)
+            {
+                try
+                {
+                    TcpListener tcp = new TcpListener(IPAddress.Loopback, p);
+                    tcp.Start();
+                    tcp.Stop();
+                    return p;
+                }
+                catch { }
+            }
+            return startingPort;
+        }
+
+        private void SetupTrayIcon()
+        {
+            trayIcon = new NotifyIcon();
+            trayIcon.Text = "Girionix AI — Sovereign Polymath Workspace";
+            
+            string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+            if (File.Exists(icoPath))
+            {
+                try { trayIcon.Icon = new Icon(icoPath); } catch { }
+            }
+            else
+            {
+                try { trayIcon.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
+            }
+
+            ContextMenu contextMenu = new ContextMenu();
+            contextMenu.MenuItems.Add("Open Girionix AI", (s, e) => LaunchChromiumApp());
+            contextMenu.MenuItems.Add("-");
+            contextMenu.MenuItems.Add("Exit", (s, e) => ExitApplication());
+            trayIcon.ContextMenu = contextMenu;
+            trayIcon.Visible = true;
+            trayIcon.DoubleClick += (s, e) => LaunchChromiumApp();
+        }
+
+        private static string FindBrowserExecutable()
+        {
+            string[] possiblePaths = new string[]
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft\\Edge\\Application\\msedge.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\\Edge\\Application\\msedge.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\\Edge\\Application\\msedge.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Google\\Chrome\\Application\\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Google\\Chrome\\Application\\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\\Chrome\\Application\\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"BraveSoftware\\Brave-Browser\\Application\\brave.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"BraveSoftware\\Brave-Browser\\Application\\brave.exe")
+            };
+
+            foreach (var p in possiblePaths)
+            {
+                if (File.Exists(p)) return p;
+            }
+            return null;
+        }
+
+        private void LaunchChromiumApp()
+        {
+            string url = "http://127.0.0.1:" + port + "/?app=true";
+            string browserExe = FindBrowserExecutable();
+            string profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Girionix AI", "profile");
+            if (!Directory.Exists(profileDir)) Directory.CreateDirectory(profileDir);
+
+            if (!string.IsNullOrEmpty(browserExe))
+            {
+                try
+                {
+                    if (browserProcess != null && !browserProcess.HasExited)
+                    {
+                        // Focus existing instance if alive
+                        return;
+                    }
+
+                    ProcessStartInfo psi = new ProcessStartInfo();
+                    psi.FileName = browserExe;
+                    psi.Arguments = "--app=\\"" + url + "\\" --user-data-dir=\\"" + profileDir + "\\" --window-size=1440,900 --disable-features=TranslateUI --disable-extensions";
+                    psi.UseShellExecute = false;
+                    browserProcess = Process.Start(psi);
+
+                    if (browserProcess != null)
+                    {
+                        ThreadPool.QueueUserWorkItem((_) =>
+                        {
+                            try
+                            {
+                                browserProcess.WaitForExit();
+                                // Cleanly exit when the main app window is closed
+                                ExitApplication();
+                            }
+                            catch { }
+                        });
+                    }
+                    return;
+                }
+                catch { }
+            }
+
+            // Fallback: Open in default browser
+            try { Process.Start(url); } catch { }
         }
 
         private void StartLocalServer()
@@ -153,31 +248,7 @@ namespace GirionixAI
                 serverThread.IsBackground = true;
                 serverThread.Start();
             }
-            catch
-            {
-                try
-                {
-                    port = 3030;
-                    listener = new HttpListener();
-                    listener.Prefixes.Add("http://127.0.0.1:" + port + "/");
-                    listener.Start();
-                    serverThread = new Thread(() =>
-                    {
-                        while (listener.IsListening)
-                        {
-                            try
-                            {
-                                var ctx = listener.GetContext();
-                                ThreadPool.QueueUserWorkItem((_) => ProcessRequest(ctx));
-                            }
-                            catch { }
-                        }
-                    });
-                    serverThread.IsBackground = true;
-                    serverThread.Start();
-                }
-                catch { }
-            }
+            catch { }
         }
 
         private void ProcessRequest(HttpListenerContext ctx)
@@ -194,16 +265,19 @@ namespace GirionixAI
                 {
                     byte[] bytes = File.ReadAllBytes(filePath);
                     string ext = Path.GetExtension(filePath).ToLowerInvariant();
-                    string mime = "text/html";
-                    if (ext == ".js") mime = "application/javascript";
-                    else if (ext == ".css") mime = "text/css";
+                    string mime = "text/html; charset=utf-8";
+                    if (ext == ".js") mime = "application/javascript; charset=utf-8";
+                    else if (ext == ".css") mime = "text/css; charset=utf-8";
                     else if (ext == ".png") mime = "image/png";
+                    else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
                     else if (ext == ".svg") mime = "image/svg+xml";
                     else if (ext == ".ico") mime = "image/x-icon";
-                    else if (ext == ".json") mime = "application/json";
+                    else if (ext == ".json") mime = "application/json; charset=utf-8";
+                    else if (ext == ".wasm") mime = "application/wasm";
 
                     ctx.Response.ContentType = mime;
                     ctx.Response.ContentLength64 = bytes.Length;
+                    ctx.Response.AddHeader("Access-Control-Allow-Origin", "*");
                     ctx.Response.OutputStream.Write(bytes, 0, bytes.Length);
                 }
                 else
@@ -215,14 +289,22 @@ namespace GirionixAI
             catch { }
         }
 
-        protected override void OnFormClosing(FormClosingEventArgs e)
+        private void ExitApplication()
         {
-            base.OnFormClosing(e);
             try
             {
+                if (trayIcon != null)
+                {
+                    trayIcon.Visible = false;
+                    trayIcon.Dispose();
+                }
                 if (listener != null) listener.Stop();
             }
             catch { }
+            finally
+            {
+                Application.Exit();
+            }
         }
 
         [STAThread]
@@ -230,7 +312,7 @@ namespace GirionixAI
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new MainForm());
+            Application.Run(new AppRunner());
         }
     }
 }
@@ -247,10 +329,11 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Uninstall Girionix AI")]
+[assembly: AssemblyDescription("Girionix AI Uninstaller Manager")]
 [assembly: AssemblyCompany("Abhinav Giri")]
 [assembly: AssemblyProduct("Girionix AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
 [assembly: ComVisible(false)]
 
 namespace GirionixAI
@@ -259,18 +342,19 @@ namespace GirionixAI
     {
         private Button btnUninstall;
         private Button btnCancel;
+        private Label lblTitle;
         private Label lblMsg;
 
         public UninstallerForm()
         {
-            this.Text = "Uninstall Girionix AI";
-            this.Size = new Size(480, 240);
+            this.Text = "Uninstall Girionix AI Desktop Workstation";
+            this.Size = new Size(520, 260);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.BackColor = Color.FromArgb(10, 12, 20);
+            this.BackColor = Color.FromArgb(7, 8, 14);
             this.ForeColor = Color.White;
-            this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
+            this.Font = new Font("Segoe UI", 9.5F, FontStyle.Regular);
 
             string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
             if (File.Exists(icoPath))
@@ -278,29 +362,54 @@ namespace GirionixAI
                 try { this.Icon = new Icon(icoPath); } catch { }
             }
 
+            Panel pnlHeader = new Panel();
+            pnlHeader.Dock = DockStyle.Top;
+            pnlHeader.Height = 70;
+            pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
+
+            lblTitle = new Label();
+            lblTitle.Text = "Uninstall Girionix AI";
+            lblTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
+            lblTitle.ForeColor = Color.FromArgb(248, 113, 113);
+            lblTitle.Location = new Point(20, 14);
+            lblTitle.AutoSize = true;
+            pnlHeader.Controls.Add(lblTitle);
+
+            Label lblSubtitle = new Label();
+            lblSubtitle.Text = "This will remove Girionix AI, desktop shortcuts, and cached application components.";
+            lblSubtitle.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular);
+            lblSubtitle.ForeColor = Color.FromArgb(156, 163, 175);
+            lblSubtitle.Location = new Point(20, 42);
+            lblSubtitle.AutoSize = true;
+            pnlHeader.Controls.Add(lblSubtitle);
+            this.Controls.Add(pnlHeader);
+
             lblMsg = new Label();
-            lblMsg.Text = "Are you sure you want to completely uninstall Girionix AI from your computer?";
-            lblMsg.Location = new Point(30, 30);
-            lblMsg.Size = new Size(410, 60);
+            lblMsg.Text = "Are you sure you want to completely remove Girionix AI from your computer?";
+            lblMsg.Location = new Point(25, 95);
+            lblMsg.Size = new Size(460, 40);
             this.Controls.Add(lblMsg);
 
             btnUninstall = new Button();
-            btnUninstall.Text = "Uninstall";
-            btnUninstall.Location = new Point(140, 120);
-            btnUninstall.Size = new Size(100, 36);
+            btnUninstall.Text = "Yes, Uninstall";
+            btnUninstall.Location = new Point(145, 155);
+            btnUninstall.Size = new Size(130, 38);
             btnUninstall.BackColor = Color.FromArgb(239, 68, 68);
             btnUninstall.ForeColor = Color.White;
+            btnUninstall.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnUninstall.FlatStyle = FlatStyle.Flat;
+            btnUninstall.Cursor = Cursors.Hand;
             btnUninstall.Click += (s, e) => PerformUninstall();
             this.Controls.Add(btnUninstall);
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Location = new Point(260, 120);
-            btnCancel.Size = new Size(100, 36);
+            btnCancel.Location = new Point(290, 155);
+            btnCancel.Size = new Size(100, 38);
             btnCancel.BackColor = Color.FromArgb(30, 41, 59);
             btnCancel.ForeColor = Color.White;
             btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.Cursor = Cursors.Hand;
             btnCancel.Click += (s, e) => this.Close();
             this.Controls.Add(btnCancel);
         }
@@ -309,13 +418,16 @@ namespace GirionixAI
         {
             try
             {
+                btnUninstall.Enabled = false;
+                btnCancel.Enabled = false;
+
                 string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
                 string installDir = Path.Combine(localAppData, "Girionix AI");
                 string desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Girionix AI.lnk");
                 string startMenuShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "Girionix AI.lnk");
 
-                if (File.Exists(desktopShortcut)) File.Delete(desktopShortcut);
-                if (File.Exists(startMenuShortcut)) File.Delete(startMenuShortcut);
+                if (File.Exists(desktopShortcut)) { try { File.Delete(desktopShortcut); } catch { } }
+                if (File.Exists(startMenuShortcut)) { try { File.Delete(startMenuShortcut); } catch { } }
 
                 try
                 {
@@ -323,7 +435,13 @@ namespace GirionixAI
                 }
                 catch { }
 
-                MessageBox.Show("Girionix AI has been cleanly uninstalled.", "Uninstallation Complete", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                try
+                {
+                    Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Classes\\GirionixAI", false);
+                }
+                catch { }
+
+                MessageBox.Show("Girionix AI has been cleanly uninstalled from your system.", "Uninstallation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
                 ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c timeout /t 1 & rd /s /q \\\"" + installDir + "\\\"");
                 psi.CreateNoWindow = true;
@@ -335,6 +453,7 @@ namespace GirionixAI
             catch (Exception ex)
             {
                 MessageBox.Show("Notice: " + ex.Message);
+                this.Close();
             }
         }
 
@@ -398,10 +517,11 @@ using System.Windows.Forms;
 using Microsoft.Win32;
 
 [assembly: AssemblyTitle("Girionix AI Setup Wizard")]
+[assembly: AssemblyDescription("Girionix AI Setup & Installation Manager")]
 [assembly: AssemblyCompany("Abhinav Giri")]
 [assembly: AssemblyProduct("Girionix AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
-[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.0.0.0")]
 [assembly: ComVisible(false)]
 
 namespace GirionixAIInstaller
@@ -412,8 +532,10 @@ namespace GirionixAIInstaller
         private Label lblStatus;
         private Button btnInstall;
         private Button btnCancel;
+        private Button btnBrowse;
         private TextBox txtInstallPath;
         private CheckBox chkDesktopShortcut;
+        private CheckBox chkStartMenuShortcut;
         private CheckBox chkLaunchAfter;
         private System.Windows.Forms.Timer timer;
         private int installProgress = 0;
@@ -422,11 +544,11 @@ namespace GirionixAIInstaller
         public SetupForm()
         {
             this.Text = "Girionix AI — Verified Standalone Setup";
-            this.Size = new Size(580, 420);
+            this.Size = new Size(620, 460);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.BackColor = Color.FromArgb(10, 12, 20);
+            this.BackColor = Color.FromArgb(7, 8, 14);
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
 
@@ -445,7 +567,7 @@ namespace GirionixAIInstaller
         {
             Panel pnlHeader = new Panel();
             pnlHeader.Dock = DockStyle.Top;
-            pnlHeader.Height = 80;
+            pnlHeader.Height = 85;
             pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
 
             Label lblTitle = new Label();
@@ -457,17 +579,17 @@ namespace GirionixAIInstaller
             pnlHeader.Controls.Add(lblTitle);
 
             Label lblSubtitle = new Label();
-            lblSubtitle.Text = "Envisioned & Engineered by Abhinav Giri • 100% Standalone Offline";
+            lblSubtitle.Text = "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 100% Offline Standalone";
             lblSubtitle.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular);
             lblSubtitle.ForeColor = Color.FromArgb(160, 175, 200);
             lblSubtitle.AutoSize = true;
-            lblSubtitle.Location = new Point(22, 45);
+            lblSubtitle.Location = new Point(22, 48);
             pnlHeader.Controls.Add(lblSubtitle);
 
             this.Controls.Add(pnlHeader);
 
             Label lblPathDesc = new Label();
-            lblPathDesc.Text = "Install Location:";
+            lblPathDesc.Text = "Installation Folder:";
             lblPathDesc.Location = new Point(25, 105);
             lblPathDesc.AutoSize = true;
             this.Controls.Add(lblPathDesc);
@@ -475,35 +597,63 @@ namespace GirionixAIInstaller
             txtInstallPath = new TextBox();
             txtInstallPath.Text = installDir;
             txtInstallPath.Location = new Point(25, 130);
-            txtInstallPath.Size = new Size(515, 25);
+            txtInstallPath.Size = new Size(440, 26);
             txtInstallPath.BackColor = Color.FromArgb(22, 27, 42);
             txtInstallPath.ForeColor = Color.White;
             txtInstallPath.BorderStyle = BorderStyle.FixedSingle;
             this.Controls.Add(txtInstallPath);
 
+            btnBrowse = new Button();
+            btnBrowse.Text = "Browse...";
+            btnBrowse.Location = new Point(475, 128);
+            btnBrowse.Size = new Size(95, 28);
+            btnBrowse.BackColor = Color.FromArgb(30, 41, 59);
+            btnBrowse.ForeColor = Color.White;
+            btnBrowse.FlatStyle = FlatStyle.Flat;
+            btnBrowse.Cursor = Cursors.Hand;
+            btnBrowse.Click += (s, e) =>
+            {
+                using (FolderBrowserDialog fbd = new FolderBrowserDialog())
+                {
+                    fbd.SelectedPath = txtInstallPath.Text;
+                    if (fbd.ShowDialog() == DialogResult.OK)
+                    {
+                        txtInstallPath.Text = fbd.SelectedPath;
+                    }
+                }
+            };
+            this.Controls.Add(btnBrowse);
+
             chkDesktopShortcut = new CheckBox();
-            chkDesktopShortcut.Text = "Create Desktop and Start Menu Shortcuts";
+            chkDesktopShortcut.Text = "Create Desktop Shortcut";
             chkDesktopShortcut.Checked = true;
             chkDesktopShortcut.Location = new Point(25, 170);
             chkDesktopShortcut.AutoSize = true;
             this.Controls.Add(chkDesktopShortcut);
 
+            chkStartMenuShortcut = new CheckBox();
+            chkStartMenuShortcut.Text = "Create Start Menu Programs Shortcut";
+            chkStartMenuShortcut.Checked = true;
+            chkStartMenuShortcut.Location = new Point(25, 198);
+            chkStartMenuShortcut.AutoSize = true;
+            this.Controls.Add(chkStartMenuShortcut);
+
             chkLaunchAfter = new CheckBox();
-            chkLaunchAfter.Text = "Launch Girionix AI immediately after installation";
+            chkLaunchAfter.Text = "Launch Girionix AI immediately upon completion";
             chkLaunchAfter.Checked = true;
-            chkLaunchAfter.Location = new Point(25, 200);
+            chkLaunchAfter.Location = new Point(25, 226);
             chkLaunchAfter.AutoSize = true;
             this.Controls.Add(chkLaunchAfter);
 
             progressBar = new ProgressBar();
-            progressBar.Location = new Point(25, 235);
-            progressBar.Size = new Size(515, 22);
+            progressBar.Location = new Point(25, 265);
+            progressBar.Size = new Size(545, 22);
             progressBar.Visible = false;
             this.Controls.Add(progressBar);
 
             lblStatus = new Label();
-            lblStatus.Text = "Ready to install standalone Girionix AI application.";
-            lblStatus.Location = new Point(25, 265);
+            lblStatus.Text = "Ready to install Girionix AI standalone workstation.";
+            lblStatus.Location = new Point(25, 295);
             lblStatus.AutoSize = true;
             lblStatus.ForeColor = Color.FromArgb(0, 229, 255);
             this.Controls.Add(lblStatus);
@@ -515,22 +665,24 @@ namespace GirionixAIInstaller
 
             btnInstall = new Button();
             btnInstall.Text = "Install Now";
-            btnInstall.Size = new Size(110, 34);
-            btnInstall.Location = new Point(315, 13);
+            btnInstall.Size = new Size(120, 36);
+            btnInstall.Location = new Point(330, 12);
             btnInstall.BackColor = Color.FromArgb(0, 180, 216);
             btnInstall.ForeColor = Color.Black;
             btnInstall.Font = new Font("Segoe UI", 9F, FontStyle.Bold);
             btnInstall.FlatStyle = FlatStyle.Flat;
+            btnInstall.Cursor = Cursors.Hand;
             btnInstall.Click += new EventHandler(BtnInstall_Click);
             pnlBottom.Controls.Add(btnInstall);
 
             btnCancel = new Button();
             btnCancel.Text = "Cancel";
-            btnCancel.Size = new Size(95, 34);
-            btnCancel.Location = new Point(445, 13);
+            btnCancel.Size = new Size(100, 36);
+            btnCancel.Location = new Point(465, 12);
             btnCancel.BackColor = Color.FromArgb(30, 36, 50);
             btnCancel.ForeColor = Color.White;
             btnCancel.FlatStyle = FlatStyle.Flat;
+            btnCancel.Cursor = Cursors.Hand;
             btnCancel.Click += (s, e) => this.Close();
             pnlBottom.Controls.Add(btnCancel);
 
@@ -544,13 +696,15 @@ namespace GirionixAIInstaller
         private void BtnInstall_Click(object sender, EventArgs e)
         {
             btnInstall.Enabled = false;
+            btnBrowse.Enabled = false;
             txtInstallPath.Enabled = false;
             chkDesktopShortcut.Enabled = false;
+            chkStartMenuShortcut.Enabled = false;
             chkLaunchAfter.Enabled = false;
 
             progressBar.Visible = true;
             progressBar.Value = 0;
-            lblStatus.Text = "Extracting verified application package...";
+            lblStatus.Text = "Extracting verified application components...";
 
             installDir = txtInstallPath.Text;
             if (!Directory.Exists(installDir)) Directory.CreateDirectory(installDir);
@@ -586,7 +740,14 @@ namespace GirionixAIInstaller
                     shortcut.WorkingDirectory = Path.GetDirectoryName(targetExePath);
                     shortcut.WindowStyle = 1;
                     shortcut.Description = description;
-                    shortcut.IconLocation = targetExePath + ",0";
+                    if (File.Exists(iconPath))
+                    {
+                        shortcut.IconLocation = iconPath + ",0";
+                    }
+                    else
+                    {
+                        shortcut.IconLocation = targetExePath + ",0";
+                    }
                     shortcut.Save();
                 }
             }
@@ -658,8 +819,11 @@ namespace GirionixAIInstaller
                 {
                     string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
                     string lnkPath = Path.Combine(desktopDir, "Girionix AI.lnk");
-                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Girionix AI Desktop Workstation");
+                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Girionix AI — Sovereign Polymath Workspace");
+                }
 
+                if (chkStartMenuShortcut.Checked)
+                {
                     string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
                     if (Directory.Exists(startMenuDir))
                     {
@@ -680,6 +844,8 @@ namespace GirionixAIInstaller
                             uninstKey.SetValue("DisplayIcon", icoPath);
                             uninstKey.SetValue("UninstallString", "\\\"" + uninstallerPath + "\\\"");
                             uninstKey.SetValue("InstallLocation", installDir);
+                            uninstKey.SetValue("HelpLink", "https://github.com/abhinavgiri45/girionix-ai");
+                            uninstKey.SetValue("URLInfoAbout", "https://girionix-ai.pages.dev");
                         }
                     }
                 }
