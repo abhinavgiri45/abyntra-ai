@@ -33,8 +33,7 @@ export default function App() {
     const isTitan = typeof window !== 'undefined' && (localStorage.getItem('abyntra_titan_mode') === 'true' || localStorage.getItem('girionix_titan_mode') === 'true' || window.location.search.includes('titan=true'));
     const isLite = typeof window !== 'undefined' && window.location.search.includes('profile=lite');
     if (isTitan) return isLite ? TITAN_AI_MODELS[1] : TITAN_AI_MODELS[0];
-    const installed = storage.isAppInstalled();
-    return installed ? AI_MODELS[0] : (AI_MODELS.find(m => m.isLite) || AI_MODELS[1]);
+    return AI_MODELS[0]; // Full Pro Flagship Universal Model available seamlessly on both web and app
   });
   const [layoutMode, setLayoutMode] = useState('chat'); // 'chat' | 'split' | 'studio'
   const [activeStudioTab, setActiveStudioTab] = useState('code'); // 'code' | 'math' | 'image' | 'video'

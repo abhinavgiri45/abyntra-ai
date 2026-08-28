@@ -988,8 +988,8 @@ export default function ChatView({
             </div>
 
             <div className="flex items-center gap-2">
-              <span className="hidden sm:inline text-gray-500">
-                {isAppInstalled ? '👑 Girionix Pro App Active' : '⚡ Girionix Lite (Web)'}
+              <span className="hidden sm:inline text-cyan-400/90 font-mono text-xs font-semibold">
+                ⚡ Girionix Pro Sovereign Engine
               </span>
             </div>
           </div>
