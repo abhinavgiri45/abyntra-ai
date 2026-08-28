@@ -112,6 +112,8 @@ export default function ChatView({
   const abortControllerRef = useRef(null);
   const messagesEndRef = useRef(null);
   const textareaRef = useRef(null);
+  const chatScrollContainerRef = useRef(null);
+  const isUserNearBottomRef = useRef(true);
 
   // Background auto-upgrade check on app startup
   useEffect(() => {
@@ -130,13 +132,20 @@ export default function ChatView({
   const messages = currentSession?.messages || [];
   const isCleanSession = messages.length === 0 || (messages.length === 1 && messages[0].id === 'welcome');
 
+  const handleChatScroll = (e) => {
+    const { scrollTop, scrollHeight, clientHeight } = e.currentTarget;
+    isUserNearBottomRef.current = scrollHeight - scrollTop - clientHeight < 150;
+  };
+
   useEffect(() => {
     if (!isIncognito) {
       storage.saveSessions(sessions);
       storage.setActiveSessionId(activeSessionId);
       storage.savePinnedItems(pinnedItems);
     }
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (isUserNearBottomRef.current) {
+      messagesEndRef.current?.scrollIntoView({ behavior: isStreaming ? 'auto' : 'smooth' });
+    }
   }, [sessions, activeSessionId, pinnedItems, isStreaming, isIncognito]);
 
   const handleInputChange = (e) => {
@@ -640,7 +649,11 @@ export default function ChatView({
       )}
 
       {/* Main Messages or Welcome Area */}
-      <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 flex flex-col justify-start">
+      <div 
+        ref={chatScrollContainerRef}
+        onScroll={handleChatScroll}
+        className="flex-1 overflow-y-auto custom-scrollbar px-3 sm:px-6 py-3 sm:py-4 flex flex-col justify-start"
+      >
         {isCleanSession ? (
           <div className="flex-1 flex items-center justify-center">
             <WelcomeCards
