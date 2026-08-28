@@ -1227,129 +1227,6 @@ export default function NeuralPulseSphere() {
       {/* ========================================================================= */}
       {activeTab === 'requirements' && (
         <div className="max-w-6xl mx-auto px-6 py-12 space-y-12 animate-fadeIn">
-          {/* ========================================================================= */}
-          {/* QUICK COMPARISON BETWEEN ALL 3 EDITIONS                                   */}
-          {/* ========================================================================= */}
-          <div className="space-y-8">
-            <div className="text-center space-y-2 max-w-3xl mx-auto">
-              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-mono font-bold border border-cyan-500/20">
-                <Crown className="w-3.5 h-3.5 text-amber-400" />
-                <span>3 DEDICATED POWER TIERS • ZERO PAYWALLS</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
-                Quick Edition Comparison
-              </h2>
-              <p className="text-xs sm:text-sm text-gray-400 font-sans">
-                Choose the edition that perfectly matches your machine's hardware, performance needs, and offline privacy requirements.
-              </p>
-            </div>
-
-            {/* Comprehensive Edition Comparison Matrix Table */}
-            <div className="p-6 rounded-3xl bg-black/70 border border-white/10 space-y-4 shadow-2xl overflow-hidden">
-              <div className="flex items-center justify-between flex-wrap gap-2 border-b border-white/10 pb-3">
-                <div className="flex items-center gap-2">
-                  <Sliders className="w-4 h-4 text-cyan-400" />
-                  <h4 className="text-base font-bold text-white font-mono">
-                    All-Edition Feature & Capability Comparison Table
-                  </h4>
-                </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/40 px-2 py-0.5 rounded-md border border-cyan-500/20">
-                    ← Full Specifications Overview →
-                  </span>
-                </div>
-              </div>
-
-              <div className="overflow-x-auto touch-scroll">
-                <table className="w-full text-left text-xs font-mono border-collapse min-w-[640px]">
-                  <thead>
-                    <tr className="border-b border-white/10 bg-white/[0.03] text-gray-300">
-                      <th className="py-3 px-4 font-bold text-gray-400 min-w-[160px]">Feature / Specification</th>
-                      <th className="py-3 px-4 font-black text-cyan-300 min-w-[150px]">
-                        🌐 Standard Universal
-                      </th>
-                      <th className="py-3 px-4 font-black text-emerald-300 min-w-[150px]">
-                        ⚡ Titan Heavy (High-End)
-                      </th>
-                      <th className="py-3 px-4 font-black text-teal-300 min-w-[150px]">
-                        🌱 Titan Lite (Budget/Battery)
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-white/5 text-gray-300 font-sans">
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🎯 Primary Use Case</td>
-                      <td className="py-3 px-4 text-gray-300 text-xs">Daily fullstack AI workflow on any PC or phone</td>
-                      <td className="py-3 px-4 text-emerald-300 text-xs font-semibold">Confidential code, research, air-gapped rigs</td>
-                      <td className="py-3 px-4 text-teal-300 text-xs font-semibold">Travel, flights, low-spec budget laptops</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">💻 Minimum RAM Required</td>
-                      <td className="py-3 px-4 text-cyan-300 font-mono font-bold">4 GB RAM</td>
-                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">16 GB DDR4/DDR5</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">2 GB – 4 GB RAM</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">⚡ CPU Cores Required</td>
-                      <td className="py-3 px-4 text-gray-300 font-mono">Any Dual/Quad Core</td>
-                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">8+ Physical Cores</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">Dual-Core 1.8GHz+</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🌐 Internet Dependency</td>
-                      <td className="py-3 px-4 text-gray-400">Broadband / 4G / 5G / Wi-Fi</td>
-                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">0% (100% Offline)</td>
-                      <td className="py-3 px-4 text-teal-300 font-bold font-mono">0% (100% Offline)</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🧠 Idle Memory Usage</td>
-                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">~42 MB (Ultra-Light)</td>
-                      <td className="py-3 px-4 text-gray-300 font-mono">8 GB dedicated in-RAM</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">~350 MB (Quantized)</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🎮 GPU Requirement</td>
-                      <td className="py-3 px-4 text-gray-300">Basic Integrated / WebGL Shader</td>
-                      <td className="py-3 px-4 text-emerald-400 font-bold">Dedicated RTX / M-Series</td>
-                      <td className="py-3 px-4 text-teal-300 font-bold">Integrated / CPU Mode</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🚀 Generation Throughput</td>
-                      <td className="py-3 px-4 text-amber-300 font-mono font-bold">~145 tok/s</td>
-                      <td className="py-3 px-4 text-amber-400 font-mono font-bold">~90–140+ tok/s</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">~25–45 tok/s</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">🔍 Pre-Flight Hardware Check</td>
-                      <td className="py-3 px-4 text-gray-400 font-mono">Universal (Runs on any PC)</td>
-                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">Automated RAM/CPU/GPU Audit ✓</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">Low-End Spec Check ✓</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">📦 Standalone Installer Size</td>
-                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~2.99 MB</td>
-                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~3.45 MB</td>
-                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~2.85 MB</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">⚡ Universal Model Auto-Upgrade</td>
-                      <td className="py-3 px-4 text-cyan-300 font-mono font-bold">Autonomous Auto-Upgrade ✓ (Newest Models)</td>
-                      <td className="py-3 px-4 text-emerald-400 font-mono">Air-Gapped Sovereign Weights</td>
-                      <td className="py-3 px-4 text-teal-300 font-mono">Air-Gapped Quantized Weights</td>
-                    </tr>
-                    <tr className="hover:bg-white/[0.02]">
-                      <td className="py-3 px-4 font-bold text-white font-mono">💰 Pricing & Licensing</td>
-                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
-                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
-                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-
-          </div>
-
           {/* DEDICATED STANDALONE DOWNLOADS SECTION */}
           <div className="p-8 rounded-3xl bg-gradient-to-r from-cyan-950/50 via-slate-900 to-purple-950/40 border border-cyan-500/40 space-y-6 shadow-2xl">
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-white/10 pb-5">
@@ -1478,6 +1355,129 @@ export default function NeuralPulseSphere() {
                 </div>
               )}
             </div>
+          </div>
+
+          {/* ========================================================================= */}
+          {/* QUICK COMPARISON BETWEEN ALL 3 EDITIONS                                   */}
+          {/* ========================================================================= */}
+          <div className="space-y-8">
+            <div className="text-center space-y-2 max-w-3xl mx-auto">
+              <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-cyan-500/10 text-cyan-300 text-xs font-mono font-bold border border-cyan-500/20">
+                <Crown className="w-3.5 h-3.5 text-amber-400" />
+                <span>3 DEDICATED POWER TIERS • ZERO PAYWALLS</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-black text-white tracking-tight">
+                Quick Edition Comparison
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-400 font-sans">
+                Choose the edition that perfectly matches your machine's hardware, performance needs, and offline privacy requirements.
+              </p>
+            </div>
+
+            {/* Comprehensive Edition Comparison Matrix Table */}
+            <div className="p-6 rounded-3xl bg-black/70 border border-white/10 space-y-4 shadow-2xl overflow-hidden">
+              <div className="flex items-center justify-between flex-wrap gap-2 border-b border-white/10 pb-3">
+                <div className="flex items-center gap-2">
+                  <Sliders className="w-4 h-4 text-cyan-400" />
+                  <h4 className="text-base font-bold text-white font-mono">
+                    All-Edition Feature & Capability Comparison Table
+                  </h4>
+                </div>
+                <div className="flex items-center gap-2">
+                  <span className="text-[10px] font-mono text-cyan-400/80 bg-cyan-950/40 px-2 py-0.5 rounded-md border border-cyan-500/20">
+                    ← Full Specifications Overview →
+                  </span>
+                </div>
+              </div>
+
+              <div className="overflow-x-auto touch-scroll">
+                <table className="w-full text-left text-xs font-mono border-collapse min-w-[640px]">
+                  <thead>
+                    <tr className="border-b border-white/10 bg-white/[0.03] text-gray-300">
+                      <th className="py-3 px-4 font-bold text-gray-400 min-w-[160px]">Feature / Specification</th>
+                      <th className="py-3 px-4 font-black text-cyan-300 min-w-[150px]">
+                        🌐 Standard Universal
+                      </th>
+                      <th className="py-3 px-4 font-black text-emerald-300 min-w-[150px]">
+                        ⚡ Titan Heavy (High-End)
+                      </th>
+                      <th className="py-3 px-4 font-black text-teal-300 min-w-[150px]">
+                        🌱 Titan Lite (Budget/Battery)
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-white/5 text-gray-300 font-sans">
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🎯 Primary Use Case</td>
+                      <td className="py-3 px-4 text-gray-300 text-xs">Daily fullstack AI workflow on any PC or phone</td>
+                      <td className="py-3 px-4 text-emerald-300 text-xs font-semibold">Confidential code, research, air-gapped rigs</td>
+                      <td className="py-3 px-4 text-teal-300 text-xs font-semibold">Travel, flights, low-spec budget laptops</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">💻 Minimum RAM Required</td>
+                      <td className="py-3 px-4 text-cyan-300 font-mono font-bold">4 GB RAM</td>
+                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">16 GB DDR4/DDR5</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">2 GB – 4 GB RAM</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">⚡ CPU Cores Required</td>
+                      <td className="py-3 px-4 text-gray-300 font-mono">Any Dual/Quad Core</td>
+                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">8+ Physical Cores</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">Dual-Core 1.8GHz+</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🌐 Internet Dependency</td>
+                      <td className="py-3 px-4 text-gray-400">Broadband / 4G / 5G / Wi-Fi</td>
+                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">0% (100% Offline)</td>
+                      <td className="py-3 px-4 text-teal-300 font-bold font-mono">0% (100% Offline)</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🧠 Idle Memory Usage</td>
+                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">~42 MB (Ultra-Light)</td>
+                      <td className="py-3 px-4 text-gray-300 font-mono">8 GB dedicated in-RAM</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">~350 MB (Quantized)</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🎮 GPU Requirement</td>
+                      <td className="py-3 px-4 text-gray-300">Basic Integrated / WebGL Shader</td>
+                      <td className="py-3 px-4 text-emerald-400 font-bold">Dedicated RTX / M-Series</td>
+                      <td className="py-3 px-4 text-teal-300 font-bold">Integrated / CPU Mode</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🚀 Generation Throughput</td>
+                      <td className="py-3 px-4 text-amber-300 font-mono font-bold">~145 tok/s</td>
+                      <td className="py-3 px-4 text-amber-400 font-mono font-bold">~90–140+ tok/s</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">~25–45 tok/s</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">🔍 Pre-Flight Hardware Check</td>
+                      <td className="py-3 px-4 text-gray-400 font-mono">Universal (Runs on any PC)</td>
+                      <td className="py-3 px-4 text-emerald-400 font-mono font-bold">Automated RAM/CPU/GPU Audit ✓</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono font-bold">Low-End Spec Check ✓</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">📦 Standalone Installer Size</td>
+                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~2.99 MB</td>
+                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~3.45 MB</td>
+                      <td className="py-3 px-4 text-purple-300 font-mono font-bold">~2.85 MB</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">⚡ Universal Model Auto-Upgrade</td>
+                      <td className="py-3 px-4 text-cyan-300 font-mono font-bold">Autonomous Auto-Upgrade ✓ (Newest Models)</td>
+                      <td className="py-3 px-4 text-emerald-400 font-mono">Air-Gapped Sovereign Weights</td>
+                      <td className="py-3 px-4 text-teal-300 font-mono">Air-Gapped Quantized Weights</td>
+                    </tr>
+                    <tr className="hover:bg-white/[0.02]">
+                      <td className="py-3 px-4 font-bold text-white font-mono">💰 Pricing & Licensing</td>
+                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
+                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
+                      <td className="py-3 px-4 text-emerald-400 font-bold font-mono">$0 Free Forever</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
           </div>
 
           {/* Complete System Requirements Matrix (Dynamically Driven by Target Platform) */}
