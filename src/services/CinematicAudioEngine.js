@@ -468,6 +468,215 @@ class CinematicAudioEngine {
   }
 
   /**
+   * Play Dynamic AI Singing Vocals with Harmonic Backing Band
+   */
+  playSingingTrack({ lyrics = 'Girionix AI lighting up the starry sky', singer = 'aria', scale = 'major', tempo = 116 }) {
+    this.init();
+    this.stop();
+    this.isPlaying = true;
+
+    try {
+      const now = this.ctx.currentTime;
+      const beatDuration = 60 / tempo;
+      
+      const scaleMap = {
+        major: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25], // C4, D4, E4, G4, A4, C5
+        minor: [220.00, 261.63, 293.66, 329.63, 392.00, 440.00], // A3, C4, D4, E4, G4, A4
+        cyber: [293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 587.33], // D Dorian
+        raga: [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16] // Bhairavi
+      };
+
+      const notes = scaleMap[scale] || scaleMap.major;
+      const words = lyrics.trim().split(/\s+/);
+
+      // 1. Synthesize Vocal Melodic Formants
+      words.forEach((word, idx) => {
+        const noteStart = now + idx * beatDuration;
+        const notePitch = notes[idx % notes.length];
+        
+        const osc = this.ctx.createOscillator();
+        const formantFilter = this.ctx.createBiquadFilter();
+        const vocalGain = this.ctx.createGain();
+        const vibratoLFO = this.ctx.createOscillator();
+        const vibratoGain = this.ctx.createGain();
+
+        // Singer voice characteristics
+        if (singer === 'nexus') {
+          osc.type = 'sawtooth';
+          formantFilter.type = 'bandpass';
+          formantFilter.frequency.setValueAtTime(1400, noteStart);
+          formantFilter.Q.setValueAtTime(8, noteStart);
+          vibratoLFO.frequency.setValueAtTime(8.0, noteStart);
+          vibratoGain.gain.setValueAtTime(2.0, noteStart);
+        } else if (singer === 'leo') {
+          osc.type = 'triangle';
+          formantFilter.type = 'lowpass';
+          formantFilter.frequency.setValueAtTime(1200, noteStart);
+          vibratoLFO.frequency.setValueAtTime(5.2, noteStart);
+          vibratoGain.gain.setValueAtTime(6.0, noteStart);
+        } else if (singer === 'sur') {
+          osc.type = 'sawtooth';
+          formantFilter.type = 'lowpass';
+          formantFilter.frequency.setValueAtTime(950, noteStart);
+          vibratoLFO.frequency.setValueAtTime(6.0, noteStart);
+          vibratoGain.gain.setValueAtTime(9.0, noteStart);
+          osc.frequency.setValueAtTime(notePitch * 0.95, noteStart);
+          osc.frequency.exponentialRampToValueAtTime(notePitch, noteStart + 0.15);
+        } else {
+          osc.type = 'sine';
+          formantFilter.type = 'bandpass';
+          formantFilter.frequency.setValueAtTime(2200, noteStart);
+          formantFilter.Q.setValueAtTime(2.5, noteStart);
+          vibratoLFO.frequency.setValueAtTime(5.8, noteStart);
+          vibratoGain.gain.setValueAtTime(5.0, noteStart);
+        }
+
+        osc.frequency.setValueAtTime(notePitch, noteStart);
+
+        vibratoLFO.connect(vibratoGain);
+        vibratoGain.connect(osc.frequency);
+
+        vocalGain.gain.setValueAtTime(0, noteStart);
+        vocalGain.gain.linearRampToValueAtTime(0.35, noteStart + 0.08);
+        vocalGain.gain.linearRampToValueAtTime(0.28, noteStart + beatDuration * 0.7);
+        vocalGain.gain.exponentialRampToValueAtTime(0.001, noteStart + beatDuration * 0.95);
+
+        osc.connect(formantFilter);
+        formantFilter.connect(vocalGain);
+        vocalGain.connect(this.masterGain);
+
+        osc.start(noteStart);
+        vibratoLFO.start(noteStart);
+        osc.stop(noteStart + beatDuration);
+        vibratoLFO.stop(noteStart + beatDuration);
+
+        this.activeNodes.push(osc, formantFilter, vocalGain, vibratoLFO, vibratoGain);
+      });
+
+      // 2. Add Backing Harmony Chords & Pulse
+      const totalDuration = words.length * beatDuration + 1;
+      for (let t = 0; t < totalDuration; t += beatDuration * 2) {
+        const chordStart = now + t;
+        const root = notes[Math.floor((t / (beatDuration * 2)) % notes.length)] / 2;
+        
+        [root, root * 1.25, root * 1.5].forEach(f => {
+          const padOsc = this.ctx.createOscillator();
+          const padGain = this.ctx.createGain();
+          padOsc.type = 'triangle';
+          padOsc.frequency.setValueAtTime(f, chordStart);
+
+          padGain.gain.setValueAtTime(0, chordStart);
+          padGain.gain.linearRampToValueAtTime(0.08, chordStart + 0.4);
+          padGain.gain.linearRampToValueAtTime(0, chordStart + beatDuration * 2);
+
+          padOsc.connect(padGain);
+          padGain.connect(this.masterGain);
+          padOsc.start(chordStart);
+          padOsc.stop(chordStart + beatDuration * 2);
+          this.activeNodes.push(padOsc, padGain);
+        });
+
+        const kickOsc = this.ctx.createOscillator();
+        const kickGain = this.ctx.createGain();
+        kickOsc.type = 'sine';
+        kickOsc.frequency.setValueAtTime(110, chordStart);
+        kickOsc.frequency.exponentialRampToValueAtTime(35, chordStart + 0.3);
+        kickGain.gain.setValueAtTime(0.3, chordStart);
+        kickGain.gain.exponentialRampToValueAtTime(0.001, chordStart + 0.35);
+
+        kickOsc.connect(kickGain);
+        kickGain.connect(this.masterGain);
+        kickOsc.start(chordStart);
+        kickOsc.stop(chordStart + 0.4);
+        this.activeNodes.push(kickOsc, kickGain);
+      }
+
+      // 3. Trigger Lyric Vocal Speech Pronunciation
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(lyrics);
+        utterance.rate = (tempo / 120) * 0.9;
+        utterance.pitch = singer === 'aria' ? 1.3 : singer === 'leo' ? 0.9 : 1.1;
+        window.speechSynthesis.speak(utterance);
+      }
+    } catch (err) {
+      console.error('Singing synthesis error:', err);
+    }
+  }
+
+  /**
+   * Render Singing Track to Downloadable .WAV Blob
+   */
+  async renderSingingToWav({ lyrics = 'Girionix AI lighting up the sky', singer = 'aria', scale = 'major', tempo = 116 }) {
+    if (typeof window === 'undefined') return null;
+    const OfflineCtx = window.OfflineAudioContext || window.webkitOfflineAudioContext;
+    if (!OfflineCtx) return null;
+
+    const beatDuration = 60 / tempo;
+    const words = lyrics.trim().split(/\s+/);
+    const duration = Math.max(6, words.length * beatDuration + 2);
+    const sampleRate = 44100;
+
+    const offline = new OfflineCtx(2, Math.ceil(sampleRate * duration), sampleRate);
+    const master = offline.createGain();
+    master.gain.value = 0.5;
+    master.connect(offline.destination);
+
+    const scaleMap = {
+      major: [261.63, 293.66, 329.63, 392.00, 440.00, 523.25],
+      minor: [220.00, 261.63, 293.66, 329.63, 392.00, 440.00],
+      cyber: [293.66, 329.63, 349.23, 392.00, 440.00, 493.88, 587.33],
+      raga: [261.63, 277.18, 311.13, 349.23, 392.00, 415.30, 466.16]
+    };
+    const notes = scaleMap[scale] || scaleMap.major;
+
+    words.forEach((_, idx) => {
+      const noteStart = idx * beatDuration;
+      const notePitch = notes[idx % notes.length];
+      const osc = offline.createOscillator();
+      const vocalGain = offline.createGain();
+      const formant = offline.createBiquadFilter();
+
+      osc.type = singer === 'nexus' ? 'sawtooth' : singer === 'leo' ? 'triangle' : 'sine';
+      osc.frequency.setValueAtTime(notePitch, noteStart);
+
+      formant.type = 'bandpass';
+      formant.frequency.setValueAtTime(singer === 'aria' ? 2200 : 1200, noteStart);
+
+      vocalGain.gain.setValueAtTime(0, noteStart);
+      vocalGain.gain.linearRampToValueAtTime(0.4, noteStart + 0.08);
+      vocalGain.gain.linearRampToValueAtTime(0.001, noteStart + beatDuration * 0.95);
+
+      osc.connect(formant);
+      formant.connect(vocalGain);
+      vocalGain.connect(master);
+
+      osc.start(noteStart);
+      osc.stop(noteStart + beatDuration);
+    });
+
+    for (let t = 0; t < duration; t += beatDuration * 2) {
+      const root = notes[Math.floor((t / (beatDuration * 2)) % notes.length)] / 2;
+      [root, root * 1.5].forEach(f => {
+        const pad = offline.createOscillator();
+        const gain = offline.createGain();
+        pad.type = 'triangle';
+        pad.frequency.setValueAtTime(f, t);
+        gain.gain.setValueAtTime(0, t);
+        gain.gain.linearRampToValueAtTime(0.1, t + 0.3);
+        gain.gain.linearRampToValueAtTime(0, Math.min(duration, t + beatDuration * 2));
+        pad.connect(gain);
+        gain.connect(master);
+        pad.start(t);
+        pad.stop(Math.min(duration, t + beatDuration * 2));
+      });
+    }
+
+    const renderedBuffer = await offline.startRendering();
+    return this.audioBufferToWavBlob(renderedBuffer);
+  }
+
+  /**
    * Convert AudioBuffer to Standard PCM 16-bit WAV Blob
    */
   audioBufferToWavBlob(buffer) {

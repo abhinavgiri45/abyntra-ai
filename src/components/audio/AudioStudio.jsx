@@ -22,13 +22,20 @@ import {
 import { cinematicAudio } from '../../services/CinematicAudioEngine';
 
 export default function AudioStudio({ activeModel, isTitanMode = false }) {
-  const [activeSubTab, setActiveSubTab] = useState('score'); // 'score' | 'voice' | 'sfx'
+  const [activeSubTab, setActiveSubTab] = useState('singing'); // 'singing' | 'score' | 'voice' | 'sfx'
   const [selectedScoreTheme, setSelectedScoreTheme] = useState('epic');
   const [isScorePlaying, setIsScorePlaying] = useState(false);
   const [volume, setVolume] = useState(75);
   const [customMusicPrompt, setCustomMusicPrompt] = useState('Cinematic sci-fi orchestral soundtrack with heavy sub-bass and futuristic synth pads');
   const [isRenderingDownload, setIsRenderingDownload] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(null);
+
+  // Singing Voice Synthesizer State
+  const [singingLyrics, setSingingLyrics] = useState('Girionix AI shining like the stars tonight / Code and wisdom taking flight');
+  const [selectedSinger, setSelectedSinger] = useState('aria');
+  const [selectedScale, setSelectedScale] = useState('major');
+  const [singingTempo, setSingingTempo] = useState(116);
+  const [isSingingPlaying, setIsSingingPlaying] = useState(false);
 
   // Voice TTS State
   const [voiceText, setVoiceText] = useState('Welcome to Girionix AI Studio. Envisioned and engineered by Abhinav Giri to empower polymath thinkers, creators, and developers worldwide.');
@@ -41,6 +48,20 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
   // Canvas visualizer
   const canvasRef = useRef(null);
   const animFrameRef = useRef(null);
+
+  const singers = [
+    { id: 'aria', name: '🌸 Aria (Dream Pop Soprano)', range: 'High Range • Expressive Vibrato', desc: 'Melodic, airy female lead vocals with celestial reverb' },
+    { id: 'nexus', name: '⚡ Nexus (Cyberpunk Vocoder)', range: 'Quantized • Formant Tuned', desc: 'Futuristic hyperpop / Daft Punk style autotuned vocals' },
+    { id: 'leo', name: '🎸 Leo (Acoustic Indie Tenor)', range: 'Mid-Low Range • Warm Harmonics', desc: 'Soulful indie acoustic singer-songwriter vocals' },
+    { id: 'sur', name: '🪕 Sur (Indian Classical Gayaki)', range: 'Microtonal • Meend Glissando', desc: 'Expressive Indian classical vocals with melodic slides' }
+  ];
+
+  const scales = [
+    { id: 'major', name: '✨ C Major (Uplifting & Bright)' },
+    { id: 'minor', name: '🌙 A Minor (Emotional & Deep)' },
+    { id: 'cyber', name: '⚡ D Dorian (Futuristic Synthwave)' },
+    { id: 'raga', name: '🪷 Raag Bhairavi (Soulful Classical)' }
+  ];
 
   const scoreThemes = [
     { id: 'epic', name: '🎻 Epic Hollywood Orchestra', bpm: '110 BPM', mood: 'Heroic & Grand', desc: 'Sub-bass drones, brass swells, and cinematic Taiko drum pulses' },
@@ -88,7 +109,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
         ctx.stroke();
       }
 
-      const isAudioActive = isScorePlaying || isSpeaking;
+      const isAudioActive = isScorePlaying || isSpeaking || isSingingPlaying;
       const barCount = 48;
       const barWidth = (width / barCount) - 3;
 
@@ -103,7 +124,10 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
 
         // Gradient
         const grad = ctx.createLinearGradient(0, y, 0, height);
-        if (selectedScoreTheme === 'cyberpunk') {
+        if (activeSubTab === 'singing') {
+          grad.addColorStop(0, '#EC4899');
+          grad.addColorStop(1, '#8B5CF6');
+        } else if (selectedScoreTheme === 'cyberpunk') {
           grad.addColorStop(0, '#00F0FF');
           grad.addColorStop(1, '#FF0055');
         } else if (selectedScoreTheme === 'ambient') {
@@ -133,7 +157,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     return () => {
       if (animFrameRef.current) cancelAnimationFrame(animFrameRef.current);
     };
-  }, [isScorePlaying, isSpeaking, selectedScoreTheme]);
+  }, [isScorePlaying, isSpeaking, isSingingPlaying, selectedScoreTheme, activeSubTab]);
 
   const handleToggleScore = () => {
     if (isScorePlaying) {
@@ -150,6 +174,53 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     setSelectedScoreTheme(themeId);
     if (isScorePlaying) {
       cinematicAudio.playCinematicScore(themeId);
+    }
+  };
+
+  // Toggle Singing Performance
+  const handleToggleSinging = () => {
+    if (isSingingPlaying) {
+      cinematicAudio.stop();
+      if (typeof window !== 'undefined' && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+      setIsSingingPlaying(false);
+    } else {
+      cinematicAudio.playSingingTrack({
+        lyrics: singingLyrics,
+        singer: selectedSinger,
+        scale: selectedScale,
+        tempo: singingTempo
+      });
+      setIsSingingPlaying(true);
+    }
+  };
+
+  // Download Sung Song as WAV
+  const handleDownloadSingingSong = async () => {
+    setIsRenderingDownload(true);
+    setDownloadSuccess(null);
+    try {
+      const blob = await cinematicAudio.renderSingingToWav({
+        lyrics: singingLyrics,
+        singer: selectedSinger,
+        scale: selectedScale,
+        tempo: singingTempo
+      });
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Girionix_Singing_${selectedSinger}_44kHz.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setDownloadSuccess('✅ Downloaded Singing Track (.wav)');
+        setTimeout(() => setDownloadSuccess(null), 3500);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRenderingDownload(false);
     }
   };
 
@@ -301,7 +372,19 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
           </div>
 
           {/* Sub-Tab Navigation Switcher */}
-          <div className="flex items-center gap-1.5 p-1 bg-black/60 rounded-2xl border border-white/10">
+          <div className="flex items-center gap-1.5 p-1 bg-black/60 rounded-2xl border border-white/10 flex-wrap">
+            <button
+              onClick={() => setActiveSubTab('singing')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
+                activeSubTab === 'singing' 
+                  ? 'bg-gradient-to-r from-pink-500 to-purple-500 text-white font-bold shadow-glow-pink' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Radio className="w-3.5 h-3.5 text-pink-400" />
+              <span>🎤 Neural Singer</span>
+            </button>
+
             <button
               onClick={() => setActiveSubTab('score')}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
@@ -318,7 +401,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
               onClick={() => setActiveSubTab('voice')}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
                 activeSubTab === 'voice' 
-                  ? 'bg-emerald-500 text-black font-bold shadow-glow-emerald' 
+                  ? 'bg-cyan-500 text-black font-bold shadow-glow-cyan' 
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -330,7 +413,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
               onClick={() => setActiveSubTab('sfx')}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
                 activeSubTab === 'sfx' 
-                  ? 'bg-emerald-500 text-black font-bold shadow-glow-emerald' 
+                  ? 'bg-amber-500 text-black font-bold' 
                   : 'text-gray-400 hover:text-white'
               }`}
             >
@@ -345,15 +428,172 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
           <canvas ref={canvasRef} className="w-full h-28 block" />
           <div className="absolute top-2 right-3 flex items-center gap-2">
             <span className="flex h-2 w-2 relative">
-              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isScorePlaying || isSpeaking ? 'bg-emerald-400' : 'bg-gray-600'} opacity-75`}></span>
-              <span className={`relative inline-flex rounded-full h-2 w-2 ${isScorePlaying || isSpeaking ? 'bg-emerald-500' : 'bg-gray-600'}`}></span>
+              <span className={`animate-ping absolute inline-flex h-full w-full rounded-full ${isScorePlaying || isSpeaking || isSingingPlaying ? 'bg-pink-400' : 'bg-gray-600'} opacity-75`}></span>
+              <span className={`relative inline-flex rounded-full h-2 w-2 ${isScorePlaying || isSpeaking || isSingingPlaying ? 'bg-pink-500' : 'bg-gray-600'}`}></span>
             </span>
-            <span className="text-[10px] font-mono text-emerald-400">
-              {isScorePlaying ? 'LIVE SCORE STREAM' : isSpeaking ? 'VOICE SYNTHESIS' : 'SPECTRUM IDLE'}
+            <span className="text-[10px] font-mono text-pink-400">
+              {isSingingPlaying ? 'VOCAL HARMONIC SYNTHESIS' : isScorePlaying ? 'LIVE SCORE STREAM' : isSpeaking ? 'VOICE SYNTHESIS' : 'SPECTRUM IDLE'}
             </span>
           </div>
         </div>
       </div>
+
+      {/* TAB 0: AI NEURAL SINGER & VOCAL MELODY STUDIO */}
+      {activeSubTab === 'singing' && (
+        <div className="p-5 rounded-3xl bg-[#080B18] border border-pink-500/30 space-y-4 shadow-2xl">
+          <div className="flex items-center justify-between flex-wrap gap-2">
+            <div>
+              <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-pink-400" />
+                <span>AI Neural Singer & Song Melodizer</span>
+                <span className="px-2 py-0.5 rounded-full bg-pink-500/20 text-pink-300 text-[10px] font-mono border border-pink-500/30">
+                  Formant Vocal Engine
+                </span>
+              </h3>
+              <p className="text-xs text-gray-400 pt-0.5">
+                Generate singing voices with multi-note pitch contours, vibrato, and synchronized backing chords.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-2">
+              <span className="text-xs font-mono text-gray-400">Tempo:</span>
+              <input
+                type="range"
+                min="80"
+                max="160"
+                value={singingTempo}
+                onChange={(e) => setSingingTempo(Number(e.target.value))}
+                className="w-20 accent-pink-400 cursor-pointer"
+              />
+              <span className="text-xs font-mono text-pink-400 font-bold w-12">{singingTempo} BPM</span>
+            </div>
+          </div>
+
+          {/* Lyrics Input */}
+          <div className="space-y-1.5">
+            <label className="text-xs font-mono text-gray-300 flex items-center justify-between">
+              <span>Song Lyrics / Vocal Script:</span>
+              <span className="text-[10px] text-gray-500">{singingLyrics.trim().split(/\s+/).filter(Boolean).length} words mapped to notes</span>
+            </label>
+            <textarea
+              value={singingLyrics}
+              onChange={(e) => setSingingLyrics(e.target.value)}
+              rows={3}
+              placeholder="Type your song lyrics here (each word will be tuned to a musical note in the melody)..."
+              className="w-full p-3.5 rounded-2xl bg-black/60 border border-pink-500/30 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-pink-500 resize-none font-sans leading-relaxed shadow-inner"
+            />
+          </div>
+
+          {/* 1-Click Lyric Presets */}
+          <div className="flex gap-2 flex-wrap text-[11px] font-mono">
+            <button
+              onClick={() => setSingingLyrics('Rising high above the neon city lights / Girionix dreams ignite the darkest nights')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-pink-500/20 text-gray-300 hover:text-pink-300 transition-colors border border-white/5"
+            >
+              ⚡ Cyberpunk Anthem
+            </button>
+            <button
+              onClick={() => setSingingLyrics('Soft acoustic morning gentle summer breeze / Melody floating through the willow trees')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-pink-500/20 text-gray-300 hover:text-pink-300 transition-colors border border-white/5"
+            >
+              🌸 Dream Pop Ballad
+            </button>
+            <button
+              onClick={() => setSingingLyrics('ज्ञान और चेतना की यह अनंत धारा / हर हृदय में चमके गिरिऑनिक्स का सितारा')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-pink-500/20 text-gray-300 hover:text-pink-300 transition-colors border border-white/5"
+            >
+              🪷 Classical Raag Lyric
+            </button>
+            <button
+              onClick={() => setSingingLyrics('Zero latency and quantum speed / Autonomous intelligence is all we need')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-pink-500/20 text-gray-300 hover:text-pink-300 transition-colors border border-white/5"
+            >
+              🚀 Sci-Fi Hyperpop
+            </button>
+          </div>
+
+          {/* Singer Profiles */}
+          <div className="space-y-2">
+            <div className="text-xs font-mono text-gray-300">Select Singer Profile:</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {singers.map((s) => {
+                const isSelected = selectedSinger === s.id;
+                return (
+                  <div
+                    key={s.id}
+                    onClick={() => setSelectedSinger(s.id)}
+                    className={`p-3.5 rounded-2xl border transition-all cursor-pointer space-y-1.5 ${
+                      isSelected
+                        ? 'bg-pink-950/40 border-pink-500 shadow-glow-pink'
+                        : 'bg-black/40 border-white/5 hover:border-white/20'
+                    }`}
+                  >
+                    <div className="font-bold text-white text-xs">{s.name}</div>
+                    <div className="text-[10px] text-pink-300 font-mono">{s.range}</div>
+                    <div className="text-[10px] text-gray-400">{s.desc}</div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Musical Scales */}
+          <div className="space-y-2">
+            <div className="text-xs font-mono text-gray-300">Musical Key & Scale:</div>
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+              {scales.map((sc) => {
+                const isSelected = selectedScale === sc.id;
+                return (
+                  <button
+                    key={sc.id}
+                    onClick={() => setSelectedScale(sc.id)}
+                    className={`p-2.5 rounded-xl border text-xs font-mono text-left transition-all ${
+                      isSelected
+                        ? 'bg-purple-950/50 border-purple-400 text-purple-200 font-bold'
+                        : 'bg-black/40 border-white/5 text-gray-400 hover:text-white'
+                    }`}
+                  >
+                    {sc.name}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="pt-2 flex items-center justify-between flex-wrap gap-3">
+            <div className="flex items-center gap-3">
+              <button
+                onClick={handleToggleSinging}
+                disabled={!singingLyrics.trim()}
+                className={`px-6 py-3 rounded-2xl font-bold text-xs transition-all flex items-center gap-2 shadow-lg cursor-pointer ${
+                  isSingingPlaying
+                    ? 'bg-rose-500 hover:bg-rose-400 text-white'
+                    : 'bg-gradient-to-r from-pink-500 via-purple-500 to-indigo-500 hover:opacity-90 text-white font-extrabold shadow-glow-pink'
+                }`}
+              >
+                {isSingingPlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
+                <span>{isSingingPlaying ? 'Stop Singing Voice' : 'Sing Lyrics Live with Music'}</span>
+              </button>
+
+              <button
+                onClick={handleDownloadSingingSong}
+                disabled={isRenderingDownload || !singingLyrics.trim()}
+                className="px-4 py-3 rounded-2xl bg-white/10 hover:bg-pink-500/20 text-pink-300 font-mono text-xs border border-pink-500/30 flex items-center gap-2 transition-all cursor-pointer disabled:opacity-50"
+              >
+                <Download className="w-4 h-4" />
+                <span>{isRenderingDownload ? 'Rendering 44.1kHz WAV...' : 'Export Singing WAV'}</span>
+              </button>
+            </div>
+
+            {downloadSuccess && (
+              <span className="text-xs font-mono text-pink-400 animate-fadeIn">
+                {downloadSuccess}
+              </span>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* TAB 1: CINEMATIC SOUNDTRACK GENERATOR */}
       {activeSubTab === 'score' && (
