@@ -34,10 +34,10 @@ const LEGACY_STORAGE_KEYS = {
 // Default latest baseline models
 export const DEFAULT_MODEL_FAMILIES = {
   frontier: {
-    name: 'Frontier Flagship Intelligence (550B / DeepSeek R1)',
-    currentId: 'nvidia/nemotron-3-ultra-550b-a55b:free',
-    fallbackId: 'deepseek/deepseek-r1',
-    patterns: [/nemotron-3-ultra/i, /claude-4/i, /claude-3\.7/i, /deepseek-r1/i, /deepseek-r2/i, /o3/i, /o1/i, /gpt-5/i, /gpt-4\.5/i],
+    name: 'Frontier Flagship Intelligence (MiniMax M3 / 550B)',
+    currentId: 'minimax/minimax-m3:free',
+    fallbackId: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+    patterns: [/minimax-m3/i, /nemotron-3-ultra/i, /claude-4/i, /claude-3\.7/i, /deepseek-r1/i, /deepseek-r2/i, /o3/i, /o1/i, /gpt-5/i, /gpt-4\.5/i],
     category: 'reasoning'
   },
   coding: {
@@ -56,16 +56,16 @@ export const DEFAULT_MODEL_FAMILIES = {
   },
   multimodal: {
     name: 'Omnimodal Vision & Analysis (GPT-4o / Gemini 2.0)',
-    currentId: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    currentId: 'minimax/minimax-m3:free',
     fallbackId: 'openai/gpt-4o',
-    patterns: [/gpt-5/i, /gpt-4\.5/i, /gpt-4o/i, /gemini-2\.0-flash/i, /claude-3\.7/i],
+    patterns: [/minimax-m3/i, /gpt-5/i, /gpt-4\.5/i, /gpt-4o/i, /gemini-2\.0-flash/i, /claude-3\.7/i],
     category: 'multimodal'
   },
   fast: {
     name: 'High-Speed Low Latency & High Accuracy',
-    currentId: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    currentId: 'minimax/minimax-m3:free',
     fallbackId: 'dots-studio/dots-3-note-preview:free',
-    patterns: [/nemotron-3-nano/i, /dots-3-note/i, /gemini-2\.0-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i],
+    patterns: [/minimax-m3/i, /dots-3-note/i, /gemini-2\.0-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i],
     category: 'fast'
   },
   script: {

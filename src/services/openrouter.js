@@ -117,16 +117,16 @@ Here is your custom high-fidelity visual render for **"${cleanSubject}"**:
     // 1. Identity & Creator Questions
     if (/which country|where are you from|country|kaha se ho|kahan se ho|origin|desh|nation|where do you live|where were you made|where was you made/i.test(p)) {
       if (/kaha|kahan|desh|bharat|aap/i.test(p)) {
-        return "मैं **गिरिऑनिक्स एआई (Girionix AI) (Girionix AI) (Girionix AI)** हूँ, और मेरा निर्माण **भारत 🇮🇳 (Bharat)** में **अभिनव गिरी (@abhinavgiri45)** द्वारा किया गया है। मेरा आदर्श वाक्य है: **THINK • CREATE • EXPLORE**।";
+        return "मैं **गिरिऑनिक्स एआई (Girionix AI)** हूँ, और मेरा निर्माण **भारत 🇮🇳 (Bharat)** में **अभिनव गिरी (@abhinavgiri45)** द्वारा किया गया है। मेरा आदर्श वाक्य है: **THINK • CREATE • EXPLORE**।";
       }
       return "I am **Girionix AI**, proudly envisioned and engineered in **India 🇮🇳 (Bharat)** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). My foundational mission is: **THINK • CREATE • EXPLORE**!";
     }
 
-    if (/who created you|who made you|founder|creator|kisne banaya|what is your name|who are you|naam kya hai|kya naam hai|tell me your name/i.test(p)) {
-      if (/kisne|naam|aap/i.test(p)) {
-        return "मेरा नाम **गिरिऑनिक्स एआई (Girionix AI) (Girionix AI) (Girionix AI)** है। मेरा निर्माण **अभिनव गिरी (@abhinavgiri45)** ने **भारत 🇮🇳** में किया है। मैं कोडिंग, गणित, कला और आवाज़ का एक सुपरह्यूमन एआई पॉलीमैथ हूँ।";
+    if (/\b(who is abhinav|who is abhinav giri|abhinav kaun hai|abhinav giri kaun hai|tell me about abhinav|who created you|who made you|founder|creator|kisne banaya|what is your name|who are you|naam kya hai|kya naam hai|tell me your name|who is the developer|developer of girionix)\b/i.test(p)) {
+      if (/kisne|naam|aap|kaun/i.test(p) && /kaha|bharat|desh/i.test(p)) {
+        return "मेरा नाम **गिरिऑनिक्स एआई (Girionix AI)** है। मेरा निर्माण **अभिनव गिरी (@abhinavgiri45)** ने **भारत 🇮🇳** में किया है। **अभिनव गिरी** गिरिऑनिक्स एआई के संस्थापक (Founder) और मुख्य विज़नरी इंजीनियर हैं।";
       }
-      return "I am **Girionix AI**, envisioned and created in **India 🇮🇳** by **Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)). I am an omnipotent AI polymath designed for high-speed coding, Olympiad mathematics, 8K visuals, cinema direction, and speech synthesis!";
+      return "**Abhinav Giri** ([@abhinavgiri45](https://x.com/AbhinavGiri45)) is the founder, visionary engineer, and developer who envisioned and created **Girionix AI** in **India 🇮🇳**.\n\nHe engineered Girionix AI as a sovereign, multi-modal AI workstation dedicated to high-speed software development, formal Olympiad mathematics, 8K creative generation, and natural human conversational intelligence guided by the motto: **THINK • CREATE • EXPLORE**.";
     }
 
     // 2. Specific Institutions & Real-World Facts
@@ -707,18 +707,9 @@ $$\\mathbf{e \\approx 2.71828182845904523536...}$$
 
     // 7. General Clean Direct Answer
     const cleanTopic = prompt.replace(/[?!.]/g, '').trim();
-    return `### ⚡ Girionix AI Direct Intelligence
+    return `Regarding your question about **"${cleanTopic}"**:
 
-Regarding: **"${cleanTopic}"**
-
-1. **Core Concept**:
-   - In response to your inquiry about **${cleanTopic}**, the most direct and accurate approach involves examining the fundamental definitions, underlying logic, and practical applications.
-
-2. **Analysis & Key Insights**:
-   - **Precision**: Formulating solutions based on empirical reasoning and structured principles.
-   - **Application**: Translating theoretical knowledge into actionable execution.
-
-*If you need complete code (Python, React, C++), formal mathematical proofs, or step-by-step guidance, please ask!*`;
+I am ready to help you analyze, derive, code, or solve this in detail. What specific aspect or step would you like to explore?`;
   },
 
   /**
@@ -781,11 +772,11 @@ Regarding: **"${cleanTopic}"**
     // If OpenRouter or default gateway, add verified high-parameter free models
     if (config.providerId === 'openrouter' || !config.providerId) {
       const freeCascade = [
-        'nvidia/nemotron-3-ultra-550b-a55b:free',
-        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
         'minimax/minimax-m3:free',
         'cohere/north-mini-code:free',
-        'dots-studio/dots-3-note-preview:free'
+        'dots-studio/dots-3-note-preview:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free'
       ];
       freeCascade.forEach(m => {
         if (!candidateModels.includes(m)) candidateModels.push(m);
@@ -849,7 +840,7 @@ Regarding: **"${cleanTopic}"**
 
           for (const line of lines) {
             const trimmed = line.trim();
-            if (!trimmed || trimmed === 'data: [DONE]') continue;
+            if (!trimmed || trimmed.startsWith(':') || trimmed === 'data: [DONE]') continue;
             if (trimmed.startsWith('data: ')) {
               try {
                 const json = JSON.parse(trimmed.slice(6));
@@ -867,6 +858,12 @@ Regarding: **"${cleanTopic}"**
               } catch (_) {}
             }
           }
+        }
+
+        // If the model produced reasoning but no separate content chunk, provide reasoning as content
+        if (!fullContent && fullReasoning) {
+          fullContent = fullReasoning;
+          if (onChunk) onChunk(fullContent, fullContent);
         }
 
         if (fullContent || fullReasoning) {
