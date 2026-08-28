@@ -862,6 +862,17 @@ open "$APP_PATH"
 fs.writeFileSync(path.join(downloadsDir, 'Install_Vedic_Mac.command'), macInstallerScript, 'utf8');
 fs.writeFileSync(path.join(downloadsDir, 'Vedic_AI_Mac_Launcher.command'), macInstallerScript, 'utf8');
 
+const macGatekeeperFix = `#!/bin/bash
+echo "🚀 Unblocking Vedic AI from macOS Gatekeeper & Quarantine..."
+xattr -dr com.apple.quarantine "$HOME/Applications/Vedic AI.app" 2>/dev/null
+xattr -cr "$HOME/Applications/Vedic AI.app" 2>/dev/null
+xattr -dr com.apple.quarantine "/Applications/Vedic AI.app" 2>/dev/null
+xattr -cr "/Applications/Vedic AI.app" 2>/dev/null
+echo "✅ Quarantine cleared! Launching Vedic AI..."
+open "$HOME/Applications/Vedic AI.app" 2>/dev/null || open "/Applications/Vedic AI.app" 2>/dev/null || open "https://vedic-ai.pages.dev"
+`;
+fs.writeFileSync(path.join(downloadsDir, 'Fix_Mac_Gatekeeper.command'), macGatekeeperFix, 'utf8');
+
 const macUninstallerScript = `#!/bin/bash
 echo "Removing Vedic AI from macOS..."
 killall "Vedic AI" 2>/dev/null
