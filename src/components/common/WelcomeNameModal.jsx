@@ -24,12 +24,12 @@ export default function WelcomeNameModal({ isOpen, onSaveName }) {
         {/* Official Brand Logo */}
         <img
           src="/logo.png"
-          alt="Vedic AI Official Logo"
+          alt="Girionix AI Official Logo"
           className="w-16 h-16 rounded-2xl object-contain shadow-glow-cyan mb-3 hover:scale-105 transition-transform"
         />
 
         <h2 className="text-2xl font-extrabold text-white tracking-tight mb-1">
-          Welcome to <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-rose-400 bg-clip-text text-transparent">Vedic AI</span>
+          Welcome to <span className="bg-gradient-to-r from-cyan-400 via-purple-400 to-rose-400 bg-clip-text text-transparent">Girionix AI</span>
         </h2>
 
         {/* Updated Slogan & Tagline */}
@@ -62,7 +62,7 @@ export default function WelcomeNameModal({ isOpen, onSaveName }) {
             type="submit"
             className="w-full py-3.5 rounded-2xl bg-gradient-to-r from-cyan-400 via-purple-500 to-rose-500 text-black font-extrabold text-xs flex items-center justify-center gap-2 shadow-glow-cyan hover:opacity-95 transition-all"
           >
-            <span>Get Started with Vedic</span>
+            <span>Get Started with Girionix</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </form>

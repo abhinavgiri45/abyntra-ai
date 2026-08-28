@@ -19,20 +19,20 @@ export default function ProAppStatusModal({ isOpen, onClose, userName = 'Abhinav
   if (!isOpen) return null;
 
   const getPlatformInfo = () => {
-    if (typeof window === 'undefined') return { os: 'Windows 11/12', path: '%LocalAppData%\\Vedic AI\\Data' };
+    if (typeof window === 'undefined') return { os: 'Windows 11/12', path: '%LocalAppData%\\Girionix AI\\Data' };
     const ua = navigator.userAgent || '';
     if (/android/i.test(ua)) return { os: 'Android App', path: 'Native App Internal Storage' };
     if (/iphone|ipad|ipod/i.test(ua)) return { os: 'iOS App (WebClip)', path: 'iOS App Container' };
-    if (/mac/i.test(ua)) return { os: 'macOS App', path: '~/Library/Application Support/Vedic AI/Data' };
-    if (/linux/i.test(ua)) return { os: 'Linux Standalone', path: '~/.local/share/vedic-ai/data' };
-    return { os: 'Windows App (Desktop Pro)', path: '%LocalAppData%\\Vedic AI\\Data' };
+    if (/mac/i.test(ua)) return { os: 'macOS App', path: '~/Library/Application Support/Girionix AI/Data' };
+    if (/linux/i.test(ua)) return { os: 'Linux Standalone', path: '~/.local/share/girionix-ai/data' };
+    return { os: 'Windows App (Desktop Pro)', path: '%LocalAppData%\\Girionix AI\\Data' };
   };
 
   const plat = getPlatformInfo();
 
   const proEngines = [
     {
-      name: 'Vedic Pro (Supreme Core)',
+      name: 'Girionix Pro (Supreme Core)',
       status: 'Active & Unlocked',
       desc: 'High-throughput reasoning, multi-turn context retention, and zero rate-limiting.'
     },
@@ -70,7 +70,7 @@ export default function ProAppStatusModal({ isOpen, onClose, userName = 'Abhinav
             </div>
             <div>
               <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
-                <span>Vedic Pro App Active</span>
+                <span>Girionix Pro App Active</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/30">
                   Native Mode
                 </span>
@@ -100,7 +100,7 @@ export default function ProAppStatusModal({ isOpen, onClose, userName = 'Abhinav
               </span>
             </div>
             <p className="text-xs text-gray-300 font-sans">
-              Welcome, <strong>{userName}</strong>. You are running the official standalone Vedic AI native application with dedicated device disk storage and maximum inference bandwidth.
+              Welcome, <strong>{userName}</strong>. You are running the official standalone Girionix AI native application with dedicated device disk storage and maximum inference bandwidth.
             </p>
           </div>
 

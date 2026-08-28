@@ -21,7 +21,7 @@ export default function PromptEnhancerModal({ isOpen, onClose, onApplyPrompt, ac
         messages: [
           {
             role: 'system',
-            content: `You are the Vedic Master Prompt Architect specializing in ${domain}. Transform the user's prompt into an ultra-detailed, precise, production-grade master instruction with clear objectives, constraints, architectural guidelines, and edge cases. Output ONLY the optimized prompt.`
+            content: `You are the Girionix Master Prompt Architect specializing in ${domain}. Transform the user's prompt into an ultra-detailed, precise, production-grade master instruction with clear objectives, constraints, architectural guidelines, and edge cases. Output ONLY the optimized prompt.`
           },
           { role: 'user', content: `Original Prompt: "${inputPrompt}"` }
         ],

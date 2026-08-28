@@ -92,7 +92,7 @@ export default function ImageStudio({ activeModel, isTitanMode = false }) {
         messages: [
           {
             role: 'system',
-            content: 'You are the Vedic Vision Director. Expand the prompt into an ultra-detailed, 8K studio-grade visual masterpiece prompt with camera lens, lighting, atmospheric haze, and material textures. Output ONLY the expanded prompt string.'
+            content: 'You are the Girionix Vision Director. Expand the prompt into an ultra-detailed, 8K studio-grade visual masterpiece prompt with camera lens, lighting, atmospheric haze, and material textures. Output ONLY the expanded prompt string.'
           },
           { role: 'user', content: `Expand for ${selectedStyle}: "${prompt}"` }
         ],
@@ -187,7 +187,7 @@ export default function ImageStudio({ activeModel, isTitanMode = false }) {
   const handleDownloadImage = (url, title) => {
     const a = document.createElement('a');
     a.href = url;
-    a.download = `vedic_8k_${(title || 'artwork').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}.png`;
+    a.download = `girionix_8k_${(title || 'artwork').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}.png`;
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();

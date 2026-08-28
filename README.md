@@ -1,4 +1,4 @@
-# Vedic AI ⚡
+# Girionix AI ⚡
 
 > **Next-Generation Multimodal AI Platform & Universal Creative Workstation**  
 > *Envisioned, designed, and created by [Abhinav Giri](https://github.com/abhinavgiri45)*
@@ -13,7 +13,7 @@
 
 ## 🌟 Overview
 
-**Vedic AI** is a unified, omnipotent AI polymath platform engineered to eliminate boundaries between fullstack software engineering, Olympiad-level mathematics, 8K studio visual art, Hollywood cinematic direction, and real-time fluid voice intelligence.
+**Girionix AI** is a unified, omnipotent AI polymath platform engineered to eliminate boundaries between fullstack software engineering, Olympiad-level mathematics, 8K studio visual art, Hollywood cinematic direction, and real-time fluid voice intelligence.
 
 Available as a high-performance web app and as standalone desktop/mobile applications for **Windows**, **macOS**, **Linux**, and **Android**.
 
@@ -58,8 +58,8 @@ Available as a high-performance web app and as standalone desktop/mobile applica
 
 ### 1. Clone Repository
 ```bash
-git clone https://github.com/abhinavgiri45/vedic-ai.git
-cd vedic-ai
+git clone https://github.com/abhinavgiri45/girionix-ai.git
+cd girionix-ai
 ```
 
 ### 2. Install Dependencies
@@ -89,7 +89,7 @@ npm run build
 ## 🌐 Deploy to Cloudflare Pages
 
 1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com/) > **Workers & Pages** > **Create application** > **Pages** > **Connect to Git**.
-2. Select repository: `abhinavgiri45/vedic-ai`.
+2. Select repository: `abhinavgiri45/girionix-ai`.
 3. Configure build settings:
    * **Framework preset:** `Vite`
    * **Build command:** `npm run build`

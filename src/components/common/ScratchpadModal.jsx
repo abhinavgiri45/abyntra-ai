@@ -15,14 +15,14 @@ import { openrouter } from '../../services/openrouter';
 
 export default function ScratchpadModal({ isOpen, onClose, activeModel }) {
   const [content, setContent] = useState(() => {
-    return localStorage.getItem('vedic_scratchpad_notes') || '# Vedic Quick Scratchpad\n\n- Jot down ideas, prompts, or snippets here\n- Automatically saved in real-time\n';
+    return localStorage.getItem('girionix_scratchpad_notes') || '# Girionix Quick Scratchpad\n\n- Jot down ideas, prompts, or snippets here\n- Automatically saved in real-time\n';
   });
   const [viewMode, setViewMode] = useState('edit'); // 'edit' | 'preview'
   const [copied, setCopied] = useState(false);
   const [isSummarizing, setIsSummarizing] = useState(false);
 
   useEffect(() => {
-    localStorage.setItem('vedic_scratchpad_notes', content);
+    localStorage.setItem('girionix_scratchpad_notes', content);
   }, [content]);
 
   if (!isOpen) return null;
@@ -37,7 +37,7 @@ export default function ScratchpadModal({ isOpen, onClose, activeModel }) {
     const blob = new Blob([content], { type: 'text/markdown;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `Vedic_Notes_${Date.now()}.md`;
+    a.download = `Girionix_Notes_${Date.now()}.md`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -50,7 +50,7 @@ export default function ScratchpadModal({ isOpen, onClose, activeModel }) {
       let result = '';
       await openrouter.streamChat({
         messages: [
-          { role: 'system', content: 'You are Vedic AI Executive Editor. Format and polish these notes into clean, structured Markdown bullet points with key insights.' },
+          { role: 'system', content: 'You are Girionix AI Executive Editor. Format and polish these notes into clean, structured Markdown bullet points with key insights.' },
           { role: 'user', content }
         ],
         model: activeModel.id,

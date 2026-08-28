@@ -1,5 +1,5 @@
 /**
- * VEDIC AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
+ * GIRIONIX AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Capabilities:
@@ -12,13 +12,13 @@
 import { storage } from './storage';
 
 const STORAGE_KEYS = {
-  UNIVERSAL_PROVIDER: 'vedic_universal_provider',
-  CUSTOM_BASE_URL: 'vedic_custom_base_url',
-  CUSTOM_API_KEY: 'vedic_custom_api_key',
-  AUTO_UPGRADE_ENABLED: 'vedic_auto_upgrade_enabled',
-  DYNAMIC_MODEL_REGISTRY: 'vedic_dynamic_model_registry',
-  LAST_MODEL_SYNC: 'vedic_last_model_sync',
-  UPGRADE_HISTORY: 'vedic_model_upgrade_history'
+  UNIVERSAL_PROVIDER: 'girionix_universal_provider',
+  CUSTOM_BASE_URL: 'girionix_custom_base_url',
+  CUSTOM_API_KEY: 'girionix_custom_api_key',
+  AUTO_UPGRADE_ENABLED: 'girionix_auto_upgrade_enabled',
+  DYNAMIC_MODEL_REGISTRY: 'girionix_dynamic_model_registry',
+  LAST_MODEL_SYNC: 'girionix_last_model_sync',
+  UPGRADE_HISTORY: 'girionix_model_upgrade_history'
 };
 
 // Default latest baseline models
@@ -170,8 +170,8 @@ export const universalApiEngine = {
   async syncLatestModels() {
     const config = this.getProviderConfig();
     const headers = {
-      'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://vedic.ai',
-      'X-Title': 'Vedic AI Universal Engine'
+      'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix.ai',
+      'X-Title': 'Girionix AI Universal Engine'
     };
 
     if (config.apiKey) {
@@ -271,33 +271,33 @@ export const universalApiEngine = {
 
     // If auto-upgrade is disabled, use static baseline mappings
     if (!config.autoUpgradeEnabled) {
-      if (requestedModelId === 'vedic-pro') return 'deepseek/deepseek-r1';
-      if (requestedModelId === 'vedic-lite') return 'google/gemini-2.0-flash-001';
+      if (requestedModelId === 'girionix-pro') return 'deepseek/deepseek-r1';
+      if (requestedModelId === 'girionix-lite') return 'google/gemini-2.0-flash-001';
       return requestedModelId;
     }
 
     // Auto-Frontier / Universal Flagship
-    if (requestedModelId === 'vedic-universal-auto' || requestedModelId === 'vedic-pro') {
+    if (requestedModelId === 'girionix-universal-auto' || requestedModelId === 'girionix-pro') {
       return registry.frontier?.currentId || 'deepseek/deepseek-r1';
     }
 
     // High-Speed / Visual Engine
-    if (requestedModelId === 'vedic-lite') {
+    if (requestedModelId === 'girionix-lite') {
       return registry.fast?.currentId || 'google/gemini-2.0-flash-001';
     }
 
     // Dedicated Coding Studio
-    if (requestedModelId === 'vedic-codemaster-ultra' || requestedModelId === 'anthropic/claude-3.7-sonnet') {
+    if (requestedModelId === 'girionix-codemaster-ultra' || requestedModelId === 'anthropic/claude-3.7-sonnet') {
       return registry.coding?.currentId || 'anthropic/claude-3.7-sonnet';
     }
 
     // Math Lab Olympiad
-    if (requestedModelId === 'vedic-mathx-olympiad' || requestedModelId === 'openai/o3-mini') {
+    if (requestedModelId === 'girionix-mathx-olympiad' || requestedModelId === 'openai/o3-mini') {
       return registry.math?.currentId || 'openai/o3-mini';
     }
 
     // Screenplay & Script Studio
-    if (requestedModelId === 'vedic-scriptmaster-cinema') {
+    if (requestedModelId === 'girionix-scriptmaster-cinema') {
       return registry.script?.currentId || 'anthropic/claude-3.7-sonnet';
     }
 

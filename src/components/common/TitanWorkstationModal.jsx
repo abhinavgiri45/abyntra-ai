@@ -117,7 +117,7 @@ export default function TitanWorkstationModal({ isOpen, onClose, onActivateTitan
             <div>
               <div className="flex items-center gap-2 flex-wrap">
                 <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white">
-                  ⚡ Vedic AI Titan Workstation
+                  ⚡ Girionix AI Titan Workstation
                 </h2>
                 <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 font-mono text-[10px] font-bold border border-emerald-500/40">
                   100% AIR-GAPPED HARDWARE MONSTER
@@ -355,13 +355,13 @@ export default function TitanWorkstationModal({ isOpen, onClose, onActivateTitan
         <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-3 border-t border-white/10">
           <div className="flex items-center gap-2 text-xs font-mono text-gray-400">
             <Database className="w-4 h-4 text-emerald-400" />
-            <span>Local Vault: <code className="text-emerald-300">%LocalAppData%\Vedic AI Titan\Data</code></span>
+            <span>Local Vault: <code className="text-emerald-300">%LocalAppData%\Girionix AI Titan\Data</code></span>
           </div>
 
           <div className="flex items-center gap-3 w-full sm:w-auto">
             <button
               onClick={() => {
-                const targetModel = selectedProfile === 'lite' ? 'vedic-titan-lite' : 'vedic-titan-70b';
+                const targetModel = selectedProfile === 'lite' ? 'girionix-titan-lite' : 'girionix-titan-70b';
                 if (onActivateTitanModel) onActivateTitanModel(targetModel);
                 onClose();
               }}

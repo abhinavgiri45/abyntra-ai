@@ -88,12 +88,12 @@ export default function AboutDeveloperModal({ isOpen, onClose, onOpenStudio }) {
           <div className="flex items-center gap-3">
             <img
               src="/logo.png"
-              alt="Vedic AI Logo"
+              alt="Girionix AI Logo"
               className="w-10 h-10 rounded-2xl object-contain shadow-glow-cyan"
             />
             <div>
               <h2 className="text-base sm:text-lg font-extrabold text-white tracking-tight flex items-center gap-2">
-                <span>About Vedic AI & Creator</span>
+                <span>About Girionix AI & Creator</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   Official Verification
                 </span>
@@ -128,7 +128,7 @@ export default function AboutDeveloperModal({ isOpen, onClose, onOpenStudio }) {
                   </span>
                 </div>
                 <p className="text-xs text-gray-300">
-                  Envisioned, designed, and architected the complete Vedic AI polymath engine.
+                  Envisioned, designed, and architected the complete Girionix AI polymath engine.
                 </p>
                 <div className="flex flex-wrap items-center gap-2 pt-1 text-xs">
                   <a
@@ -163,11 +163,11 @@ export default function AboutDeveloperModal({ isOpen, onClose, onOpenStudio }) {
             </div>
           </div>
 
-          {/* Vedic Core Features Grid */}
+          {/* Girionix Core Features Grid */}
           <div className="space-y-3">
             <div className="flex items-center justify-between">
               <h3 className="text-xs font-mono uppercase tracking-wider text-gray-400 font-bold">
-                ⚡ Vedic AI Superhuman Capabilities & Features
+                ⚡ Girionix AI Superhuman Capabilities & Features
               </h3>
               <span className="text-[11px] font-mono text-cyan-400">6 Core Engines</span>
             </div>
@@ -211,7 +211,7 @@ export default function AboutDeveloperModal({ isOpen, onClose, onOpenStudio }) {
             onClick={onClose}
             className="px-5 py-2 rounded-xl bg-gradient-to-r from-cyan-400 to-purple-500 text-black font-bold text-xs shadow-glow-cyan hover:opacity-90 flex items-center gap-1.5"
           >
-            <span>Explore Vedic Workspace</span>
+            <span>Explore Girionix Workspace</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>

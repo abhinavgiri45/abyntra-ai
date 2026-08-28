@@ -101,7 +101,7 @@ export default function ToolsModal({
   // Custom Persona Builder State
   const [customPersonas, setCustomPersonas] = useState(() => {
     try {
-      const saved = localStorage.getItem('vedic_custom_personas');
+      const saved = localStorage.getItem('girionix_custom_personas');
       return saved ? JSON.parse(saved) : [];
     } catch (_) { return []; }
   });
@@ -111,7 +111,7 @@ export default function ToolsModal({
   const [isCreatingPersona, setIsCreatingPersona] = useState(false);
 
   // Theme State
-  const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('vedic_theme') || 'obsidian');
+  const [currentTheme, setCurrentTheme] = useState(() => localStorage.getItem('girionix_theme') || 'obsidian');
 
   // Focus Timer State
   const [timerSeconds, setTimerSeconds] = useState(25 * 60);
@@ -232,7 +232,7 @@ export default function ToolsModal({
     };
     const updated = [...customPersonas, personaObj];
     setCustomPersonas(updated);
-    localStorage.setItem('vedic_custom_personas', JSON.stringify(updated));
+    localStorage.setItem('girionix_custom_personas', JSON.stringify(updated));
     setNewPersonaName('');
     setNewPersonaDesc('');
     setNewPersonaSuffix('');
@@ -242,7 +242,7 @@ export default function ToolsModal({
 
   const handleApplyTheme = (themeId) => {
     setCurrentTheme(themeId);
-    localStorage.setItem('vedic_theme', themeId);
+    localStorage.setItem('girionix_theme', themeId);
   };
 
   const handleExportWorkspace = () => {
@@ -258,7 +258,7 @@ export default function ToolsModal({
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `vedic_backup_${Date.now()}.json`;
+    a.download = `girionix_backup_${Date.now()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -277,8 +277,8 @@ export default function ToolsModal({
         if (imported.settings) storage.saveSettings(imported.settings);
         if (imported.pinned) storage.savePinnedItems(imported.pinned);
         if (imported.userName) storage.setUserName(imported.userName);
-        if (imported.customPersonas) localStorage.setItem('vedic_custom_personas', JSON.stringify(imported.customPersonas));
-        if (imported.theme) localStorage.setItem('vedic_theme', imported.theme);
+        if (imported.customPersonas) localStorage.setItem('girionix_custom_personas', JSON.stringify(imported.customPersonas));
+        if (imported.theme) localStorage.setItem('girionix_theme', imported.theme);
         setBackupStatus('Workspace restored! Refreshing...');
         setTimeout(() => window.location.reload(), 1000);
       } catch (err) {
@@ -310,7 +310,7 @@ export default function ToolsModal({
             </div>
             <div>
               <h2 className="text-base font-bold text-white tracking-tight flex items-center gap-2">
-                <span>Vedic AI Studio & Tools Hub</span>
+                <span>Girionix AI Studio & Tools Hub</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-cyan-500/20 text-cyan-300 border border-cyan-500/30">
                   Production Ready
                 </span>
@@ -376,7 +376,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-cyan-300">Dev Runner & Code Studio</h3>
-                    <div className="text-[10px] font-mono text-cyan-400 font-bold">⚡ Model: Vedic CodeMaster Ultra (70B)</div>
+                    <div className="text-[10px] font-mono text-cyan-400 font-bold">⚡ Model: Girionix CodeMaster Ultra (70B)</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Live sandboxed component runner, Tailwind preview, AST auto-debugger, and zero-latency compilation.
@@ -400,7 +400,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-indigo-300">Screenplay & Script Studio</h3>
-                    <div className="text-[10px] font-mono text-indigo-400 font-bold">✍️ Model: Vedic ScriptMaster Cinema</div>
+                    <div className="text-[10px] font-mono text-indigo-400 font-bold">✍️ Model: Girionix ScriptMaster Cinema</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Hollywood screenplay formatting, YouTube video hooks, AI scene co-pilot, and neural voice table-read mode.
@@ -424,7 +424,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-purple-300">Math Olympiad & 3D Lab</h3>
-                    <div className="text-[10px] font-mono text-purple-400 font-bold">📐 Model: Vedic Math-X Olympiad (72B)</div>
+                    <div className="text-[10px] font-mono text-purple-400 font-bold">📐 Model: Girionix Math-X Olympiad (72B)</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Step-by-step rigorous proofs, formula derivations, 2D calculus curve grapher, and 3D parametric surface plotter.
@@ -448,7 +448,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-rose-300">8K VisionForge Studio</h3>
-                    <div className="text-[10px] font-mono text-rose-400 font-bold">🎨 Model: Vedic VisionForge 8K Pro</div>
+                    <div className="text-[10px] font-mono text-rose-400 font-bold">🎨 Model: Girionix VisionForge 8K Pro</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Ultra-HD photorealistic generation, Arri Alexa optics, 4X upscale, and multi-aspect ratio cinema framing.
@@ -472,7 +472,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-amber-300">MotionLab 4K/8K Cinema Video</h3>
-                    <div className="text-[10px] font-mono text-amber-400 font-bold">🎬 Model: Vedic CineMotion 4K/8K Max</div>
+                    <div className="text-[10px] font-mono text-amber-400 font-bold">🎬 Model: Girionix CineMotion 4K/8K Max</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Cinematic 4-shot storyboard synthesis, 3D camera flight trajectories (Orbit, Dolly, FPV), and stereo scoring.
@@ -496,7 +496,7 @@ export default function ToolsModal({
                   </div>
                   <div>
                     <h3 className="text-sm font-bold text-white group-hover:text-emerald-300">AudioLab & Neural Voice Studio</h3>
-                    <div className="text-[10px] font-mono text-emerald-400 font-bold">🎙️ Model: Vedic AudioCraft HD</div>
+                    <div className="text-[10px] font-mono text-emerald-400 font-bold">🎙️ Model: Girionix AudioCraft HD</div>
                   </div>
                   <p className="text-xs text-gray-400 leading-relaxed">
                     Multi-speaker neural voice synthesis, real-time audio spectrum frequency analyzer, and procedural soundtrack scoring.
@@ -610,7 +610,7 @@ export default function ToolsModal({
                 <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 flex items-center gap-3">
                   <CheckCircle className="w-5 h-5 text-cyan-400 shrink-0" />
                   <div>
-                    <h4 className="font-bold text-white text-xs">You are running the latest version of Vedic AI</h4>
+                    <h4 className="font-bold text-white text-xs">You are running the latest version of Girionix AI</h4>
                     <p className="text-[11px] text-gray-400 font-sans">All studios, 8K engines, and offline vaults are fully synchronized.</p>
                   </div>
                 </div>
@@ -670,7 +670,7 @@ export default function ToolsModal({
               <div className="p-4 rounded-2xl bg-emerald-950/30 border border-emerald-500/30 flex items-center justify-between">
                 <div>
                   <h3 className="text-sm font-bold text-white flex items-center gap-2">
-                    <span>Vedic AI Native Cross-Platform Apps</span>
+                    <span>Girionix AI Native Cross-Platform Apps</span>
                     <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300">
                       90-Day Local Vault
                     </span>
@@ -683,11 +683,11 @@ export default function ToolsModal({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
                 {[
-                  { name: 'Windows', ext: 'Vedic_AI_Setup.exe', file: '/downloads/Vedic_AI_Setup.exe', os: 'Win 7, 8, 10, 11, 12', color: 'cyan', desc: 'Full GUI Setup Wizard + Windows Settings/Control Panel integration.' },
-                  { name: 'Android', ext: 'Vedic_AI.apk', file: '/downloads/Vedic_AI.apk', os: 'Android 8.0 to 15/16', color: 'emerald', desc: 'Real signed Android APK with 90-day sandbox storage.' },
-                  { name: 'macOS', ext: 'Vedic_AI_macOS.dmg', file: '/downloads/Vedic_AI_macOS.dmg', os: 'Apple Silicon & Intel', color: 'rose', desc: 'Universal DMG bundle with 1-click uninstaller script.' },
-                  { name: 'Linux', ext: 'Vedic_AI_Linux.AppImage', file: '/downloads/Vedic_AI_Linux.AppImage', os: 'Ubuntu, Fedora, Arch', color: 'amber', desc: 'Self-contained executable with Wayland & X11 acceleration.' },
-                  { name: 'iOS Profile', ext: 'Vedic_AI_iOS.mobileconfig', file: '/downloads/Vedic_AI_iOS.mobileconfig', os: 'iOS 15 to 18/19', color: 'purple', desc: 'Instant Apple WebClip profile with isolated app container.' }
+                  { name: 'Windows', ext: 'Girionix_AI_Setup.exe', file: '/downloads/Girionix_AI_Setup.exe', os: 'Win 7, 8, 10, 11, 12', color: 'cyan', desc: 'Full GUI Setup Wizard + Windows Settings/Control Panel integration.' },
+                  { name: 'Android', ext: 'Girionix_AI.apk', file: '/downloads/Girionix_AI.apk', os: 'Android 8.0 to 15/16', color: 'emerald', desc: 'Real signed Android APK with 90-day sandbox storage.' },
+                  { name: 'macOS', ext: 'Girionix_AI_macOS.dmg', file: '/downloads/Girionix_AI_macOS.dmg', os: 'Apple Silicon & Intel', color: 'rose', desc: 'Universal DMG bundle with 1-click uninstaller script.' },
+                  { name: 'Linux', ext: 'Girionix_AI_Linux.AppImage', file: '/downloads/Girionix_AI_Linux.AppImage', os: 'Ubuntu, Fedora, Arch', color: 'amber', desc: 'Self-contained executable with Wayland & X11 acceleration.' },
+                  { name: 'iOS Profile', ext: 'Girionix_AI_iOS.mobileconfig', file: '/downloads/Girionix_AI_iOS.mobileconfig', os: 'iOS 15 to 18/19', color: 'purple', desc: 'Instant Apple WebClip profile with isolated app container.' }
                 ].map((item, idx) => (
                   <div key={idx} className="p-4 rounded-2xl bg-white/[0.02] border border-white/10 hover:border-cyan-400/50 space-y-2.5 transition-all">
                     <div className="flex items-center justify-between">
@@ -792,7 +792,7 @@ export default function ToolsModal({
           {activeTab === 'themes' && (
             <div className="space-y-4">
               <div className="text-xs text-gray-400 font-mono">
-                Select an aesthetic visual theme for your Vedic workspace:
+                Select an aesthetic visual theme for your Girionix workspace:
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {THEMES.map(th => {
@@ -900,7 +900,7 @@ export default function ToolsModal({
           {activeTab === 'backup' && (
             <div className="space-y-4">
               <div className="text-xs text-gray-400 font-mono">
-                Export and restore your entire Vedic workspace (all chat sessions, bookmarks, custom settings):
+                Export and restore your entire Girionix workspace (all chat sessions, bookmarks, custom settings):
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="p-5 rounded-2xl bg-black/60 border border-cyan-500/30 space-y-3">
@@ -981,7 +981,7 @@ export default function ToolsModal({
               </div>
 
               <p className="text-xs font-sans text-gray-300 max-w-lg mx-auto leading-relaxed">
-                This certifies that <strong className="text-cyan-400">Vedic AI</strong> was envisioned, architected, and engineered in India by <strong className="text-purple-300 font-bold">Abhinav Giri</strong> to pioneer the next generation of artificial intelligence, combining superhuman code sandboxing, Olympiad mathematics, 8K art direction, and conversational voice intelligence.
+                This certifies that <strong className="text-cyan-400">Girionix AI</strong> was envisioned, architected, and engineered in India by <strong className="text-purple-300 font-bold">Abhinav Giri</strong> to pioneer the next generation of artificial intelligence, combining superhuman code sandboxing, Olympiad mathematics, 8K art direction, and conversational voice intelligence.
               </p>
 
               {/* Creator Official Links */}

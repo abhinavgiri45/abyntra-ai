@@ -166,7 +166,7 @@ export default function ScriptStudio({ activeModel, isTitanMode = false }) {
     const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `vedic_script_${Date.now()}.${ext}`;
+    a.download = `girionix_script_${Date.now()}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -180,7 +180,7 @@ export default function ScriptStudio({ activeModel, isTitanMode = false }) {
     setIsGenerating(true);
     let generatedScript = '';
 
-    const systemPrompt = `You are Vedic ScriptMaster Cinema, a world-class Hollywood screenplay writer, Emmy-winning narrative architect, and viral content strategist.
+    const systemPrompt = `You are Girionix ScriptMaster Cinema, a world-class Hollywood screenplay writer, Emmy-winning narrative architect, and viral content strategist.
 Format all output in pure, industry-standard Fountain / Hollywood Screenplay format:
 - Scene headings in all caps: INT. LOCATION - DAY/NIGHT
 - Action lines in clear present tense
@@ -197,7 +197,7 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
             { role: 'system', content: systemPrompt },
             { role: 'user', content: `Instruction: "${instruction}"\n\nCurrent Script Context:\n${scriptContent.slice(-1200)}` }
           ],
-          model: 'vedic-titan-70b',
+          model: 'girionix-titan-70b',
           onChunk: (chunk, acc) => { generatedScript = acc; }
         });
       } else {
@@ -533,7 +533,7 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
               onKeyDown={(e) => e.key === 'Enter' && handleAiGenerate()}
-              placeholder="Ask Vedic to write next scene, create dialogue punch-up, or generate character backstory..."
+              placeholder="Ask Girionix to write next scene, create dialogue punch-up, or generate character backstory..."
               className="flex-1 bg-transparent px-2 text-xs sm:text-sm text-white placeholder-gray-500 focus:outline-none"
             />
           </div>

@@ -63,7 +63,7 @@ export default function LocalNeuralModal({
 
   if (!isOpen) return null;
 
-  const isLocalActive = activeModel?.id === 'vedic-local-core';
+  const isLocalActive = activeModel?.id === 'girionix-local-core';
 
   return (
     <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-xl flex items-center justify-center p-4 animate-fadeIn">
@@ -84,7 +84,7 @@ export default function LocalNeuralModal({
           <div>
             <div className="flex items-center gap-2">
               <h2 className="text-lg sm:text-xl font-black text-white">
-                Vedic Local Core — 100% On-Device Neural Engine
+                Girionix Local Core — 100% On-Device Neural Engine
               </h2>
               <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 text-[10px] font-mono border border-emerald-500/30">
                 Air-Gapped Local Hardware

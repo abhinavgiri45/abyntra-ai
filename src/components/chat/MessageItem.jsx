@@ -392,7 +392,7 @@ function GeneratedImageCard({ initialUrl, altText, onOpenLightbox }) {
   const handleDownload = () => {
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Vedic_8K_${(altText || 'artwork').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}.png`;
+    a.download = `Girionix_8K_${(altText || 'artwork').replace(/[^a-zA-Z0-9]/g, '_').toLowerCase()}.png`;
     a.target = '_blank';
     document.body.appendChild(a);
     a.click();
@@ -683,7 +683,7 @@ export default function MessageItem({
     const blob = new Blob([code], { type: 'text/plain;charset=utf-8' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `Vedic_${lang}_${Date.now()}.${ext}`;
+    a.download = `Girionix_${lang}_${Date.now()}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -713,7 +713,7 @@ export default function MessageItem({
     }
   };
 
-  const handleDownload = (url, title = 'vedic_masterpiece') => {
+  const handleDownload = (url, title = 'girionix_masterpiece') => {
     const a = document.createElement('a');
     a.href = url;
     a.download = `${title.replace(/[^a-z0-9]/gi, '_')}.png`;
@@ -851,7 +851,7 @@ export default function MessageItem({
               <div className="p-3.5 bg-gradient-to-br from-indigo-950/40 via-purple-950/20 to-slate-900 border-t border-cyan-500/20 text-xs font-sans text-gray-300 space-y-1.5 animate-fadeIn">
                 <div className="flex items-center gap-2 text-cyan-300 font-mono font-bold text-[11px]">
                   <Sparkles className="w-3.5 h-3.5 text-cyan-400" />
-                  <span>Vedic AI Code Analysis:</span>
+                  <span>Girionix AI Code Analysis:</span>
                 </div>
                 <p className="text-[11px] text-gray-300 leading-relaxed">
                   • <strong>Architecture:</strong> Modular, modern {language} structure with strict types and memory isolation.
@@ -1015,14 +1015,14 @@ export default function MessageItem({
           )}
 
           {/* Interactive Pro App Download Callout Button */}
-          {(message.isProGated || message.content?.includes('MotionLab 60 FPS Video Studio is an Vedic Pro Feature') || (message.content?.includes('Download App') && !isUser)) && onOpenDownload && (
+          {(message.isProGated || message.content?.includes('MotionLab 60 FPS Video Studio is an Girionix Pro Feature') || (message.content?.includes('Download App') && !isUser)) && onOpenDownload && (
             <div className="mt-4 pt-3 border-t border-white/10 flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenDownload}
                 className="px-5 py-2.5 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-black font-extrabold text-xs shadow-glow-emerald hover:opacity-90 transition-all flex items-center gap-2 hover:scale-105 cursor-pointer"
               >
                 <Download className="w-4 h-4 text-black" />
-                <span>Download Vedic AI Native App Suite (Windows, Android, macOS, Linux, iOS)</span>
+                <span>Download Girionix AI Native App Suite (Windows, Android, macOS, Linux, iOS)</span>
               </button>
             </div>
           )}
@@ -1116,7 +1116,7 @@ export default function MessageItem({
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  onClick={() => handleDownload(selectedImage, 'vedic_masterpiece_8k')}
+                  onClick={() => handleDownload(selectedImage, 'girionix_masterpiece_8k')}
                   className="px-3 py-1.5 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-500/40 transition-colors flex items-center gap-1.5 font-bold cursor-pointer"
                 >
                   <Download className="w-3.5 h-3.5" />

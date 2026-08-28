@@ -158,7 +158,7 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
             <span className="text-[10px] font-mono text-gray-400 uppercase">Engine Model:</span>
             <span className="px-3 py-1 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5">
               <Clapperboard className="w-3.5 h-3.5 text-amber-400" />
-              <span>{isTitanMode ? '⚡ Titan CineMotion Core' : 'Vedic CineMotion 4K/8K Max'}</span>
+              <span>{isTitanMode ? '⚡ Titan CineMotion Core' : 'Girionix CineMotion 4K/8K Max'}</span>
             </span>
           </div>
         </div>

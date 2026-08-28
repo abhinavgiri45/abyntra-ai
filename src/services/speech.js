@@ -1,5 +1,5 @@
 /**
- * Next-Gen Human-Grade Speech Recognition and Natural Neural Synthesis Service for Vedic AI
+ * Next-Gen Human-Grade Speech Recognition and Natural Neural Synthesis Service for Girionix AI
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Key Highlights:
@@ -422,14 +422,14 @@ class SpeechService {
 
     if (targetLang === 'hi-IN' || this.hasDevanagari(t)) {
       t = t
-        .replace(/\bVedic AI\b/gi, 'अब्यंतरा एआई')
-        .replace(/\bVedic\b/gi, 'अब्यंतरा')
+        .replace(/\bGirionix AI\b/gi, 'गिरिऑनिक्स एआई (Girionix AI) (Girionix AI)')
+        .replace(/\bGirionix\b/gi, 'अब्यंतरा')
         .replace(/\bAbhinav Giri\b/gi, 'अभिनव गिरी')
         .replace(/\bIndia\b/gi, 'भारत');
     } else {
       t = t
-        .replace(/\bVedic AI\b/g, 'Abhyntra AI')
-        .replace(/\bVedic\b/g, 'Abhyntra');
+        .replace(/\bGirionix AI\b/g, 'Abhyntra AI')
+        .replace(/\bGirionix\b/g, 'Abhyntra');
     }
 
     return t.replace(/\s+/g, ' ').trim();

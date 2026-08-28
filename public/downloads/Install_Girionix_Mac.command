@@ -1,23 +1,23 @@
 #!/bin/bash
 # ==========================================================
-# Vedic AI Pro - macOS 1-Click Verified Installer
+# Girionix AI Pro - macOS 1-Click Verified Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Vedic AI for macOS..."
+echo "🚀 Installing Girionix AI for macOS..."
 DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_PATH="$HOME/Applications/Vedic AI.app"
-DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
+APP_PATH="$HOME/Applications/Girionix AI.app"
+DATA_DIR="$HOME/Library/Application Support/Girionix AI/Data"
 
 mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources"
 mkdir -p "$DATA_DIR"
 
 # Copy Launcher
-cat << 'EOF' > "$APP_PATH/Contents/MacOS/VedicAI"
+cat << 'EOF' > "$APP_PATH/Contents/MacOS/GirionixAI"
 #!/bin/bash
 PORT=49153
 DIR="$(cd "$(dirname "$0")/../Resources" && pwd)"
-DATA_DIR="$HOME/Library/Application Support/Vedic AI/Data"
+DATA_DIR="$HOME/Library/Application Support/Girionix AI/Data"
 if command -v python3 &>/dev/null; then
   (cd "$DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
@@ -32,12 +32,12 @@ else
 fi
 EOF
 
-chmod +x "$APP_PATH/Contents/MacOS/VedicAI"
+chmod +x "$APP_PATH/Contents/MacOS/GirionixAI"
 
 # Remove macOS Gatekeeper Quarantine Flag
 xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
 xattr -cr "$APP_PATH" 2>/dev/null
 
-echo "✅ Vedic AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching Vedic AI..."
+echo "✅ Girionix AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
+echo "🚀 Launching Girionix AI..."
 open "$APP_PATH"

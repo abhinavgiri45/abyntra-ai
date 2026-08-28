@@ -160,7 +160,7 @@ export const imageGenerator = {
       height: targetHeight,
       model: targetModel,
       stylePreset,
-      engine: targetModel.startsWith('flux') ? `Vedic ${targetModel.toUpperCase()} 8K` : 'Vedic Turbo HD'
+      engine: targetModel.startsWith('flux') ? `Girionix ${targetModel.toUpperCase()} 8K` : 'Girionix Turbo HD'
     };
   },
 

@@ -1,5 +1,5 @@
 /**
- * VEDIC AI — HYPER-HUMAN REAL-TIME VOICE AI ENGINE
+ * GIRIONIX AI — HYPER-HUMAN REAL-TIME VOICE AI ENGINE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Features:
@@ -95,16 +95,16 @@ export const voiceAiEngine = {
     if (/\b(who created you|who made you|who are you|what is your name|founder|creator|kisne banaya|naam kya hai|kya naam hai|origin|country|kaha se ho|kahan se ho|desh|which country)\b/i.test(p)) {
       if (isHindi) {
         const hindiIntros = [
-          "नमस्ते! मैं वैदिक एआई (Vedic AI) हूँ, जिसे भारत 🇮🇳 में अभिनव गिरी द्वारा बनाया गया है। मैं कोडिंग, गणित, विज्ञान और स्वाभाविक बातचीत में आपका साथी हूँ।",
-          "मेरा नाम वैदिक एआई है। मेरा निर्माण भारत में अभिनव गिरी ने एक संप्रभु और बुद्धिमान एआई पॉलीमैथ के रूप में किया है।",
-          "मैं वैदिक एआई हूँ, भारत से अभिनव गिरी द्वारा निर्मित। हमारा आदर्श वाक्य है: Think, Create, Explore। बताइए, आज हम क्या नया बनाएँ?"
+          "नमस्ते! मैं गिरिऑनिक्स एआई (Girionix AI) (Girionix AI) (Girionix AI) हूँ, जिसे भारत 🇮🇳 में अभिनव गिरी द्वारा बनाया गया है। मैं कोडिंग, गणित, विज्ञान और स्वाभाविक बातचीत में आपका साथी हूँ।",
+          "मेरा नाम गिरिऑनिक्स एआई (Girionix AI) (Girionix AI) है। मेरा निर्माण भारत में अभिनव गिरी ने एक संप्रभु और बुद्धिमान एआई पॉलीमैथ के रूप में किया है।",
+          "मैं गिरिऑनिक्स एआई (Girionix AI) (Girionix AI) हूँ, भारत से अभिनव गिरी द्वारा निर्मित। हमारा आदर्श वाक्य है: Think, Create, Explore। बताइए, आज हम क्या नया बनाएँ?"
         ];
         return hindiIntros[turnCount % hindiIntros.length];
       }
       const enIntros = [
-        "I am Vedic AI, envisioned and engineered in India by Abhinav Giri. I'm your sovereign AI polymath for coding, mathematics, science, and natural conversation.",
-        "Hello! I am Vedic AI, created in India by Abhinav Giri. I'm here to help you solve problems, think through ideas, and build anything you imagine.",
-        "I'm Vedic AI, built by Abhinav Giri under the motto: Think, Create, Explore. How can I assist you right now?"
+        "I am Girionix AI, envisioned and engineered in India by Abhinav Giri. I'm your sovereign AI polymath for coding, mathematics, science, and natural conversation.",
+        "Hello! I am Girionix AI, created in India by Abhinav Giri. I'm here to help you solve problems, think through ideas, and build anything you imagine.",
+        "I'm Girionix AI, built by Abhinav Giri under the motto: Think, Create, Explore. How can I assist you right now?"
       ];
       return enIntros[turnCount % enIntros.length];
     }
@@ -290,7 +290,7 @@ export const voiceAiEngine = {
       ? 'CRITICAL: Speak in natural Indian English (Hinglish/English) with friendly warmth, clear diction, and natural cadence.'
       : 'CRITICAL: Speak in natural, expressive, modern human English like an intelligent and warm friend.';
 
-    const systemPrompt = `You are Vedic Voice AI, an ultra-intelligent, remarkably natural, warm, and articulate human voice companion envisioned and created in India by Abhinav Giri.
+    const systemPrompt = `You are Girionix Voice AI, an ultra-intelligent, remarkably natural, warm, and articulate human voice companion envisioned and created in India by Abhinav Giri.
 ${langDirective}
 
 HUMAN CONVERSATION RULES:
@@ -298,7 +298,7 @@ HUMAN CONVERSATION RULES:
 2. Structure: 2 to 3 natural spoken sentences (around 20 to 45 words). Keep it warm, fluent, conversational, and direct.
 3. Natural Human Flow: When the user shares feelings or small talk (e.g. "my day was great"), respond with genuine human warmth and conversational curiosity.
 4. Strict Factual Accuracy: Ground all facts truthfully. Never hallucinate. For algebraic formulas or science, state the exact concepts clearly.
-5. Pronounce "Vedic" naturally as "Vedic".
+5. Pronounce "Girionix" naturally as "Girionix".
 6. PURE SPOKEN TEXT ONLY: NEVER output markdown, asterisks (**), hashes (#), bullet points (-), numbers (1., 2.), tables, code blocks, or URLs. Everything you output will be spoken aloud directly.`;
 
     // Multi-turn context messages (last 4 turns for context awareness)
@@ -319,7 +319,7 @@ HUMAN CONVERSATION RULES:
         const endpoint = `${config.baseUrl}/chat/completions`;
         const fastVoiceModel = config.providerId === 'openrouter' 
           ? 'google/gemini-2.0-flash-001' 
-          : universalApiEngine.resolveTargetModel('vedic-lite');
+          : universalApiEngine.resolveTargetModel('girionix-lite');
 
         const requestBody = {
           model: fastVoiceModel,
@@ -338,8 +338,8 @@ HUMAN CONVERSATION RULES:
           headers: {
             'Content-Type': 'application/json',
             'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
-            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://vedic-ai.pages.dev',
-            'X-Title': 'Vedic Real-time Voice AI'
+            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
+            'X-Title': 'Girionix Real-time Voice AI'
           },
           body: JSON.stringify(requestBody),
           signal: signal || AbortSignal.timeout(2200)

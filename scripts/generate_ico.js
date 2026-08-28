@@ -27,5 +27,5 @@ if (fs.existsSync(pngPath)) {
   const icoData = Buffer.concat([header, pngData]);
   fs.writeFileSync(icoPath, icoData);
   fs.writeFileSync(downloadsIcoPath, icoData);
-  console.log('✅ Generated valid Windows .ICO icon with Vedic Logo:', icoData.length, 'bytes');
+  console.log('✅ Generated valid Windows .ICO icon with Girionix Logo:', icoData.length, 'bytes');
 }

@@ -165,7 +165,7 @@ export default function SettingsModal({ isOpen, onClose, onApiKeyUpdated }) {
                   className={`w-10 h-5 rounded-full p-0.5 transition-colors duration-200 ease-in-out flex items-center cursor-pointer ${
                     autoUpgradeEnabled ? 'bg-cyan-400' : 'bg-white/20'
                   }`}
-                  title="When enabled, Vedic automatically switches to newer model generations as they release"
+                  title="When enabled, Girionix automatically switches to newer model generations as they release"
                 >
                   <div className={`w-4 h-4 rounded-full transition-transform duration-200 ease-in-out ${
                     autoUpgradeEnabled ? 'translate-x-5 bg-black shadow-sm' : 'translate-x-0 bg-gray-400'
@@ -175,7 +175,7 @@ export default function SettingsModal({ isOpen, onClose, onApiKeyUpdated }) {
             </div>
 
             <p className="text-xs text-gray-300 font-sans leading-relaxed">
-              When <strong>Auto-Upgrade</strong> is active, Vedic AI autonomously routes requests to newly released frontier models (e.g. Claude 3.7/4.0, GPT-4.5/5, DeepSeek R1/R2, Gemini 2.5) without needing manual updates.
+              When <strong>Auto-Upgrade</strong> is active, Girionix AI autonomously routes requests to newly released frontier models (e.g. Claude 3.7/4.0, GPT-4.5/5, DeepSeek R1/R2, Gemini 2.5) without needing manual updates.
             </p>
 
             {/* Provider Select */}

@@ -83,7 +83,7 @@ export default function Sidebar({
             <button
               onClick={onOpenWhySwitch}
               className="p-2.5 rounded-xl text-amber-400 hover:text-white hover:bg-purple-500/20 transition-colors"
-              title="Why Switch to Vedic AI? (Model Benchmarks)"
+              title="Why Switch to Girionix AI? (Model Benchmarks)"
             >
               <Crown className="w-5 h-5" />
             </button>
@@ -93,7 +93,7 @@ export default function Sidebar({
             <button
               onClick={onOpenAbout}
               className="p-2.5 rounded-xl text-cyan-400 hover:text-white hover:bg-cyan-500/20 transition-colors"
-              title="Introducing Vedic AI & Creator Abhinav Giri"
+              title="Introducing Girionix AI & Creator Abhinav Giri"
             >
               <Award className="w-5 h-5" />
             </button>
@@ -238,7 +238,7 @@ export default function Sidebar({
               <div className="flex items-center gap-2">
                 <Download className="w-3.5 h-3.5 text-emerald-400" />
                 <div className="flex flex-col">
-                  <span className="text-xs font-medium text-gray-200 group-hover:text-emerald-300">Get Vedic App</span>
+                  <span className="text-xs font-medium text-gray-200 group-hover:text-emerald-300">Get Girionix App</span>
                   <span className="text-[10px] font-mono text-gray-500">Android • Win • Mac • iOS</span>
                 </div>
               </div>
@@ -251,12 +251,12 @@ export default function Sidebar({
           <button
             onClick={onOpenWhySwitch}
             className="w-full p-2 rounded-xl bg-purple-950/20 hover:bg-purple-950/40 border border-purple-500/20 hover:border-purple-500/40 flex items-center justify-between text-left transition-all group cursor-pointer"
-            title="Why Switch to Vedic AI • Model Benchmarks & Comparison"
+            title="Why Switch to Girionix AI • Model Benchmarks & Comparison"
           >
             <div className="flex items-center gap-2">
               <Crown className="w-3.5 h-3.5 text-amber-400" />
               <div className="flex flex-col">
-                <span className="text-xs font-bold text-white group-hover:text-amber-300">Why Switch to Vedic?</span>
+                <span className="text-xs font-bold text-white group-hover:text-amber-300">Why Switch to Girionix?</span>
                 <span className="text-[10px] font-mono text-purple-300/80">Benchmarks vs ChatGPT & Claude</span>
               </div>
             </div>
@@ -268,12 +268,12 @@ export default function Sidebar({
           <button
             onClick={onOpenAbout}
             className="w-full p-2 rounded-xl bg-white/[0.02] hover:bg-cyan-950/30 border border-white/[0.06] hover:border-cyan-500/30 flex items-center justify-between text-left transition-all group cursor-pointer"
-            title="Open Introducing Vedic AI & Creator Profile"
+            title="Open Introducing Girionix AI & Creator Profile"
           >
             <div className="flex items-center gap-2">
               <Award className="w-3.5 h-3.5 text-cyan-400" />
               <div className="flex flex-col">
-                <span className="text-xs font-medium text-gray-200 group-hover:text-cyan-300">About Vedic AI</span>
+                <span className="text-xs font-medium text-gray-200 group-hover:text-cyan-300">About Girionix AI</span>
                 <span className="text-[10px] font-mono text-gray-500">Creator: Abhinav Giri</span>
               </div>
             </div>

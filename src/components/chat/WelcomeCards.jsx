@@ -8,11 +8,11 @@ export default function WelcomeCards({ userName, onOpenAbout, onOpenWhySwitch })
       <div 
         className="mb-4 sm:mb-5 flex flex-col items-center cursor-pointer group" 
         onClick={onOpenAbout} 
-        title="Click to view About Vedic AI & Creator Abhinav Giri"
+        title="Click to view About Girionix AI & Creator Abhinav Giri"
       >
         <img
           src="/logo.png"
-          alt="Vedic AI Official Logo"
+          alt="Girionix AI Official Logo"
           className="w-20 h-20 sm:w-24 sm:h-24 rounded-3xl object-contain shadow-glow-cyan mb-2.5 sm:mb-3 group-hover:scale-105 transition-transform duration-300"
         />
         <span className="text-[11px] sm:text-xs font-mono tracking-[0.25em] text-cyan-300 font-bold uppercase drop-shadow-sm">
@@ -40,7 +40,7 @@ export default function WelcomeCards({ userName, onOpenAbout, onOpenWhySwitch })
             className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-purple-500/15 hover:bg-purple-500/25 border border-purple-500/30 text-purple-300 text-xs font-bold transition-all hover:scale-105 shadow-sm cursor-pointer"
           >
             <Crown className="w-3.5 h-3.5 text-amber-400" />
-            <span>Why Switch to Vedic AI? (Compare)</span>
+            <span>Why Switch to Girionix AI? (Compare)</span>
           </button>
         )}
 

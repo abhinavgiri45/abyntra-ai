@@ -95,7 +95,7 @@ export default function App() {
         <div>
           <h2 className="text-xl font-bold text-white tracking-wide flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-full bg-cyan-400 animate-ping"></span>
-            Vedic Quantum Visualizer
+            Girionix Quantum Visualizer
           </h2>
           <p className="text-xs text-gray-400 font-mono mt-0.5">Real-time 3D Particle Mesh & Simulation</p>
         </div>
@@ -156,7 +156,7 @@ export default function App() {
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Vedic Live Canvas</title>
+    <title>Girionix Live Canvas</title>
     <script src="https://cdn.tailwindcss.com"></script>
   </head>
   <body class="bg-black text-white m-0 p-0 flex items-center justify-center min-h-screen">

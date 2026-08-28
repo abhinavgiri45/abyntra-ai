@@ -119,7 +119,7 @@ export default function ChatView({
       try {
         const res = await universalApiEngine.syncLatestModels();
         if (res.upgraded) {
-          console.log('[Vedic AI] Auto-Upgraded to newly released model weights:', res.upgradedFamilies);
+          console.log('[Girionix AI] Auto-Upgraded to newly released model weights:', res.upgradedFamilies);
         }
       } catch (_) {}
     };
@@ -204,7 +204,7 @@ export default function ChatView({
       if (onOpenAbout) {
         onOpenAbout();
       } else {
-        handleSend('Who created you and what was the vision behind Vedic AI?');
+        handleSend('Who created you and what was the vision behind Girionix AI?');
       }
       setInput('');
       return;
@@ -438,7 +438,7 @@ export default function ChatView({
       const targetVideoSubject = cleanVideoPrompt || promptToSend;
       const storyboard = await imageGenerator.generateVideoStoryboard({ prompt: targetVideoSubject });
 
-      const videoScriptReply = `🎬 **Cinematic Video Scene Directed by Vedic Motion Engine (Pro)**\n\n**Scene Subject**: "${targetVideoSubject}"\n\n**Camera Motion**: 360° Counter-Clockwise Orbit & Speed Ramp\n**Aspect Ratio**: 2.39:1 Anamorphic Cinema • 60 FPS HD\n\n> 🎥 **Multi-Shot Screenplay Breakdown**:\n> - **Shot 1 (00:00 - 00:04)**: Dynamic wide establishing tracking shot with atmospheric volumetric lighting.\n> - **Shot 2 (00:04 - 00:08)**: Hyper-dolly zoom focusing on subject highlights at 60 FPS.\n> - **Shot 3 (00:08 - 00:12)**: FPV ascending crane move into dramatic rim-lighting.`;
+      const videoScriptReply = `🎬 **Cinematic Video Scene Directed by Girionix Motion Engine (Pro)**\n\n**Scene Subject**: "${targetVideoSubject}"\n\n**Camera Motion**: 360° Counter-Clockwise Orbit & Speed Ramp\n**Aspect Ratio**: 2.39:1 Anamorphic Cinema • 60 FPS HD\n\n> 🎥 **Multi-Shot Screenplay Breakdown**:\n> - **Shot 1 (00:00 - 00:04)**: Dynamic wide establishing tracking shot with atmospheric volumetric lighting.\n> - **Shot 2 (00:04 - 00:08)**: Hyper-dolly zoom focusing on subject highlights at 60 FPS.\n> - **Shot 3 (00:08 - 00:12)**: FPV ascending crane move into dramatic rim-lighting.`;
 
       setSessions(prev => prev.map(s => s.id === activeSessionId ? {
         ...s,
@@ -518,8 +518,8 @@ export default function ChatView({
     const isOfflineOrTitan = isTitanMode || 
       effectiveModel?.isTitan || 
       effectiveModel?.isLocal || 
-      effectiveModel?.id?.startsWith('vedic-titan') || 
-      effectiveModel?.id === 'vedic-local-core' || 
+      effectiveModel?.id?.startsWith('girionix-titan') || 
+      effectiveModel?.id === 'girionix-local-core' || 
       (typeof navigator !== 'undefined' && !navigator.onLine);
 
     if (isOfflineOrTitan) {
@@ -527,8 +527,8 @@ export default function ChatView({
         await localNeuralEngine.streamLocalResponse({
           prompt: promptToSend,
           history: updatedMessages,
-          model: effectiveModel?.id || 'vedic-titan-70b',
-          isTitanLite: effectiveModel?.id === 'vedic-titan-lite' || effectiveModel?.category === 'titan-lite',
+          model: effectiveModel?.id || 'girionix-titan-70b',
+          isTitanLite: effectiveModel?.id === 'girionix-titan-lite' || effectiveModel?.category === 'titan-lite',
           onReasoning: (reasoningText) => {
             setSessions(prev => prev.map(s => s.id === activeSessionId ? {
               ...s,
@@ -976,7 +976,7 @@ export default function ChatView({
 
             <div className="flex items-center gap-2">
               <span className="hidden sm:inline text-gray-500">
-                {isAppInstalled ? '👑 Vedic Pro App Active' : '⚡ Vedic Lite (Web)'}
+                {isAppInstalled ? '👑 Girionix Pro App Active' : '⚡ Girionix Lite (Web)'}
               </span>
             </div>
           </div>

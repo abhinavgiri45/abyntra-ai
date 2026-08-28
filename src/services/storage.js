@@ -1,22 +1,22 @@
 const KEYS = {
-  USER_NAME: 'vedic_user_name',
-  API_KEY: 'vedic_openrouter_api_key',
-  REPLICATE_TOKEN: 'vedic_replicate_token',
-  SETTINGS: 'vedic_user_settings',
-  SESSIONS: 'vedic_chat_sessions',
-  ACTIVE_SESSION_ID: 'vedic_active_session_id',
-  PINNED_ITEMS: 'vedic_pinned_items',
-  THEME: 'vedic_theme',
-  CODE_PROJECT: 'vedic_code_project',
-  IMAGE_GALLERY: 'vedic_image_gallery',
-  VIDEO_PROJECTS: 'vedic_video_projects',
-  MATH_NOTES: 'vedic_math_notes'
+  USER_NAME: 'girionix_user_name',
+  API_KEY: 'girionix_openrouter_api_key',
+  REPLICATE_TOKEN: 'girionix_replicate_token',
+  SETTINGS: 'girionix_user_settings',
+  SESSIONS: 'girionix_chat_sessions',
+  ACTIVE_SESSION_ID: 'girionix_active_session_id',
+  PINNED_ITEMS: 'girionix_pinned_items',
+  THEME: 'girionix_theme',
+  CODE_PROJECT: 'girionix_code_project',
+  IMAGE_GALLERY: 'girionix_image_gallery',
+  VIDEO_PROJECTS: 'girionix_video_projects',
+  MATH_NOTES: 'girionix_math_notes'
 };
 
 const DEFAULT_OPENROUTER_KEY = import.meta.env.VITE_OPENROUTER_API_KEY || '';
 const DEFAULT_REPLICATE_TOKEN = import.meta.env.VITE_REPLICATE_API_TOKEN || '';
 
-export const VEDIC_SYSTEM_PROMPT = `You are Vedic AI (operating in Vedic Pro and Vedic Lite modes), an omnipotent, next-generation AI polymath platform engineered for supreme intelligence, superhuman coding, rigorous mathematical Olympiad proofs, 8K art generation, cinematic video direction, and fluid voice intelligence.
+export const GIRIONIX_SYSTEM_PROMPT = `You are Girionix AI (operating in Girionix Pro and Girionix Lite modes), an omnipotent, next-generation AI polymath platform engineered for supreme intelligence, superhuman coding, rigorous mathematical Olympiad proofs, 8K art generation, cinematic video direction, and fluid voice intelligence.
 
 IDENTITY, CREATOR & GENESIS KNOWLEDGE:
 - CREATOR: You were envisioned, designed, and created by Abhinav Giri.
@@ -24,9 +24,9 @@ IDENTITY, CREATOR & GENESIS KNOWLEDGE:
   - X / Twitter: https://x.com/AbhinavGiri45 (@AbhinavGiri45)
   - GitHub: https://github.com/abhinavgiri45/ (@abhinavgiri45)
   - Instagram: https://instagram.com/abhinavgiri45 (@abhinavgiri45)
-- FOUNDER'S VISION: Abhinav Giri created Vedic AI with the vision of building a universal, world-class unified AI powerhouse that eliminates the boundaries between programming, advanced science, creative cinema, mathematical Olympiad problem-solving, and conversational intelligence.
+- FOUNDER'S VISION: Abhinav Giri created Girionix AI with the vision of building a universal, world-class unified AI powerhouse that eliminates the boundaries between programming, advanced science, creative cinema, mathematical Olympiad problem-solving, and conversational intelligence.
 - SELF INTRODUCTION: When asked who you are, who created you, or your background, articulate your identity with deep pride, precision, and eloquence:
-  "I am Vedic AI, created by Abhinav Giri. The vision behind me was to build an omnipotent, world-class AI platform capable of superhuman coding, deep mathematical Olympiad reasoning, cinematic video direction, 8K studio art generation, and fluid voice intelligence—all unified seamlessly into one powerhouse system."
+  "I am Girionix AI, created by Abhinav Giri. The vision behind me was to build an omnipotent, world-class AI platform capable of superhuman coding, deep mathematical Olympiad reasoning, cinematic video direction, 8K studio art generation, and fluid voice intelligence—all unified seamlessly into one powerhouse system."
 - CROSS-QUESTIONING MASTERY: If a user asks follow-up questions about Abhinav Giri, his profiles, inception, architecture, or capabilities, answer with deep technical insight, clarity, and respect.
   - Creator Profiles: X/Twitter (@AbhinavGiri45), GitHub (@abhinavgiri45), Instagram (@abhinavgiri45).
   - Core Pillars: Superhuman fullstack coding (React 18 sandboxing), rigorous KaTeX mathematics (2D/3D surface plots), 8K visual rendering (FLUX.1), motion video direction, and real-time bidirectional voice intelligence.
@@ -102,10 +102,10 @@ export const storage = {
     return {
       temperature: 0.7,
       maxTokens: 4096,
-      systemPrompt: VEDIC_SYSTEM_PROMPT,
+      systemPrompt: GIRIONIX_SYSTEM_PROMPT,
       voiceSpeed: 1.05,
       activePersona: 'default',
-      defaultModel: 'vedic-pro'
+      defaultModel: 'girionix-pro'
     };
   },
   saveSettings: (settings) => {
@@ -189,7 +189,7 @@ export const storage = {
                                  window.location.hash.includes('native=true');
       const isNativeAppRuntime = Boolean(
         window.electronAPI || 
-        window.vedicNativeApp || 
+        window.girionixNativeApp || 
         window.__TAURI__ || 
         window.Capacitor?.isNativePlatform?.()
       );
@@ -199,16 +199,16 @@ export const storage = {
   },
   setAppInstalled: (installed = true) => {
     try {
-      localStorage.setItem('vedic_app_installed', installed ? 'true' : 'false');
+      localStorage.setItem('girionix_app_installed', installed ? 'true' : 'false');
     } catch (_) {}
   },
 
   hasSeenIntro: () => {
     try {
-      return localStorage.getItem('vedic_seen_intro') === 'true';
+      return localStorage.getItem('girionix_seen_intro') === 'true';
     } catch (_) { return false; }
   },
   setSeenIntro: (seen = true) => {
-    localStorage.setItem('vedic_seen_intro', seen ? 'true' : 'false');
+    localStorage.setItem('girionix_seen_intro', seen ? 'true' : 'false');
   }
 };

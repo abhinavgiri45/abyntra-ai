@@ -20,7 +20,7 @@ export default function UrlInspectorModal({ isOpen, onClose, onSendSummarizedUrl
         messages: [
           {
             role: 'system',
-            content: 'You are the Vedic Web Inspector. The user provided a URL. Provide an in-depth, structured summary of what this web resource covers, including key topics, architectural highlights, and critical takeaways.'
+            content: 'You are the Girionix Web Inspector. The user provided a URL. Provide an in-depth, structured summary of what this web resource covers, including key topics, architectural highlights, and critical takeaways.'
           },
           { role: 'user', content: `Inspect, analyze and summarize this URL resource:\n${url}` }
         ],

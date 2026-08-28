@@ -63,7 +63,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
 
   useEffect(() => {
     const handleWindowMessage = (event) => {
-      if (event.data?.type === 'VEDIC_CONSOLE_LOG') {
+      if (event.data?.type === 'GIRIONIX_CONSOLE_LOG') {
         setConsoleLogs(prev => [...prev.slice(-40), {
           type: event.data.level,
           text: event.data.message,
@@ -140,7 +140,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
             },
             { role: 'user', content: activeFile.content }
           ],
-          model: 'vedic-titan-coder',
+          model: 'girionix-titan-coder',
           onChunk: (chunk, acc) => { testCode = acc; }
         });
       } else {
@@ -199,7 +199,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
     const blob = new Blob([jsonContent], { type: 'application/json' });
     const a = document.createElement('a');
     a.href = URL.createObjectURL(blob);
-    a.download = `vedic_project_${Date.now()}.json`;
+    a.download = `girionix_project_${Date.now()}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -236,11 +236,11 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
           messages: [
             {
               role: 'system',
-              content: 'You are Vedic Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
+              content: 'You are Girionix Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
             },
             { role: 'user', content: `Error context:\n${errorContext}\n\nCurrent Code:\n${activeFile.content}` }
           ],
-          model: 'vedic-titan-coder',
+          model: 'girionix-titan-coder',
           onChunk: (chunk, acc) => { fixedContent = acc; }
         });
       } else {
@@ -248,7 +248,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
           messages: [
             {
               role: 'system',
-              content: 'You are Vedic Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
+              content: 'You are Girionix Live Code Auto-Fixer. Fix all runtime and syntax errors in the provided React code. Return ONLY valid, executable JavaScript/JSX without markdown backticks.'
             },
             { role: 'user', content: `Error context:\n${errorContext}\n\nCurrent Code:\n${activeFile.content}` }
           ],
@@ -262,7 +262,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
         handleCodeChange(cleanCode);
         setConsoleLogs(prev => [...prev, {
           type: 'info',
-          text: '⚡ Vedic Auto-Fix applied successfully!',
+          text: '⚡ Girionix Auto-Fix applied successfully!',
           time: new Date().toLocaleTimeString()
         }]);
       }
@@ -284,14 +284,14 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
           messages: [
             {
               role: 'system',
-              content: 'You are Vedic AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
+              content: 'You are Girionix AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
             },
             {
               role: 'user',
               content: `Instruction: "${aiPrompt}"\n\nCurrent Code:\n${activeFile.content}`
             }
           ],
-          model: 'vedic-titan-coder',
+          model: 'girionix-titan-coder',
           onChunk: (chunk, acc) => {
             fullCode = acc;
           }
@@ -301,7 +301,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
           messages: [
             {
               role: 'system',
-              content: 'You are Vedic AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
+              content: 'You are Girionix AI Code Architect. Return ONLY the updated React 18 component code. No markdown wrapping, no conversational filler.'
             },
             {
               role: 'user',
@@ -359,7 +359,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
   </style>
   <script>
     const sendLog = (level, msg) => {
-      window.parent.postMessage({ type: 'VEDIC_CONSOLE_LOG', level, message: String(msg) }, '*');
+      window.parent.postMessage({ type: 'GIRIONIX_CONSOLE_LOG', level, message: String(msg) }, '*');
     };
     console.log = (...args) => sendLog('log', args.join(' '));
     console.warn = (...args) => sendLog('warn', args.join(' '));
@@ -402,7 +402,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
 
       if (!RootComponent) {
         // Search global functions for any defined component
-        const candidates = ['App', 'VedicQuantumSphere', 'StandaloneSnakeGame', 'TitanEngineDashboard', 'Dashboard', 'Component', 'Main'];
+        const candidates = ['App', 'GirionixQuantumSphere', 'StandaloneSnakeGame', 'TitanEngineDashboard', 'Dashboard', 'Component', 'Main'];
         for (const name of candidates) {
           if (typeof window[name] === 'function') {
             RootComponent = window[name];
@@ -585,7 +585,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
             <Sparkles className="w-4 h-4 text-cyan-400 flex-shrink-0" />
             <input
               type="text"
-              placeholder="Ask Vedic to add a feature, refactor, or style this component..."
+              placeholder="Ask Girionix to add a feature, refactor, or style this component..."
               value={aiPrompt}
               onChange={(e) => setAiPrompt(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter') handleAiModify(); }}
@@ -611,7 +611,7 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
             >
               <iframe
                 ref={iframeRef}
-                title="Vedic Sandboxed Live App"
+                title="Girionix Sandboxed Live App"
                 srcDoc={getSandboxHtml()}
                 sandbox="allow-scripts allow-modals allow-same-origin"
                 className="w-full h-full border-0 bg-[#07080F]"

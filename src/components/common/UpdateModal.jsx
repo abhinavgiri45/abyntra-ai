@@ -136,7 +136,7 @@ export default function UpdateModal({ isOpen, onClose, onOpenDownload }) {
           <div className="p-4 rounded-2xl bg-cyan-950/20 border border-cyan-500/20 flex items-center gap-3">
             <CheckCircle className="w-5 h-5 text-cyan-400 shrink-0" />
             <div>
-              <h4 className="font-bold text-white text-xs">You are running the latest version of Vedic AI</h4>
+              <h4 className="font-bold text-white text-xs">You are running the latest version of Girionix AI</h4>
               <p className="text-[11px] text-gray-400 font-sans">All studios, 8K engines, and offline vaults are fully synchronized.</p>
             </div>
           </div>

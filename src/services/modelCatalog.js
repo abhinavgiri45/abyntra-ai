@@ -1,6 +1,6 @@
 export const TITAN_AI_MODELS = [
   {
-    id: "vedic-titan-70b",
+    id: "girionix-titan-70b",
     name: "⚡ Titan 70B Heavy Core (100% Offline Heavy Hardware)",
     provider: "Physical Machine Hardware (16GB+ RAM / 8+ Cores)",
     category: "titan-heavy",
@@ -17,7 +17,7 @@ export const TITAN_AI_MODELS = [
     recommendedFor: ["Air-Gapped Sovereign Intelligence", "Heavy Coding & Math", "Zero Cloud Latency", "High-End PCs"]
   },
   {
-    id: "vedic-titan-lite",
+    id: "girionix-titan-lite",
     name: "🌱 Titan Lite (100% Offline Low-End Hardware Engine)",
     provider: "Physical Machine (2GB–8GB RAM / Dual-Core)",
     category: "titan-lite",
@@ -35,7 +35,7 @@ export const TITAN_AI_MODELS = [
     recommendedFor: ["Low-End PCs & Laptops", "Older Systems (2GB-8GB RAM)", "Battery-Saving Offline Tasks", "Zero Network Traffic"]
   },
   {
-    id: "vedic-titan-coder",
+    id: "girionix-titan-coder",
     name: "⚡ Titan Matrix Coder 33B (Zero-Latency Local Compilation)",
     provider: "Physical Machine Hardware (Multi-Core CPU)",
     category: "titan-coding",
@@ -52,7 +52,7 @@ export const TITAN_AI_MODELS = [
     recommendedFor: ["Superhuman Offline Coding", "Kernel / CUDA Dev", "Fullstack Sandbox"]
   },
   {
-    id: "vedic-titan-math",
+    id: "girionix-titan-math",
     name: "⚡ Titan Olympiad Quantum Matrix (Symbolic Offline Solver)",
     provider: "Physical Machine Hardware (Tensor Shaders)",
     category: "titan-math",
@@ -69,7 +69,7 @@ export const TITAN_AI_MODELS = [
     recommendedFor: ["Olympiad Math Proofs", "Tensor Physics", "Differential Equations"]
   },
   {
-    id: "vedic-titan-vision",
+    id: "girionix-titan-vision",
     name: "⚡ Titan 8K Neural Vision (Metal 3 / Vulkan Shaders)",
     provider: "Physical Machine Hardware (GPU Shaders)",
     category: "titan-vision",
@@ -89,7 +89,7 @@ export const TITAN_AI_MODELS = [
 
 export const AI_MODELS = [
   {
-    id: "vedic-universal-auto",
+    id: "girionix-universal-auto",
     name: "⚡ Universal Auto-Frontier",
     provider: "Dynamic Universal AI Engine",
     category: "universal-auto",
@@ -105,10 +105,10 @@ export const AI_MODELS = [
     recommendedFor: ["Always-Latest Models", "Autonomous Upgrades", "Superhuman Frontier Intelligence"]
   },
   {
-    id: "vedic-pro",
+    id: "girionix-pro",
     openRouterModel: "deepseek/deepseek-r1",
-    name: "Vedic Pro",
-    provider: "Vedic Core",
+    name: "Girionix Pro",
+    provider: "Girionix Core",
     category: "reasoning",
     tag: "Supreme Omnipotent Model",
     badgeColor: "purple",
@@ -122,7 +122,7 @@ export const AI_MODELS = [
     recommendedFor: ["Complex Math", "Superhuman Coding", "Fullstack Architecture", "Olympiad Proofs"]
   },
   {
-    id: "vedic-titan-70b",
+    id: "girionix-titan-70b",
     name: "⚡ Titan 70B Heavy Core (100% Offline Physical Execution)",
     provider: "Physical Machine Hardware (16GB+ RAM / 8+ Cores)",
     category: "titan-heavy",
@@ -139,7 +139,7 @@ export const AI_MODELS = [
     recommendedFor: ["Air-Gapped Sovereign Intelligence", "Heavy Coding & Math", "Zero Cloud Latency", "High-End PCs"]
   },
   {
-    id: "vedic-titan-lite",
+    id: "girionix-titan-lite",
     name: "🌱 Titan Lite (100% Offline Low-End Hardware Engine)",
     provider: "Physical Machine (2GB–8GB RAM / Dual-Core)",
     category: "titan-lite",
@@ -157,8 +157,8 @@ export const AI_MODELS = [
     recommendedFor: ["Low-End PCs & Laptops", "Older Systems (2GB-8GB RAM)", "Battery-Saving Offline Tasks", "Zero Network Traffic"]
   },
   {
-    id: "vedic-local-core",
-    name: "Vedic Local Core (On-Device 100% Offline)",
+    id: "girionix-local-core",
+    name: "Girionix Local Core (On-Device 100% Offline)",
     provider: "Your Physical Hardware (CPU + GPU)",
     category: "local-neural",
     tag: "100% Offline • Zero Server Dependency",
@@ -173,9 +173,9 @@ export const AI_MODELS = [
     recommendedFor: ["Air-Gapped Privacy", "100% Offline Coding", "Local STEM Math", "Zero Internet Access"]
   },
   {
-    id: "vedic-lite",
+    id: "girionix-lite",
     openRouterModel: "google/gemini-2.0-flash-001",
-    name: "Vedic Lite",
+    name: "Girionix Lite",
     provider: "Google Frontier Ultra-Fast",
     category: "fast",
     tag: "Sub-Second Ultra-Fast & Grounded Knowledge",
@@ -192,8 +192,8 @@ export const AI_MODELS = [
   {
     id: "anthropic/claude-3.7-sonnet",
     openRouterModel: "anthropic/claude-3.7-sonnet",
-    name: "Vedic CodeMaster",
-    provider: "Vedic Neural Network",
+    name: "Girionix CodeMaster",
+    provider: "Girionix Neural Network",
     category: "coding",
     tag: "Hybrid Thinking & Code Synthesis",
     badgeColor: "cyan",
@@ -208,8 +208,8 @@ export const AI_MODELS = [
   {
     id: "openai/o3-mini",
     openRouterModel: "openai/o3-mini",
-    name: "Vedic Math-X",
-    provider: "Vedic Neural Network",
+    name: "Girionix Math-X",
+    provider: "Girionix Neural Network",
     category: "reasoning",
     tag: "STEM & High-Speed Proofs",
     badgeColor: "emerald",
@@ -224,8 +224,8 @@ export const AI_MODELS = [
   {
     id: "openai/gpt-4o",
     openRouterModel: "openai/gpt-4o",
-    name: "Vedic Omni",
-    provider: "Vedic Neural Network",
+    name: "Girionix Omni",
+    provider: "Girionix Neural Network",
     category: "multimodal",
     tag: "Flagship Multimodal",
     badgeColor: "blue",
@@ -246,7 +246,7 @@ export const STUDIO_MODES = [
     shortName: "Chat",
     icon: "MessageSquare",
     color: "cyan",
-    description: "Conversational intelligence powered by Vedic Pro and Vedic Lite."
+    description: "Conversational intelligence powered by Girionix Pro and Girionix Lite."
   },
   {
     id: "code",
@@ -270,7 +270,7 @@ export const STUDIO_MODES = [
     shortName: "8K Vision",
     icon: "Image",
     color: "rose",
-    description: "Powered by Vedic Visual Engine for studio-grade photorealistic image generation."
+    description: "Powered by Girionix Visual Engine for studio-grade photorealistic image generation."
   },
   {
     id: "video",
@@ -292,16 +292,16 @@ export const STUDIO_MODES = [
 
 export const STUDIO_DEDICATED_MODELS = {
   code: {
-    id: "vedic-codemaster-ultra",
-    name: "Vedic CodeMaster Ultra (70B Coder)",
-    provider: "Vedic Neural Compilation Core",
+    id: "girionix-codemaster-ultra",
+    name: "Girionix CodeMaster Ultra (70B Coder)",
+    provider: "Girionix Neural Compilation Core",
     workDomain: "Fullstack Coding & Sandbox Execution",
     badgeColor: "cyan",
     tag: "Superhuman Fullstack Coder & AST Debugger",
     speed: "⚡ 140 tok/s (Real-Time AST Engine)",
     contextWindow: 200000,
     openRouterModel: "anthropic/claude-3.7-sonnet",
-    titanModelId: "vedic-titan-coder",
+    titanModelId: "girionix-titan-coder",
     languages: ["React 18", "Next.js 15", "Tailwind CSS", "TypeScript", "Python 3.12", "Rust", "C++", "WebGL"],
     capabilities: [
       "Live Component Sandbox Execution",
@@ -312,16 +312,16 @@ export const STUDIO_DEDICATED_MODELS = {
     benchmark: "98.4% HumanEval • 0-Defect Sandbox"
   },
   math: {
-    id: "vedic-mathx-olympiad",
-    name: "Vedic Math-X Olympiad (Deep Logic 72B)",
-    provider: "Vedic Quantum Symbolic Engine",
+    id: "girionix-mathx-olympiad",
+    name: "Girionix Math-X Olympiad (Deep Logic 72B)",
+    provider: "Girionix Quantum Symbolic Engine",
     workDomain: "Olympiad Math & Quantum Physics Lab",
     badgeColor: "purple",
     tag: "Formal Coq/Lean Logic & KaTeX Derivations",
     speed: "⚡ 125 tok/s (Symbolic Core)",
     contextWindow: 128000,
     openRouterModel: "openai/o3-mini",
-    titanModelId: "vedic-titan-math",
+    titanModelId: "girionix-titan-math",
     languages: ["KaTeX LaTeX", "Symbolic Math", "Tensor Calculus", "Differential Equations", "Riemann Zeta"],
     capabilities: [
       "IMO Gold Medal Step-by-Step Proofs",
@@ -332,8 +332,8 @@ export const STUDIO_DEDICATED_MODELS = {
     benchmark: "96.8% MATH Olympiad • Formal Logic Verified"
   },
   image: {
-    id: "vedic-visionforge-8k",
-    name: "Vedic VisionForge 8K Pro (Cinema Optics)",
+    id: "girionix-visionforge-8k",
+    name: "Girionix VisionForge 8K Pro (Cinema Optics)",
     provider: "FLUX.1 Cinema Ultra Engine",
     workDomain: "8K Photorealism & Multi-Style Image Synthesis",
     badgeColor: "rose",
@@ -341,7 +341,7 @@ export const STUDIO_DEDICATED_MODELS = {
     speed: "⚡ 0.4s Ultra-Speed Pipeline",
     contextWindow: 64000,
     replicateModel: "black-forest-labs/flux-schnell",
-    titanModelId: "vedic-titan-vision",
+    titanModelId: "girionix-titan-vision",
     languages: ["8K Photorealism", "Unreal Engine 5.4", "Studio Ghibli Anime", "Cyberpunk Neon", "Oil Painting"],
     capabilities: [
       "True 8K Master Resolution (7680x4320)",
@@ -352,8 +352,8 @@ export const STUDIO_DEDICATED_MODELS = {
     benchmark: "8K Sub-Pixel Sharpness • 0.4s Generation"
   },
   video: {
-    id: "vedic-cinemotion-max",
-    name: "Vedic CineMotion 4K/8K Max (Hollywood Director)",
+    id: "girionix-cinemotion-max",
+    name: "Girionix CineMotion 4K/8K Max (Hollywood Director)",
     provider: "Runway Gen-3 / Sora V2 Cinema Engine",
     workDomain: "Cinematic Multi-Shot 60FPS Video Generation",
     badgeColor: "amber",
@@ -361,7 +361,7 @@ export const STUDIO_DEDICATED_MODELS = {
     speed: "⚡ 60 FPS Real-Time Canvas Motion",
     contextWindow: 128000,
     openRouterModel: "openai/gpt-4o",
-    titanModelId: "vedic-titan-vision",
+    titanModelId: "girionix-titan-vision",
     languages: ["4-Shot Storyboard", "24/60/120 FPS", "2.39:1 Anamorphic", "4K UHD 2160p", "8K IMAX"],
     capabilities: [
       "Multi-Shot Scene Continuity (4 Evolving Hollywood Frames)",
@@ -372,8 +372,8 @@ export const STUDIO_DEDICATED_MODELS = {
     benchmark: "4K/8K 60FPS Cinema Grade • 100% Continuity"
   },
   script: {
-    id: "vedic-scriptmaster-cinema",
-    name: "Vedic ScriptMaster Cinema (Screenplay & Story)",
+    id: "girionix-scriptmaster-cinema",
+    name: "Girionix ScriptMaster Cinema (Screenplay & Story)",
     provider: "Hollywood Screenplay & Beat Engine",
     workDomain: "Cinema Screenplays, YouTube Scripts & Story Architecture",
     badgeColor: "indigo",
@@ -381,7 +381,7 @@ export const STUDIO_DEDICATED_MODELS = {
     speed: "⚡ Real-Time Scene Flow & Table-Read Audio",
     contextWindow: 128000,
     openRouterModel: "anthropic/claude-3.7-sonnet",
-    titanModelId: "vedic-titan-70b",
+    titanModelId: "girionix-titan-70b",
     languages: ["Hollywood Screenplay", "YouTube Video Script", "TV Pilot & Episodic", "Theater Drama", "Podcast Narrative"],
     capabilities: [
       "Auto-Formatting for Scene Headings, Action, Dialogue & Transitions",
@@ -392,8 +392,8 @@ export const STUDIO_DEDICATED_MODELS = {
     benchmark: "Industry Standard Screenplay Format • Table-Read Mode"
   },
   audio: {
-    id: "vedic-audiocraft-hd",
-    name: "Vedic AudioCraft & NeuralVoice HD",
+    id: "girionix-audiocraft-hd",
+    name: "Girionix AudioCraft & NeuralVoice HD",
     provider: "ElevenLabs V3 Neural Studio",
     workDomain: "Studio Voice Synthesis & Sound Score Lab",
     badgeColor: "emerald",
@@ -401,7 +401,7 @@ export const STUDIO_DEDICATED_MODELS = {
     speed: "⚡ Sub-50ms Real-Time Synthesis",
     contextWindow: 64000,
     openRouterModel: "openai/gpt-4o-mini",
-    titanModelId: "vedic-titan-70b",
+    titanModelId: "girionix-titan-70b",
     languages: ["English", "Hindi", "Multilingual", "Polyphonic Foley", "48kHz Studio WAV"],
     capabilities: [
       "Emotional Tone & Timbre Customization",
