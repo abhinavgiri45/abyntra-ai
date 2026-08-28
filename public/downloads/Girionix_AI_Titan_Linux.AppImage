@@ -1,9 +1,9 @@
 #!/bin/bash
 # ==========================================================
-# Girionix AI Pro - Linux 1-Click Native Desktop Installer
+# Girionix AI Titan Heavy - Linux 1-Click Native Desktop Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Girionix AI for Linux..."
+echo "🚀 Installing Girionix AI Titan Heavy for Linux..."
 INSTALL_DIR="$HOME/.local/share/girionix-ai"
 BIN_DIR="$HOME/.local/bin"
 DESKTOP_DIR="$HOME/.local/share/applications"
@@ -22,7 +22,7 @@ if command -v python3 &>/dev/null; then
   (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
 sleep 0.3
-TARGET_URL="http://127.0.0.1:$PORT/?app=true"
+TARGET_URL="http://127.0.0.1:$PORT/?app=true&titan=true"
 if command -v google-chrome &>/dev/null; then
   google-chrome --app="$TARGET_URL" --user-data-dir="$DATA_DIR" &
 elif command -v chromium-browser &>/dev/null; then
@@ -37,10 +37,9 @@ EOF
 chmod +x "$INSTALL_DIR/girionix-ai"
 ln -sf "$INSTALL_DIR/girionix-ai" "$BIN_DIR/girionix-ai"
 
-# Create .desktop entry
 cat << EOF > "$DESKTOP_DIR/girionix-ai.desktop"
 [Desktop Entry]
-Name=Girionix AI
+Name=Girionix AI Titan Heavy
 Comment=Sovereign AI Polymath Desktop Workstation
 Exec=$INSTALL_DIR/girionix-ai
 Terminal=false
@@ -50,7 +49,6 @@ StartupNotify=true
 EOF
 
 chmod +x "$DESKTOP_DIR/girionix-ai.desktop"
-
-echo "✅ Girionix AI installed successfully with native application menu launcher."
-echo "🚀 Launching Girionix AI..."
+echo "✅ Girionix AI Titan Heavy installed successfully with native desktop menu launcher."
+echo "🚀 Launching..."
 "$INSTALL_DIR/girionix-ai" &

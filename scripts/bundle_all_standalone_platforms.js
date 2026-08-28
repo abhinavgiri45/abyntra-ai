@@ -108,9 +108,17 @@ namespace GirionixAI
         private int port = 3456;
         private Process browserProcess;
         private NotifyIcon trayIcon;
+        private string editionArgs = "";
 
-        public AppRunner()
+        public AppRunner(string[] args)
         {
+            if (args != null && args.Length > 0)
+            {
+                string joined = string.Join(" ", args).ToLowerInvariant();
+                if (joined.Contains("titan-lite") || joined.Contains("titan_lite")) editionArgs = "&titan=true&lite=true";
+                else if (joined.Contains("titan")) editionArgs = "&titan=true";
+            }
+
             appDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
             if (!Directory.Exists(appDir)) appDir = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -183,7 +191,7 @@ namespace GirionixAI
 
         private void LaunchChromiumApp()
         {
-            string url = "http://127.0.0.1:" + port + "/?app=true";
+            string url = "http://127.0.0.1:" + port + "/?app=true" + editionArgs;
             string browserExe = FindBrowserExecutable();
             string profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Girionix AI", "profile");
             if (!Directory.Exists(profileDir)) Directory.CreateDirectory(profileDir);
@@ -194,7 +202,6 @@ namespace GirionixAI
                 {
                     if (browserProcess != null && !browserProcess.HasExited)
                     {
-                        // Focus existing instance if alive
                         return;
                     }
 
@@ -211,7 +218,6 @@ namespace GirionixAI
                             try
                             {
                                 browserProcess.WaitForExit();
-                                // Cleanly exit when the main app window is closed
                                 ExitApplication();
                             }
                             catch { }
@@ -308,11 +314,11 @@ namespace GirionixAI
         }
 
         [STAThread]
-        static void Main()
+        static void Main(string[] args)
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new AppRunner());
+            Application.Run(new AppRunner(args));
         }
     }
 }
@@ -503,8 +509,8 @@ const payloadJson = JSON.stringify(payloadMap);
 const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, 'utf8'));
 fs.writeFileSync(path.join(downloadsDir, 'payload.dat'), payloadGz);
 
-// Compile Standard Setup Wizard
-const setupWizardTemplate = `using System;
+function generateSetupWizardSource(editionName, editionSubtitle, shortcutName, launchArgs, regKey) {
+  return `using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -516,8 +522,8 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("Girionix AI Setup Wizard")]
-[assembly: AssemblyDescription("Girionix AI Setup & Installation Manager")]
+[assembly: AssemblyTitle("${editionName} Setup Wizard")]
+[assembly: AssemblyDescription("${editionName} Setup & Installation Manager")]
 [assembly: AssemblyCompany("Abhinav Giri")]
 [assembly: AssemblyProduct("Girionix AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
@@ -543,7 +549,7 @@ namespace GirionixAIInstaller
 
         public SetupForm()
         {
-            this.Text = "Girionix AI — Verified Standalone Setup";
+            this.Text = "${editionName} — Verified Standalone Setup";
             this.Size = new Size(620, 460);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -571,7 +577,7 @@ namespace GirionixAIInstaller
             pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
 
             Label lblTitle = new Label();
-            lblTitle.Text = "Girionix AI Desktop Workstation Setup";
+            lblTitle.Text = "${editionName} Setup";
             lblTitle.Font = new Font("Segoe UI", 14F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(0, 240, 255);
             lblTitle.Location = new Point(22, 16);
@@ -579,7 +585,7 @@ namespace GirionixAIInstaller
             pnlHeader.Controls.Add(lblTitle);
 
             Label lblSubtitle = new Label();
-            lblSubtitle.Text = "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 100% Offline Standalone";
+            lblSubtitle.Text = "${editionSubtitle}";
             lblSubtitle.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular);
             lblSubtitle.ForeColor = Color.FromArgb(160, 175, 200);
             lblSubtitle.AutoSize = true;
@@ -625,7 +631,7 @@ namespace GirionixAIInstaller
             this.Controls.Add(btnBrowse);
 
             chkDesktopShortcut = new CheckBox();
-            chkDesktopShortcut.Text = "Create Desktop Shortcut";
+            chkDesktopShortcut.Text = "Create Desktop Shortcut (${shortcutName})";
             chkDesktopShortcut.Checked = true;
             chkDesktopShortcut.Location = new Point(25, 170);
             chkDesktopShortcut.AutoSize = true;
@@ -639,7 +645,7 @@ namespace GirionixAIInstaller
             this.Controls.Add(chkStartMenuShortcut);
 
             chkLaunchAfter = new CheckBox();
-            chkLaunchAfter.Text = "Launch Girionix AI immediately upon completion";
+            chkLaunchAfter.Text = "Launch ${shortcutName} immediately upon completion";
             chkLaunchAfter.Checked = true;
             chkLaunchAfter.Location = new Point(25, 226);
             chkLaunchAfter.AutoSize = true;
@@ -652,7 +658,7 @@ namespace GirionixAIInstaller
             this.Controls.Add(progressBar);
 
             lblStatus = new Label();
-            lblStatus.Text = "Ready to install Girionix AI standalone workstation.";
+            lblStatus.Text = "Ready to install ${editionName}.";
             lblStatus.Location = new Point(25, 295);
             lblStatus.AutoSize = true;
             lblStatus.ForeColor = Color.FromArgb(0, 229, 255);
@@ -814,12 +820,13 @@ namespace GirionixAIInstaller
                 string exePath = Path.Combine(installDir, "GirionixAI.exe");
                 string uninstallerPath = Path.Combine(installDir, "Uninstall_Girionix_AI.exe");
                 string icoPath = Path.Combine(installDir, "app.ico");
+                string args = "${launchArgs}";
 
                 if (chkDesktopShortcut.Checked)
                 {
                     string desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    string lnkPath = Path.Combine(desktopDir, "Girionix AI.lnk");
-                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "Girionix AI — Sovereign Polymath Workspace");
+                    string lnkPath = Path.Combine(desktopDir, "${shortcutName}.lnk");
+                    CreateWindowsShortcut(lnkPath, exePath, icoPath, "${editionName}", args);
                 }
 
                 if (chkStartMenuShortcut.Checked)
@@ -827,18 +834,18 @@ namespace GirionixAIInstaller
                     string startMenuDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
                     if (Directory.Exists(startMenuDir))
                     {
-                        string startLnkPath = Path.Combine(startMenuDir, "Girionix AI.lnk");
-                        CreateWindowsShortcut(startLnkPath, exePath, icoPath, "Girionix AI");
+                        string startLnkPath = Path.Combine(startMenuDir, "${shortcutName}.lnk");
+                        CreateWindowsShortcut(startLnkPath, exePath, icoPath, "${shortcutName}", args);
                     }
                 }
 
                 try
                 {
-                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\GirionixAI"))
+                    using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${regKey}"))
                     {
                         if (uninstKey != null)
                         {
-                            uninstKey.SetValue("DisplayName", "Girionix AI Desktop Workstation");
+                            uninstKey.SetValue("DisplayName", "${editionName}");
                             uninstKey.SetValue("DisplayVersion", "2.0.0");
                             uninstKey.SetValue("Publisher", "Abhinav Giri (@abhinavgiri45)");
                             uninstKey.SetValue("DisplayIcon", icoPath);
@@ -851,7 +858,7 @@ namespace GirionixAIInstaller
                 }
                 catch { }
 
-                lblStatus.Text = "✅ Installation Complete! Girionix AI is ready.";
+                lblStatus.Text = "✅ Installation Complete! ${shortcutName} is ready.";
                 btnInstall.Text = "Finish";
                 btnInstall.BackColor = Color.FromArgb(0, 229, 255);
                 btnInstall.Enabled = true;
@@ -860,7 +867,7 @@ namespace GirionixAIInstaller
                 {
                     if (chkLaunchAfter.Checked && File.Exists(exePath))
                     {
-                        try { Process.Start(exePath); } catch { }
+                        try { Process.Start(exePath, args); } catch { }
                     }
                     this.Close();
                 };
@@ -886,18 +893,52 @@ namespace GirionixAIInstaller
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupWizard.cs'), setupWizardTemplate, 'utf8');
+}
 
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Setup.exe GirionixSetupWizard.cs`, {
+// 1. Compile Standard Edition Setup Wizard
+const standardWizardSrc = generateSetupWizardSource(
+  "Girionix AI Desktop Workstation",
+  "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 100% Standalone Offline",
+  "Girionix AI",
+  "",
+  "GirionixAI"
+);
+fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupStandard.cs'), standardWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Setup.exe GirionixSetupStandard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
-console.log('✅ Standard Setup Wizard compiled with Win32 Manifest & Assembly Info (Girionix_AI_Setup.exe).');
+console.log('✅ Standard Setup Wizard compiled (Girionix_AI_Setup.exe).');
 
-// Compile Titan and Titan Lite Setup Wizards
-fs.copyFileSync(path.join(downloadsDir, 'Girionix_AI_Setup.exe'), path.join(downloadsDir, 'Girionix_AI_Titan_Setup.exe'));
-fs.copyFileSync(path.join(downloadsDir, 'Girionix_AI_Setup.exe'), path.join(downloadsDir, 'Girionix_AI_Titan_Lite_Setup.exe'));
-console.log('✅ Titan Heavy & Titan Lite Setup Wizards compiled.');
+// 2. Compile Titan Heavy Setup Wizard
+const titanWizardSrc = generateSetupWizardSource(
+  "Girionix AI Titan Heavy (Offline 70B)",
+  "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 70B Sovereign Neural Engine",
+  "Girionix AI Titan Heavy",
+  "--titan",
+  "GirionixAI_Titan"
+);
+fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupTitan.cs'), titanWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Titan_Setup.exe GirionixSetupTitan.cs`, {
+  cwd: downloadsDir,
+  stdio: 'inherit'
+});
+console.log('✅ Titan Heavy Setup Wizard compiled (Girionix_AI_Titan_Setup.exe).');
+
+// 3. Compile Titan Lite Setup Wizard
+const titanLiteWizardSrc = generateSetupWizardSource(
+  "Girionix AI Titan Lite (Battery & Fast Offline)",
+  "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • Fast Low-Resource Edition",
+  "Girionix AI Titan Lite",
+  "--titan-lite",
+  "GirionixAI_Titan_Lite"
+);
+fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupTitanLite.cs'), titanLiteWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Titan_Lite_Setup.exe GirionixSetupTitanLite.cs`, {
+  cwd: downloadsDir,
+  stdio: 'inherit'
+});
+console.log('✅ Titan Lite Setup Wizard compiled (Girionix_AI_Titan_Lite_Setup.exe).');
 
 // Sign all Windows Executables with Verified Authenticode Digital Certificate
 try {
@@ -979,14 +1020,15 @@ exit
 `;
 fs.writeFileSync(path.join(downloadsDir, 'Unblock-Windows-App.bat'), unblockScript, 'utf8');
 
-// 5. Generate Safe macOS Bundle, DMG, and 1-Click Gatekeeper Cleaner
+// 5. Generate Safe macOS Bundle, DMG, and 1-Click Gatekeeper Cleaners
 console.log('\n📦 [5/6] Packaging Safe macOS Universal Bundle & Gatekeeper Notarization Helper...');
-const macInstallerScript = `#!/bin/bash
+function generateMacScript(title, urlParams) {
+  return `#!/bin/bash
 # ==========================================================
-# Girionix AI Pro - macOS 1-Click Verified Installer
+# ${title} - macOS 1-Click Verified Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Girionix AI for macOS..."
+echo "🚀 Installing ${title} for macOS..."
 DIR="$(cd "$(dirname "$0")" && pwd)"
 APP_PATH="$HOME/Applications/Girionix AI.app"
 DATA_DIR="$HOME/Library/Application Support/Girionix AI/Data"
@@ -995,7 +1037,6 @@ mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources"
 mkdir -p "$DATA_DIR"
 
-# Copy Launcher
 cat << 'EOF' > "$APP_PATH/Contents/MacOS/GirionixAI"
 #!/bin/bash
 PORT=49153
@@ -1005,7 +1046,7 @@ if command -v python3 &>/dev/null; then
   (cd "$DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
 sleep 0.3
-TARGET_URL="http://127.0.0.1:$PORT/?app=true"
+TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
 if [ -d "/Applications/Google Chrome.app" ]; then
   open -n -a "Google Chrome" --args "--app=$TARGET_URL" "--user-data-dir=$DATA_DIR"
 elif [ -d "/Applications/Microsoft Edge.app" ]; then
@@ -1016,17 +1057,17 @@ fi
 EOF
 
 chmod +x "$APP_PATH/Contents/MacOS/GirionixAI"
-
-# Remove macOS Gatekeeper Quarantine Flag
 xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
 xattr -cr "$APP_PATH" 2>/dev/null
 
-echo "✅ Girionix AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching Girionix AI..."
+echo "✅ ${title} installed to $APP_PATH (Gatekeeper quarantine cleared)."
+echo "🚀 Launching..."
 open "$APP_PATH"
 `;
-fs.writeFileSync(path.join(downloadsDir, 'Install_Girionix_Mac.command'), macInstallerScript, 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Mac_Launcher.command'), macInstallerScript, 'utf8');
+}
+
+fs.writeFileSync(path.join(downloadsDir, 'Install_Girionix_Mac.command'), generateMacScript('Girionix AI', ''), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Mac_Launcher.command'), generateMacScript('Girionix AI', ''), 'utf8');
 
 const macGatekeeperFix = `#!/bin/bash
 echo "🚀 Unblocking Girionix AI from macOS Gatekeeper & Quarantine..."
@@ -1050,12 +1091,13 @@ fs.writeFileSync(path.join(downloadsDir, 'Uninstall_Girionix_Mac.command'), macU
 
 // 6. Generate Safe Linux AppImage & 1-Click Desktop Installer
 console.log('\n📦 [6/6] Packaging Safe Linux Standalone AppImage & Desktop Shortcuts...');
-const linuxInstallerScript = `#!/bin/bash
+function generateLinuxScript(title, urlParams) {
+  return `#!/bin/bash
 # ==========================================================
-# Girionix AI Pro - Linux 1-Click Native Desktop Installer
+# ${title} - Linux 1-Click Native Desktop Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
-echo "🚀 Installing Girionix AI for Linux..."
+echo "🚀 Installing ${title} for Linux..."
 INSTALL_DIR="$HOME/.local/share/girionix-ai"
 BIN_DIR="$HOME/.local/bin"
 DESKTOP_DIR="$HOME/.local/share/applications"
@@ -1074,7 +1116,7 @@ if command -v python3 &>/dev/null; then
   (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
 fi
 sleep 0.3
-TARGET_URL="http://127.0.0.1:$PORT/?app=true"
+TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
 if command -v google-chrome &>/dev/null; then
   google-chrome --app="$TARGET_URL" --user-data-dir="$DATA_DIR" &
 elif command -v chromium-browser &>/dev/null; then
@@ -1089,10 +1131,9 @@ EOF
 chmod +x "$INSTALL_DIR/girionix-ai"
 ln -sf "$INSTALL_DIR/girionix-ai" "$BIN_DIR/girionix-ai"
 
-# Create .desktop entry
 cat << EOF > "$DESKTOP_DIR/girionix-ai.desktop"
 [Desktop Entry]
-Name=Girionix AI
+Name=${title}
 Comment=Sovereign AI Polymath Desktop Workstation
 Exec=$INSTALL_DIR/girionix-ai
 Terminal=false
@@ -1102,15 +1143,16 @@ StartupNotify=true
 EOF
 
 chmod +x "$DESKTOP_DIR/girionix-ai.desktop"
-
-echo "✅ Girionix AI installed successfully with native application menu launcher."
-echo "🚀 Launching Girionix AI..."
+echo "✅ ${title} installed successfully with native desktop menu launcher."
+echo "🚀 Launching..."
 "$INSTALL_DIR/girionix-ai" &
 `;
-fs.writeFileSync(path.join(downloadsDir, 'install_girionix_linux.sh'), linuxInstallerScript, 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Linux.AppImage'), linuxInstallerScript, 'utf8');
-fs.copyFileSync(path.join(downloadsDir, 'Girionix_AI_Linux.AppImage'), path.join(downloadsDir, 'Girionix_AI_Titan_Linux.AppImage'));
-fs.copyFileSync(path.join(downloadsDir, 'Girionix_AI_Linux.AppImage'), path.join(downloadsDir, 'Girionix_AI_Titan_Lite_Linux.AppImage'));
+}
+
+fs.writeFileSync(path.join(downloadsDir, 'install_girionix_linux.sh'), generateLinuxScript('Girionix AI', ''), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Linux.AppImage'), generateLinuxScript('Girionix AI', ''), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Titan_Linux.AppImage'), generateLinuxScript('Girionix AI Titan Heavy', '&titan=true'), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Titan_Lite_Linux.AppImage'), generateLinuxScript('Girionix AI Titan Lite', '&titan=true&lite=true'), 'utf8');
 
 const linuxUninstallerScript = `#!/bin/bash
 echo "Uninstalling Girionix AI from Linux..."
@@ -1140,7 +1182,7 @@ try {
 }
 
 // Clean up temporary C# files
-const tempCs = ['GirionixApp.cs', 'GirionixUninstaller.cs', 'GirionixSetupWizard.cs', 'app.manifest'];
+const tempCs = ['GirionixApp.cs', 'GirionixUninstaller.cs', 'GirionixSetupStandard.cs', 'GirionixSetupTitan.cs', 'GirionixSetupTitanLite.cs', 'app.manifest'];
 for (const f of tempCs) {
   const p = path.join(downloadsDir, f);
   if (fs.existsSync(p)) {

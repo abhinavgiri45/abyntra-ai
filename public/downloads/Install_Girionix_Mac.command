@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================================
-# Girionix AI Pro - macOS 1-Click Verified Installer
+# Girionix AI - macOS 1-Click Verified Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
 echo "🚀 Installing Girionix AI for macOS..."
@@ -12,7 +12,6 @@ mkdir -p "$APP_PATH/Contents/MacOS"
 mkdir -p "$APP_PATH/Contents/Resources"
 mkdir -p "$DATA_DIR"
 
-# Copy Launcher
 cat << 'EOF' > "$APP_PATH/Contents/MacOS/GirionixAI"
 #!/bin/bash
 PORT=49153
@@ -33,11 +32,9 @@ fi
 EOF
 
 chmod +x "$APP_PATH/Contents/MacOS/GirionixAI"
-
-# Remove macOS Gatekeeper Quarantine Flag
 xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
 xattr -cr "$APP_PATH" 2>/dev/null
 
 echo "✅ Girionix AI installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching Girionix AI..."
+echo "🚀 Launching..."
 open "$APP_PATH"

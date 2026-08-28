@@ -1,6 +1,6 @@
 #!/bin/bash
 # ==========================================================
-# Girionix AI Pro - Linux 1-Click Native Desktop Installer
+# Girionix AI - Linux 1-Click Native Desktop Installer
 # Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 # ==========================================================
 echo "🚀 Installing Girionix AI for Linux..."
@@ -37,7 +37,6 @@ EOF
 chmod +x "$INSTALL_DIR/girionix-ai"
 ln -sf "$INSTALL_DIR/girionix-ai" "$BIN_DIR/girionix-ai"
 
-# Create .desktop entry
 cat << EOF > "$DESKTOP_DIR/girionix-ai.desktop"
 [Desktop Entry]
 Name=Girionix AI
@@ -50,7 +49,6 @@ StartupNotify=true
 EOF
 
 chmod +x "$DESKTOP_DIR/girionix-ai.desktop"
-
-echo "✅ Girionix AI installed successfully with native application menu launcher."
-echo "🚀 Launching Girionix AI..."
+echo "✅ Girionix AI installed successfully with native desktop menu launcher."
+echo "🚀 Launching..."
 "$INSTALL_DIR/girionix-ai" &
