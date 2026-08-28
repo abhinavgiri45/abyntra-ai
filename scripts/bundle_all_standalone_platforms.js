@@ -102,8 +102,9 @@ namespace GirionixAI
 {
     public class AppRunner : ApplicationContext
     {
-        private HttpListener listener;
+        private TcpListener tcpServer;
         private Thread serverThread;
+        private bool isRunning = true;
         private string appDir;
         private int port = 3456;
         private Process browserProcess;
@@ -122,26 +123,108 @@ namespace GirionixAI
             appDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
             if (!Directory.Exists(appDir)) appDir = AppDomain.CurrentDomain.BaseDirectory;
 
-            port = FindAvailablePort(3456);
-            StartLocalServer();
+            StartTcpServer();
             SetupTrayIcon();
             LaunchChromiumApp();
         }
 
-        private int FindAvailablePort(int startingPort)
+        private void StartTcpServer()
         {
-            for (int p = startingPort; p < startingPort + 100; p++)
+            for (int p = 3456; p < 3556; p++)
             {
                 try
                 {
-                    TcpListener tcp = new TcpListener(IPAddress.Loopback, p);
-                    tcp.Start();
-                    tcp.Stop();
-                    return p;
+                    tcpServer = new TcpListener(IPAddress.Loopback, p);
+                    tcpServer.Start();
+                    port = p;
+                    break;
                 }
                 catch { }
             }
-            return startingPort;
+
+            serverThread = new Thread(() =>
+            {
+                while (isRunning)
+                {
+                    try
+                    {
+                        TcpClient client = tcpServer.AcceptTcpClient();
+                        ThreadPool.QueueUserWorkItem((_) => HandleClient(client));
+                    }
+                    catch
+                    {
+                        if (!isRunning) break;
+                    }
+                }
+            });
+            serverThread.IsBackground = true;
+            serverThread.Start();
+        }
+
+        private void HandleClient(TcpClient client)
+        {
+            try
+            {
+                using (NetworkStream stream = client.GetStream())
+                {
+                    byte[] buffer = new byte[8192];
+                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
+                    if (bytesRead <= 0) { client.Close(); return; }
+
+                    string req = Encoding.UTF8.GetString(buffer, 0, bytesRead);
+                    string[] lines = req.Split(new string[] { "\\r\\n", "\\n" }, StringSplitOptions.None);
+                    if (lines.Length == 0) { client.Close(); return; }
+
+                    string[] parts = lines[0].Split(' ');
+                    if (parts.Length < 2) { client.Close(); return; }
+
+                    string reqPath = parts[1];
+                    int qIdx = reqPath.IndexOf('?');
+                    if (qIdx != -1) reqPath = reqPath.Substring(0, qIdx);
+                    reqPath = reqPath.TrimStart('/');
+                    if (string.IsNullOrEmpty(reqPath)) reqPath = "index.html";
+
+                    string localPath = Path.Combine(appDir, reqPath.Replace('/', Path.DirectorySeparatorChar));
+                    if (!File.Exists(localPath)) localPath = Path.Combine(appDir, "index.html");
+
+                    if (File.Exists(localPath))
+                    {
+                        byte[] body = File.ReadAllBytes(localPath);
+                        string ext = Path.GetExtension(localPath).ToLowerInvariant();
+                        string mime = "text/html; charset=utf-8";
+                        if (ext == ".js") mime = "application/javascript; charset=utf-8";
+                        else if (ext == ".css") mime = "text/css; charset=utf-8";
+                        else if (ext == ".png") mime = "image/png";
+                        else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
+                        else if (ext == ".svg") mime = "image/svg+xml";
+                        else if (ext == ".ico") mime = "image/x-icon";
+                        else if (ext == ".json") mime = "application/json; charset=utf-8";
+                        else if (ext == ".wasm") mime = "application/wasm";
+
+                        string header = "HTTP/1.1 200 OK\\r\\n" +
+                                        "Content-Type: " + mime + "\\r\\n" +
+                                        "Content-Length: " + body.Length + "\\r\\n" +
+                                        "Access-Control-Allow-Origin: *\\r\\n" +
+                                        "Connection: close\\r\\n\\r\\n";
+                        byte[] headerBytes = Encoding.UTF8.GetBytes(header);
+                        stream.Write(headerBytes, 0, headerBytes.Length);
+                        stream.Write(body, 0, body.Length);
+                        stream.Flush();
+                    }
+                    else
+                    {
+                        string notFound = "HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n";
+                        byte[] nfb = Encoding.UTF8.GetBytes(notFound);
+                        stream.Write(nfb, 0, nfb.Length);
+                        stream.Flush();
+                    }
+                }
+            }
+            catch { }
+            finally
+            {
+                try { client.Close(); } catch { }
+            }
         }
 
         private void SetupTrayIcon()
@@ -232,79 +315,17 @@ namespace GirionixAI
             try { Process.Start(url); } catch { }
         }
 
-        private void StartLocalServer()
-        {
-            try
-            {
-                listener = new HttpListener();
-                listener.Prefixes.Add("http://127.0.0.1:" + port + "/");
-                listener.Start();
-                serverThread = new Thread(() =>
-                {
-                    while (listener.IsListening)
-                    {
-                        try
-                        {
-                            var ctx = listener.GetContext();
-                            ThreadPool.QueueUserWorkItem((_) => ProcessRequest(ctx));
-                        }
-                        catch { }
-                    }
-                });
-                serverThread.IsBackground = true;
-                serverThread.Start();
-            }
-            catch { }
-        }
-
-        private void ProcessRequest(HttpListenerContext ctx)
-        {
-            try
-            {
-                string rawUrl = ctx.Request.Url.AbsolutePath.TrimStart('/');
-                if (string.IsNullOrEmpty(rawUrl) || rawUrl == "/") rawUrl = "index.html";
-
-                string filePath = Path.Combine(appDir, rawUrl.Replace('/', Path.DirectorySeparatorChar));
-                if (!File.Exists(filePath)) filePath = Path.Combine(appDir, "index.html");
-
-                if (File.Exists(filePath))
-                {
-                    byte[] bytes = File.ReadAllBytes(filePath);
-                    string ext = Path.GetExtension(filePath).ToLowerInvariant();
-                    string mime = "text/html; charset=utf-8";
-                    if (ext == ".js") mime = "application/javascript; charset=utf-8";
-                    else if (ext == ".css") mime = "text/css; charset=utf-8";
-                    else if (ext == ".png") mime = "image/png";
-                    else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
-                    else if (ext == ".svg") mime = "image/svg+xml";
-                    else if (ext == ".ico") mime = "image/x-icon";
-                    else if (ext == ".json") mime = "application/json; charset=utf-8";
-                    else if (ext == ".wasm") mime = "application/wasm";
-
-                    ctx.Response.ContentType = mime;
-                    ctx.Response.ContentLength64 = bytes.Length;
-                    ctx.Response.AddHeader("Access-Control-Allow-Origin", "*");
-                    ctx.Response.OutputStream.Write(bytes, 0, bytes.Length);
-                }
-                else
-                {
-                    ctx.Response.StatusCode = 404;
-                }
-                ctx.Response.Close();
-            }
-            catch { }
-        }
-
         private void ExitApplication()
         {
             try
             {
+                isRunning = false;
                 if (trayIcon != null)
                 {
                     trayIcon.Visible = false;
                     trayIcon.Dispose();
                 }
-                if (listener != null) listener.Stop();
+                if (tcpServer != null) tcpServer.Stop();
             }
             catch { }
             finally
