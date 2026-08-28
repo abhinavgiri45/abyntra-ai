@@ -885,20 +885,16 @@ export default function ChatView({
                                 {m.isPro && !m.isTitan && (
                                   <span className="text-[9px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 border border-amber-500/30 flex items-center gap-0.5">
                                     <Crown className="w-2.5 h-2.5" />
-                                    <span>PRO {isLockedOnWeb ? '(App Only)' : ''}</span>
+                                    <span>PRO</span>
                                   </span>
                                 )}
                               </div>
                               <span className="text-[10px] text-gray-400 truncate">
-                                {isLockedOnWeb ? '🔒 Download the app to access' : m.tag}
+                                {m.tag || m.description}
                               </span>
                             </div>
-                            {isLockedOnWeb ? (
-                              <span className="text-[10px] font-mono text-amber-400 font-bold shrink-0">Unlock ↗</span>
-                            ) : (
-                              activeModel.id === m.id && (
-                                <Check className={`w-3.5 h-3.5 shrink-0 ${isTitanMode ? 'text-emerald-400' : 'text-cyan-400'}`} />
-                              )
+                            {activeModel.id === m.id && (
+                              <Check className={`w-3.5 h-3.5 shrink-0 ${isTitanMode ? 'text-emerald-400' : 'text-cyan-400'}`} />
                             )}
                           </button>
                         );
