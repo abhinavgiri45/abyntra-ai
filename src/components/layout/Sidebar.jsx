@@ -28,7 +28,8 @@ export default function Sidebar({
   onOpenAbout,
   onOpenDownload,
   onOpenProStatus,
-  isAppInstalled
+  isAppInstalled,
+  onOpenWhySwitch
 }) {
   const [searchQuery, setSearchQuery] = useState('');
 
@@ -76,6 +77,16 @@ export default function Sidebar({
                 <Download className="w-5 h-5" />
               </button>
             )
+          )}
+
+          {onOpenWhySwitch && (
+            <button
+              onClick={onOpenWhySwitch}
+              className="p-2.5 rounded-xl text-amber-400 hover:text-white hover:bg-purple-500/20 transition-colors"
+              title="Why Switch to Abyntra AI? (Model Benchmarks)"
+            >
+              <Crown className="w-5 h-5" />
+            </button>
           )}
 
           {onOpenAbout && (
@@ -234,6 +245,23 @@ export default function Sidebar({
               <ChevronRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-emerald-300 transition-transform" />
             </button>
           )
+        )}
+
+        {onOpenWhySwitch && (
+          <button
+            onClick={onOpenWhySwitch}
+            className="w-full p-2 rounded-xl bg-purple-950/20 hover:bg-purple-950/40 border border-purple-500/20 hover:border-purple-500/40 flex items-center justify-between text-left transition-all group cursor-pointer"
+            title="Why Switch to Abyntra AI • Model Benchmarks & Comparison"
+          >
+            <div className="flex items-center gap-2">
+              <Crown className="w-3.5 h-3.5 text-amber-400" />
+              <div className="flex flex-col">
+                <span className="text-xs font-bold text-white group-hover:text-amber-300">Why Switch to Abyntra?</span>
+                <span className="text-[10px] font-mono text-purple-300/80">Benchmarks vs ChatGPT & Claude</span>
+              </div>
+            </div>
+            <ChevronRight className="w-3.5 h-3.5 text-gray-500 group-hover:text-amber-300 transition-transform" />
+          </button>
         )}
 
         {onOpenAbout && (

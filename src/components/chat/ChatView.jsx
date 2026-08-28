@@ -73,7 +73,8 @@ export default function ChatView({
   onOpenDownload,
   isAppInstalled = false,
   isTitanMode = false,
-  onOpenTitanWorkstation
+  onOpenTitanWorkstation,
+  onOpenWhySwitch
 }) {
   const [pinnedItems, setPinnedItems] = useState(() => storage.getPinnedItems());
   const [activePersona, setActivePersona] = useState(() => storage.getSettings().activePersona || 'default');
@@ -629,12 +630,13 @@ export default function ChatView({
       )}
 
       {/* Main Messages or Welcome Area */}
-      <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-4 flex flex-col justify-start">
+      <div className="flex-1 overflow-y-auto px-3 sm:px-6 py-3 sm:py-4 flex flex-col justify-start">
         {isCleanSession ? (
           <div className="flex-1 flex items-center justify-center">
             <WelcomeCards
               userName={userName}
               onOpenAbout={onOpenAbout}
+              onOpenWhySwitch={onOpenWhySwitch}
             />
           </div>
         ) : (
@@ -813,7 +815,7 @@ export default function ChatView({
                 </button>
 
                 {isEngineDropdownOpen && (
-                  <div className="absolute bottom-full left-0 mb-2 w-84 rounded-2xl bg-[#070913] border border-white/15 p-2 shadow-2xl z-50 space-y-1 backdrop-blur-xl max-h-[75vh] flex flex-col">
+                  <div className="absolute bottom-full left-0 mb-2 w-[calc(100vw-2rem)] sm:w-84 max-w-sm rounded-2xl bg-[#070913] border border-white/15 p-2 shadow-2xl z-50 space-y-1 backdrop-blur-xl max-h-[75vh] flex flex-col">
                     <div className="px-2.5 py-1 text-[10px] font-mono text-gray-400 uppercase border-b border-white/10 flex justify-between items-center shrink-0">
                       <span>{isTitanMode ? '⚡ Titan 100% Offline Models' : '🌐 Standard AI Models'}</span>
                       {isTitanMode ? (

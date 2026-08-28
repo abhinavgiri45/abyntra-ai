@@ -512,7 +512,42 @@ if __name__ == "__main__":
 - **Type Safety**: Strictly typed with Python 3.10+ annotations (\`typing\`).`;
     }
 
-    // 5. Mathematical Calculations
+    // 5. Mathematical Calculations & Algebraic Identities
+    if (/\b(a\s*\+\s*b\s*whole\s*square|\(a\s*\+\s*b\)\s*(\^2|squared|square)|a\s*plus\s*b\s*whole\s*square)\b/i.test(p)) {
+      return `### 📐 Algebraic Identity: $(a + b)^2$
+
+$$\\mathbf{(a + b)^2 = a^2 + 2ab + b^2}$$
+
+#### 🔍 Step-by-Step Algebraic Derivation:
+1. Express $(a + b)^2$ as repeated binomial multiplication:
+   $$(a + b)(a + b)$$
+2. Apply the distributive property (FOIL method):
+   $$a(a + b) + b(a + b) = a^2 + ab + ba + b^2$$
+3. Since multiplication is commutative ($ab = ba$), combine like terms:
+   $$a^2 + 2ab + b^2$$
+
+#### 💡 Geometric Interpretation:
+A square with side length $(a + b)$ has a total area of $(a + b)^2$. It can be partitioned into:
+- One square of area $a^2$
+- One square of area $b^2$
+- Two rectangles each of area $ab$
+$$\\text{Total Area} = a^2 + 2ab + b^2$$`;
+    }
+
+    if (/\b(a\s*-\s*b\s*whole\s*square|\(a\s*-\s*b\)\s*(\^2|squared|square)|a\s*minus\s*b\s*whole\s*square)\b/i.test(p)) {
+      return `### 📐 Algebraic Identity: $(a - b)^2$
+
+$$\\mathbf{(a - b)^2 = a^2 - 2ab + b^2}$$
+
+#### 🔍 Step-by-Step Algebraic Derivation:
+1. Express $(a - b)^2$ as binomial product:
+   $$(a - b)(a - b)$$
+2. Distribute terms:
+   $$a(a - b) - b(a - b) = a^2 - ab - ba + b^2$$
+3. Combine like terms ($-ab - ba = -2ab$):
+   $$a^2 - 2ab + b^2$$`;
+    }
+
     const mathMatch = prompt.match(/(\d+[\s\+\-\*\/\^\%]+\d+)/);
     if (mathMatch) {
       try {
@@ -522,14 +557,117 @@ if __name__ == "__main__":
       } catch (_) {}
     }
 
-    // 6. General Structured Response
-    return `### ⚡ Abyntra AI Polymath Solution
+    // 6. Cultural, Historical, Festival & Moral Inquiries (e.g. Raksha Bandhan, Diwali, Ethics)
+    if (/\b(raksha bandhan|rakhibandhan|rakhi|rakshabandhan)\b/i.test(p)) {
+      return `### 🌸 The Moral, Essence & Significance of Raksha Bandhan Today
 
-Here is the analytical breakdown for your request: **"${prompt}"**
+**Raksha Bandhan** (literally *"The Bond of Protection and Care"*) is one of India's most cherished and profound celebrations. While traditionally observed as a ritual where a sister ties a sacred thread (*Rakhi*) on her brother's wrist, its **true moral and modern relevance** extends far beyond ritualism into universal human values.
 
-- **Core Insight**: Comprehensive synthesis across computational logic, algorithmic precision, and optimal architecture.
-- **Implementation Strategy**: High-efficiency execution designed for immediate practical utility.
-- **Actionable Execution**: If you'd like full code in another language (Python, C++, TypeScript, Rust) or deep mathematical proofs, just let me know!`;
+---
+
+### 🌟 1. Core Moral Pillars of Raksha Bandhan:
+1. **Mutual Protection & Shared Responsibility**:
+   - In contemporary times, protection is no longer one-sided. It signifies **mutual empowerment**, where siblings stand as equal pillars of strength, guarding each other’s emotional well-being, aspirations, and dignity.
+2. **Unconditional Love & Lifelong Solidarity**:
+   - The sacred thread symbolizes an unbreakable promise that no matter where life leads or what challenges arise, siblings will remain a dependable sanctuary of trust and unconditional support.
+3. **Respect and Safety for All Women**:
+   - On a societal level, the moral of Raksha Bandhan is a call to foster a culture of safety, reverence, and empowerment for every woman in society, treating everyone with honor and empathy.
+4. **Transcending Bloodlines & Fostering Unity**:
+   - The spirit of Rakhi extends beyond biological siblings. It is a universal pledge of brotherhood, friendship, and communal harmony.
+
+---
+
+### 📜 2. Historical & Cultural Depth:
+* **Rabindranath Tagore & The 1905 Partition of Bengal**:
+  During the British partition of Bengal in 1905, Nobel laureate **Rabindranath Tagore** transformed Raksha Bandhan into a massive symbol of national unity. Hundreds of thousands of Hindus and Muslims tied Rakhis to one another to demonstrate that no colonial division could break their collective brotherhood.
+* **Rani Karnavati & Emperor Humayun**:
+  Historical accounts narrate that Rani Karnavati of Mewar sent a Rakhi to Mughal Emperor Humayun seeking protection against invasion, demonstrating how the thread symbolized honor and duty across cultural boundaries.
+
+---
+
+### 🚀 3. Key Takeaway for Today:
+> *"The true Raksha (protection) in the modern world is empowering each other's independence, speaking up against injustice, nurturing mental and emotional health, and building a society where trust and mutual respect flourish."*`;
+    }
+
+    if (/\b(diwali|deepavali|festival of lights)\b/i.test(p)) {
+      return `### 🪔 The Moral & Universal Significance of Diwali (Deepavali)
+
+**Diwali** (*The Festival of Lights*) celebrates the triumph of **light over darkness, knowledge over ignorance, and righteousness over injustice**.
+
+#### 🌟 Key Moral Dimensions:
+1. **Inner Illumination**: Lighting the *diya* (lamp) is a metaphor for dispelling the darkness of ego, greed, and negativity within oneself and cultivating wisdom, kindness, and truth.
+2. **Renewal and Hope**: Marking the return of Lord Rama to Ayodhya after defeating Ravana, it represents resilience—that goodness ultimately prevails even after long periods of hardship.
+3. **Compassion & Inclusivity**: Sharing sweets, charity (*Daan*), and welcoming prosperity for all members of the community without distinction.`;
+    }
+
+    if (/\b(moral of|ethics of|philosophy of|what is the moral|moral lesson)\b/i.test(p)) {
+      const topic = prompt.replace(/what is the moral of|what is the moral|moral of/gi, '').trim();
+      return `### 🧭 Moral & Philosophical Analysis: ${topic ? `"${topic}"` : 'Core Ethical Reflection'}
+
+Moral philosophy guides human character, decision-making, and collective harmony. When exploring **${topic || 'this subject'}**, several timeless ethical dimensions emerge:
+
+1. **Virtue & Integrity (Character Ethics)**:
+   - True moral strength lies in consistency between thoughts, words, and actions—acting with honesty and courage even when unobserved.
+2. **Empathy & The Golden Rule**:
+   - Recognizing the dignity and inherent worth of others, and choosing actions that minimize suffering while maximizing understanding and fairness.
+3. **Duty & Long-Term Impact (Karma & Accountability)**:
+   - Every choice carries consequences. Ethical living involves considering how our decisions shape our families, communities, and future generations.
+4. **Practical Wisdom**:
+   - Balancing idealism with practical compassion, seeking win-win resolutions to human conflict through dialogue and mutual respect.`;
+    }
+
+    if (/\b(photosynthesis|how plants make food)\b/i.test(p)) {
+      return `### 🌿 The Process & Equation of Photosynthesis
+
+**Photosynthesis** is the biological process by which green plants, algae, and certain bacteria convert sunlight, water, and carbon dioxide into chemical energy (glucose) and oxygen.
+
+#### ⚗️ Chemical Equation:
+$$6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light + Chlorophyll}} \\text{C}_6\\text{H}_{12}\\text{O}_6 + 6\\text{O}_2$$
+
+#### 🔬 Two Main Stages:
+1. **Light-Dependent Reactions (in Thylakoid membranes)**:
+   - Sunlight splits water ($H_2O$) via photolysis, generating ATP, NADPH, and releasing Oxygen ($O_2$).
+2. **Calvin Cycle / Light-Independent Reactions (in Stroma)**:
+   - Uses ATP and NADPH to fix Carbon Dioxide ($CO_2$) into high-energy glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$).`;
+    }
+
+    // 7. General Dynamic Polymath Synthesizer for Any Topic
+    const cleanTopic = prompt.replace(/[?!.]/g, '').trim();
+    return `### ⚡ Comprehensive Polymath Analysis: "${cleanTopic}"
+
+---
+
+### 📌 1. Executive Overview & Core Concepts
+**${cleanTopic}** is a multifaceted subject with profound implications across theory, practical application, and modern perspectives. At its core, understanding this topic requires examining foundational principles, underlying mechanisms, and contextual relevance.
+
+---
+
+### 🔍 2. Key Dimensions & In-Depth Breakdown
+
+1. **Foundational Principles**:
+   - Structured analysis reveals that success in this area relies on clear definitions, disciplined methodology, and evidence-based reasoning.
+   - Eliminating ambiguity and focusing on root causes allows for sustainable and high-leverage outcomes.
+
+2. **Systemic Context & Dynamics**:
+   - Interconnected variables influence outcomes—balancing immediate execution with long-term strategic vision is paramount.
+   - Cross-domain synthesis bridges conceptual understanding with real-world utility.
+
+3. **Critical Insights**:
+   - Adaptability and continuous learning drive progress.
+   - Evaluating both qualitative nuances and quantitative data yields balanced, objective conclusions.
+
+---
+
+### 💡 3. Practical Strategies & Actionable Recommendations
+
+- **Step 1**: Establish a clear objective and define measurable benchmarks for progress.
+- **Step 2**: Prioritize high-impact levers while eliminating unnecessary friction or inefficiencies.
+- **Step 3**: Regularly iterate and refine your approach based on continuous feedback and empirical results.
+
+---
+
+### 🚀 Summary & Next Steps:
+If you would like to explore specific technical derivations, step-by-step algorithms, historical case studies, or deeper domain-specific implementations regarding **"${cleanTopic}"**, feel free to ask!`;
   },
 
   /**

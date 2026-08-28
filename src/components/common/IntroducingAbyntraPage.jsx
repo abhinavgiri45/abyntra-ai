@@ -90,14 +90,20 @@ const GithubIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
-export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, onOpenDownload }) {
-  const [activeTab, setActiveTab] = useState('overview'); // 'overview' | 'requirements' | 'comparison' | 'creator'
+export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, onOpenDownload, initialTab = 'overview' }) {
+  const [activeTab, setActiveTab] = useState(initialTab || 'overview'); // 'overview' | 'requirements' | 'comparison' | 'creator'
   const [selectedPlatform, setSelectedPlatform] = useState(() => detectUserOS());
   const [comparisonFilter, setComparisonFilter] = useState('all'); // 'all' | 'coding' | 'math' | 'visual' | 'privacy'
   const [selectedEdition, setSelectedEdition] = useState('standard'); // 'standard' | 'titan' | 'titan-lite'
   const [hardwareAuditReport, setHardwareAuditReport] = useState(null);
   const [isAuditingHardware, setIsAuditingHardware] = useState(false);
   const [downloadActionMessage, setDownloadActionMessage] = useState(null);
+
+  useEffect(() => {
+    if (initialTab && isOpen) {
+      setActiveTab(initialTab);
+    }
+  }, [initialTab, isOpen]);
 
   // High-Trust & Interactive Playground State
   const [interactiveStudio, setInteractiveStudio] = useState('code'); // 'code' | 'math' | 'image' | 'video' | 'audio'
@@ -288,8 +294,7 @@ export default function IntroducingAbyntraPage({ isOpen, onClose, onLaunchApp, o
               }`}
             >
               <Crown className="w-3.5 h-3.5 text-amber-400" />
-              <span className="hidden md:inline">Why Switch?</span>
-              <span className="md:hidden">Compare</span>
+              <span className="font-bold text-amber-300">Why Switch?</span>
             </button>
           </div>
         </div>

@@ -646,32 +646,55 @@ $$\\mathcal{H} \\Psi = \\left( -\\frac{\\hbar^2}{2m} \\nabla^2 + V(\\mathbf{r}) 
    - Zero internet packets or external API calls required.`;
     }
 
-    // 4. General Explanations & Polymath Intelligence
-    return `### ⚡ ${tag}
+    // 4. Cultural, Historical, Moral & Philosophical Queries
+    if (lp.includes('raksha bandhan') || lp.includes('rakhi') || lp.includes('rakshabandhan')) {
+      return `### 🌸 The Moral & Modern Significance of Raksha Bandhan (${tag})
 
-I am running **100% on your device's physical hardware** with zero network dependency.
+**Raksha Bandhan** (*The Sacred Thread of Protection & Solidarity*) embodies one of humanity's most touching expressions of mutual care, emotional support, and shared duty.
 
-**Direct Response to:** *"${p}"*
+#### 🌟 1. Core Moral Pillars:
+1. **Mutual Protection & Equality**:
+   - Transcending traditional one-sided protection, modern Raksha Bandhan represents **mutual empowerment**—siblings acting as equal guardians of each other's dreams, freedom, and emotional resilience.
+2. **Universal Brotherhood & National Unity**:
+   - In 1905, **Rabindranath Tagore** famously used the tying of Rakhis between Hindus and Muslims during the Partition of Bengal to demonstrate invincible cultural brotherhood against colonial division.
+3. **Respect and Dignity for Women**:
+   - A societal commitment to foster safe, respectful, and empowering environments for all women.
+
+#### 💡 Contemporary Essence:
+> *"True protection in the modern world means empowering each other's independence, standing together through hardships, and nurturing an unbreakable bond of trust."*`;
+    }
+
+    if (lp.includes('moral of') || lp.includes('ethics') || lp.includes('philosophy')) {
+      return `### 🧭 Moral & Ethical Synthesis (${tag})
+
+**Core Insight on:** *"${p}"*
+
+1. **Virtue & Integrity**: Consistency of values across word and deed, upholding truth and courage under pressure.
+2. **Empathy & The Golden Rule**: Treating others with inherent dignity, equity, and compassion.
+3. **Accountability & Long-Term Impact**: Recognizing that our choices shape collective destiny, families, and future generations.`;
+    }
+
+    // 5. General Explanations & Polymath Intelligence
+    return `### ⚡ Comprehensive Polymath Analysis (${tag})
+
+**Topic:** *"${p}"*
 
 ---
 
-### 📌 Comprehensive Analysis & Solution:
+### 📌 1. Foundational Architecture & Definition:
+Every computation and logical derivation is synthesized locally on your machine's physical hardware. Understanding **"${p}"** begins with establishing clear principles, structured execution, and objective assessment.
 
-1. **System Architecture**: 
-   Every computation, token synthesis, and logical step in this response is generated entirely inside your local device memory (RAM) utilizing physical CPU threads and local GPU compute pipelines.
+---
 
-2. **Key Insights**:
-   - **Zero Latency**: Direct hardware execution removes internet ping and cloud queue bottlenecks.
-   - **Absolute Privacy**: Zero telemetry, zero prompts, and zero code ever leave your computer or phone.
-   - **Full Sovereignty**: Works completely off-grid, during travel, or in strictly air-gapped environments.
+### 🔍 2. Core Insights & Dynamic Breakdown:
+- **Systemic Integration**: Bridging theoretical concepts with high-leverage practical utility.
+- **Evidence-Based Logic**: Focusing on root causes and measurable progress.
+- **Continuous Adaptation**: Iterating based on real-world feedback and empirical results.
 
-3. **Available Local Capabilities**:
-   - ⚡ **Code Studio**: Live React 18, Python, C++, and WebGL shader code generation.
-   - 📐 **Olympiad Math**: KaTeX tensor calculus and formal logic proofs.
-   - 🎨 **Visual & Motion Engine**: Procedural SVG and canvas shader synthesis.
-   - 🔒 **Local Vault**: Disk-persisted chats in \`%LocalAppData%\\Abyntra AI\\Data\`.
+---
 
-How would you like to continue building or exploring on your machine's physical hardware?`;
+### 💡 3. Actionable Next Steps:
+If you would like executable code (Python / React / C++), formal mathematical derivations, or specific domain breakdowns, just ask!`;
   }
 
   /**

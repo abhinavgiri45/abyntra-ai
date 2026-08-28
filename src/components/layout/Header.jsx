@@ -33,7 +33,8 @@ export default function Header({
   onChangeName,
   isAppInstalled,
   isTitanMode,
-  onToggleTitanMode
+  onToggleTitanMode,
+  onOpenWhySwitch
 }) {
   const [isToolsDropdownOpen, setIsToolsDropdownOpen] = useState(false);
   const dropdownRef = useRef(null);
@@ -170,8 +171,20 @@ export default function Header({
         </button>
       </div>
 
-      {/* Right: Clean Action Hub (Get App, Unified Tools Menu & User Profile) */}
+      {/* Right: Clean Action Hub (Why Switch, Get App, Unified Tools Menu & User Profile) */}
       <div className="flex items-center gap-1.5 sm:gap-2">
+        {/* Why Switch? Quick Button */}
+        {onOpenWhySwitch && (
+          <button
+            onClick={onOpenWhySwitch}
+            className="flex items-center gap-1.5 px-2 sm:px-2.5 py-1.5 rounded-xl bg-purple-500/15 hover:bg-purple-500/25 text-purple-300 border border-purple-500/30 text-xs font-bold transition-all hover:scale-[1.02] cursor-pointer"
+            title="Why Switch to Abyntra AI? (Model Benchmarks & Comparison)"
+          >
+            <Crown className="w-3.5 h-3.5 text-amber-400 shrink-0" />
+            <span className="hidden xs:inline">Why Switch?</span>
+          </button>
+        )}
+
         {/* App Status / Download App */}
         {isAppInstalled ? (
           <button
@@ -213,6 +226,25 @@ export default function Header({
 
           {isToolsDropdownOpen && (
             <div className="absolute right-0 mt-2 w-64 sm:w-72 rounded-2xl bg-[#090C18]/95 border border-white/15 shadow-2xl backdrop-blur-2xl p-2 z-50 animate-fadeIn space-y-1">
+              {/* Why Switch? */}
+              {onOpenWhySwitch && (
+                <button
+                  onClick={() => { setIsToolsDropdownOpen(false); onOpenWhySwitch(); }}
+                  className="w-full flex items-center gap-3 px-3 py-2 rounded-xl text-left text-xs text-gray-200 hover:text-white hover:bg-purple-500/20 transition-colors border-b border-white/5 pb-2 mb-1"
+                >
+                  <div className="p-1.5 rounded-lg bg-amber-500/20 text-amber-400">
+                    <Crown className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="font-semibold text-white flex items-center gap-1">
+                      <span>Why Switch to Abyntra?</span>
+                      <span className="text-[9px] px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-300 font-mono font-bold">Compare</span>
+                    </div>
+                    <div className="text-[10px] text-gray-400">Model benchmarks vs ChatGPT & Claude</div>
+                  </div>
+                </button>
+              )}
+
               {/* 1. Tools Hub */}
               <button
                 onClick={() => { setIsToolsDropdownOpen(false); onOpenTools(); }}

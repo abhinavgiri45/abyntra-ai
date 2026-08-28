@@ -40,6 +40,7 @@ export default function App() {
   const [activeStudioTab, setActiveStudioTab] = useState('code'); // 'code' | 'math' | 'image' | 'video'
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
+  const [introTab, setIntroTab] = useState('overview');
   // The AI Web App ALWAYS opens with the Official Introduction Page as the primary landing page first!
   const [isAboutOpen, setIsAboutOpen] = useState(() => {
     try {
@@ -54,6 +55,11 @@ export default function App() {
       return true;
     }
   });
+
+  const handleOpenWhySwitch = () => {
+    setIntroTab('comparison');
+    setIsAboutOpen(true);
+  };
   const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [isProStatusOpen, setIsProStatusOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
@@ -238,7 +244,11 @@ export default function App() {
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         onOpenSettings={() => setIsToolsOpen(true)}
-        onOpenAbout={() => setIsAboutOpen(true)}
+        onOpenAbout={() => {
+          setIntroTab('overview');
+          setIsAboutOpen(true);
+        }}
+        onOpenWhySwitch={handleOpenWhySwitch}
         onOpenDownload={() => setIsDownloadOpen(true)}
         onOpenProStatus={() => setIsProStatusOpen(true)}
         isAppInstalled={isAppInstalled}
@@ -250,7 +260,11 @@ export default function App() {
           layoutMode={layoutMode}
           setLayoutMode={setLayoutMode}
           onOpenTools={() => setIsToolsOpen(true)}
-          onOpenAbout={() => setIsAboutOpen(true)}
+          onOpenAbout={() => {
+            setIntroTab('overview');
+            setIsAboutOpen(true);
+          }}
+          onOpenWhySwitch={handleOpenWhySwitch}
           onOpenDownload={() => setIsDownloadOpen(true)}
           onOpenProStatus={() => setIsProStatusOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
@@ -290,7 +304,11 @@ export default function App() {
                 setActiveSessionId={setActiveSessionId}
                 onCreateNewSession={handleCreateNewSession}
                 onOpenVoiceModal={() => setIsVoiceModeOpen(true)}
-                onOpenAbout={() => setIsAboutOpen(true)}
+                onOpenAbout={() => {
+                  setIntroTab('overview');
+                  setIsAboutOpen(true);
+                }}
+                onOpenWhySwitch={handleOpenWhySwitch}
                 onOpenDownload={() => setIsDownloadOpen(true)}
                 isAppInstalled={isAppInstalled}
                 isTitanMode={isTitanMode}
@@ -341,6 +359,7 @@ export default function App() {
       {/* Official OpenAI-Style Introducing Abyntra AI Landing & Announcement Page */}
       <IntroducingAbyntraPage
         isOpen={isAboutOpen}
+        initialTab={introTab}
         onClose={handleCloseIntro}
         onLaunchApp={handleCloseIntro}
         onOpenDownload={() => {
