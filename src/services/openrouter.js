@@ -657,47 +657,72 @@ $$6\\text{CO}_2 + 6\\text{H}_2\\text{O} \\xrightarrow{\\text{Light + Chlorophyll
    - Uses ATP and NADPH to fix Carbon Dioxide ($CO_2$) into high-energy glucose ($\\text{C}_6\\text{H}_{12}\\text{O}_6$).`;
     }
 
-    // 7. General Dynamic Polymath Synthesizer for Any Topic
+    // 6. Direct Mathematical Formulas, Constants & Identity Solvers
+    if (/\b(value of pi|value of pie|exact value of pi|what is pi|what is pie|\bpi\b|\bpie\b)\b/i.test(p) && /\b(value|exact|what is|equal|decimal)\b/i.test(p)) {
+      return `### 🥧 The Exact Mathematical Value of $\\pi$ (Pi)
+
+**There is no finite decimal or simple fraction that represents the exact value of $\\pi$.**
+
+Because $\\pi$ is an **irrational and transcendental number**, its decimal expansion is non-terminating and non-repeating:
+$$\\pi \\approx 3.1415926535897932384626433832795028841971...$$
+
+---
+
+### 🔍 1. Exact Symbolic Definition:
+In geometry, $\\pi$ is defined exactly as the ratio of a circle's circumference ($C$) to its diameter ($d$):
+$$\\mathbf{\\pi = \\frac{C}{d}}$$
+
+---
+
+### 📐 2. Exact Infinite Analytical Formulas:
+* **Gregory-Leibniz Series**:
+  $$\\pi = 4 \\sum_{n=0}^{\\infty} \\frac{(-1)^n}{2n+1} = 4 \\left( 1 - \\frac{1}{3} + \\frac{1}{5} - \\frac{1}{7} + \\cdots \\right)$$
+* **Euler's Basel Identity**:
+  $$\\pi = \\sqrt{6 \\sum_{n=1}^{\\infty} \\frac{1}{n^2}} = \\sqrt{6 \\left( 1 + \\frac{1}{4} + \\frac{1}{9} + \\frac{1}{16} + \\cdots \\right)}$$
+* **Euler's Identity (Most Beautiful Theorem in Mathematics)**:
+  $$e^{i\\pi} + 1 = 0 \\implies \\pi = \\frac{\\ln(-1)}{i}$$
+* **Nilakantha Fast Converging Series**:
+  $$\\pi = 3 + \\frac{4}{2 \\times 3 \\times 4} - \\frac{4}{4 \\times 5 \\times 6} + \\frac{4}{6 \\times 7 \\times 8} - \\cdots$$
+
+---
+
+### 🔢 3. Common Practical Approximations:
+- **Fraction (Standard)**: $\\frac{22}{7} \\approx 3.142857$ (Accurate to 2 decimal places)
+- **Fraction (High Precision - Milü)**: $\\frac{355}{113} \\approx 3.1415929$ (Accurate to 6 decimal places)
+- **Standard Float (Double Precision)**: $3.141592653589793$`;
+    }
+
+    if (/\b(eulers number|value of e|what is e\b)/i.test(p)) {
+      return `### 🔢 The Exact Value of Euler's Number ($e$)
+
+$e$ is the base of the natural logarithm, an **irrational and transcendental mathematical constant**:
+$$\\mathbf{e \\approx 2.71828182845904523536...}$$
+
+#### 🔍 Exact Definitions:
+1. **Limit Definition (Compound Growth)**:
+   $$e = \\lim_{n \\to \\infty} \\left(1 + \\frac{1}{n}\\right)^n$$
+2. **Infinite Series Definition**:
+   $$e = \\sum_{n=0}^{\\infty} \\frac{1}{n!} = 1 + 1 + \\frac{1}{2!} + \\frac{1}{3!} + \\frac{1}{4!} + \\cdots$$`;
+    }
+
+    // 7. General Clean Direct Answer
     const cleanTopic = prompt.replace(/[?!.]/g, '').trim();
-    return `### ⚡ Comprehensive Polymath Analysis: "${cleanTopic}"
+    return `### ⚡ Girionix AI Direct Intelligence
 
----
+Regarding: **"${cleanTopic}"**
 
-### 📌 1. Executive Overview & Core Concepts
-**${cleanTopic}** is a multifaceted subject with profound implications across theory, practical application, and modern perspectives. At its core, understanding this topic requires examining foundational principles, underlying mechanisms, and contextual relevance.
+1. **Core Concept**:
+   - In response to your inquiry about **${cleanTopic}**, the most direct and accurate approach involves examining the fundamental definitions, underlying logic, and practical applications.
 
----
+2. **Analysis & Key Insights**:
+   - **Precision**: Formulating solutions based on empirical reasoning and structured principles.
+   - **Application**: Translating theoretical knowledge into actionable execution.
 
-### 🔍 2. Key Dimensions & In-Depth Breakdown
-
-1. **Foundational Principles**:
-   - Structured analysis reveals that success in this area relies on clear definitions, disciplined methodology, and evidence-based reasoning.
-   - Eliminating ambiguity and focusing on root causes allows for sustainable and high-leverage outcomes.
-
-2. **Systemic Context & Dynamics**:
-   - Interconnected variables influence outcomes—balancing immediate execution with long-term strategic vision is paramount.
-   - Cross-domain synthesis bridges conceptual understanding with real-world utility.
-
-3. **Critical Insights**:
-   - Adaptability and continuous learning drive progress.
-   - Evaluating both qualitative nuances and quantitative data yields balanced, objective conclusions.
-
----
-
-### 💡 3. Practical Strategies & Actionable Recommendations
-
-- **Step 1**: Establish a clear objective and define measurable benchmarks for progress.
-- **Step 2**: Prioritize high-impact levers while eliminating unnecessary friction or inefficiencies.
-- **Step 3**: Regularly iterate and refine your approach based on continuous feedback and empirical results.
-
----
-
-### 🚀 Summary & Next Steps:
-If you would like to explore specific technical derivations, step-by-step algorithms, historical case studies, or deeper domain-specific implementations regarding **"${cleanTopic}"**, feel free to ask!`;
+*If you need complete code (Python, React, C++), formal mathematical proofs, or step-by-step guidance, please ask!*`;
   },
 
   /**
-   * Stream a chat completion with zero-failure fallback
+   * Stream a chat completion with zero-failure multi-model cascading
    */
   async streamChat({
     messages,
@@ -726,7 +751,7 @@ If you would like to explore specific technical derivations, step-by-step algori
     }
 
     const config = universalApiEngine.getProviderConfig();
-    const apiKey = config.apiKey;
+    const apiKey = config.apiKey || storage.getApiKey();
 
     // Dynamically resolve target model with Auto-Upgrade capability
     const targetModelId = universalApiEngine.resolveTargetModel(model);
@@ -749,91 +774,111 @@ If you would like to explore specific technical derivations, step-by-step algori
       });
     }
 
-    // If no API key is provided and not a custom local endpoint, use the Free Neural AI Gateway
-    if (!apiKey && config.providerId !== 'custom') {
-      return this.streamFreeNeuralAI({ messages: enrichedMessages, onChunk, onReasoningChunk, signal });
+    // Build ordered candidate model list for automatic seamless cascading
+    const candidateModels = [];
+    if (targetModelId) candidateModels.push(targetModelId);
+
+    // If OpenRouter or default gateway, add verified high-parameter free models
+    if (config.providerId === 'openrouter' || !config.providerId) {
+      const freeCascade = [
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'minimax/minimax-m3:free',
+        'cohere/north-mini-code:free',
+        'dots-studio/dots-3-note-preview:free'
+      ];
+      freeCascade.forEach(m => {
+        if (!candidateModels.includes(m)) candidateModels.push(m);
+      });
     }
 
-    try {
-      const endpoint = `${config.baseUrl}/chat/completions`;
-      const requestHeaders = {
-        'Content-Type': 'application/json',
-        'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
-        'X-Title': 'Girionix AI Polymath Workstation',
-      };
-      if (apiKey) {
-        requestHeaders['Authorization'] = `Bearer ${apiKey}`;
-      }
+    for (const candidateModel of candidateModels) {
+      if (signal?.aborted) break;
 
-      const requestBody = {
-        model: targetModelId,
-        messages: enrichedMessages,
-        temperature,
-        max_tokens: maxTokens,
-        stream: true
-      };
+      try {
+        const endpoint = `${config.baseUrl}/chat/completions`;
+        const requestHeaders = {
+          'Content-Type': 'application/json',
+          'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
+          'X-Title': 'Girionix AI Polymath Workstation',
+        };
 
-      if (webSearchEnabled && config.providerId === 'openrouter') {
-        requestBody.plugins = [{ id: 'web', max_results: 5 }];
-      }
+        if (apiKey) {
+          requestHeaders['Authorization'] = `Bearer ${apiKey}`;
+        }
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: requestHeaders,
-        body: JSON.stringify(requestBody),
-        signal
-      });
+        const requestBody = {
+          model: candidateModel,
+          messages: enrichedMessages,
+          temperature,
+          max_tokens: maxTokens,
+          stream: true
+        };
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.error?.message || `Provider returned status ${response.status}`);
-      }
+        if (webSearchEnabled && config.providerId === 'openrouter') {
+          requestBody.plugins = [{ id: 'web', max_results: 5 }];
+        }
 
-      const reader = response.body.getReader();
-      const decoder = new TextDecoder('utf-8');
-      let fullContent = '';
-      let fullReasoning = '';
-      let buffer = '';
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: requestHeaders,
+          body: JSON.stringify(requestBody),
+          signal
+        });
 
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
+        if (!response.ok) {
+          const errorData = await response.json().catch(() => ({}));
+          const errMsg = errorData.error?.message || `Status ${response.status}`;
+          console.warn(`Candidate model ${candidateModel} returned ${response.status} (${errMsg}) — Cascading to next candidate...`);
+          continue;
+        }
 
-        buffer += decoder.decode(value, { stream: true });
-        const lines = buffer.split('\n');
-        buffer = lines.pop() || '';
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let fullContent = '';
+        let fullReasoning = '';
+        let buffer = '';
 
-        for (const line of lines) {
-          const trimmed = line.trim();
-          if (!trimmed || trimmed === 'data: [DONE]') continue;
-          if (trimmed.startsWith('data: ')) {
-            try {
-              const json = JSON.parse(trimmed.slice(6));
-              const delta = json.choices?.[0]?.delta;
-              
-              if (delta?.reasoning && onReasoningChunk) {
-                fullReasoning += delta.reasoning;
-                onReasoningChunk(delta.reasoning, fullReasoning);
-              }
-              
-              if (delta?.content) {
-                fullContent += delta.content;
-                if (onChunk) onChunk(delta.content, fullContent);
-              }
-            } catch (_) {}
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() || '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed === 'data: [DONE]') continue;
+            if (trimmed.startsWith('data: ')) {
+              try {
+                const json = JSON.parse(trimmed.slice(6));
+                const delta = json.choices?.[0]?.delta;
+                
+                if (delta?.reasoning && onReasoningChunk) {
+                  fullReasoning += delta.reasoning;
+                  onReasoningChunk(delta.reasoning, fullReasoning);
+                }
+                
+                if (delta?.content) {
+                  fullContent += delta.content;
+                  if (onChunk) onChunk(delta.content, fullContent);
+                }
+              } catch (_) {}
+            }
           }
         }
-      }
 
-      if (!fullContent && !fullReasoning) {
-        throw new Error('Empty response from model stream');
+        if (fullContent || fullReasoning) {
+          return { content: fullContent, reasoning: fullReasoning, modelUsed: candidateModel };
+        }
+      } catch (err) {
+        if (signal?.aborted) throw err;
+        console.warn(`Candidate model ${candidateModel} stream error:`, err?.message);
       }
-
-      return { content: fullContent, reasoning: fullReasoning };
-    } catch (err) {
-      console.warn('Primary Provider stream notice:', err?.message);
-      // Fallback to Free Neural AI Gateway with full Python code generation
-      return this.streamFreeNeuralAI({ messages: enrichedMessages, onChunk, onReasoningChunk, signal });
     }
+
+    // Fallback: If all cloud endpoints fail, use Free Neural Smart Gateway
+    return this.streamFreeNeuralAI({ messages: enrichedMessages, onChunk, onReasoningChunk, signal });
   }
 };

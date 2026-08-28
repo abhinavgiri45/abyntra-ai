@@ -1,5 +1,5 @@
 /**
- * GIRIONIX AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
+ * ABYNTRA AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Capabilities:
@@ -12,6 +12,16 @@
 import { storage } from './storage';
 
 const STORAGE_KEYS = {
+  UNIVERSAL_PROVIDER: 'abyntra_universal_provider',
+  CUSTOM_BASE_URL: 'abyntra_custom_base_url',
+  CUSTOM_API_KEY: 'abyntra_custom_api_key',
+  AUTO_UPGRADE_ENABLED: 'abyntra_auto_upgrade_enabled',
+  DYNAMIC_MODEL_REGISTRY: 'abyntra_dynamic_model_registry',
+  LAST_MODEL_SYNC: 'abyntra_last_model_sync',
+  UPGRADE_HISTORY: 'abyntra_model_upgrade_history'
+};
+
+const LEGACY_STORAGE_KEYS = {
   UNIVERSAL_PROVIDER: 'girionix_universal_provider',
   CUSTOM_BASE_URL: 'girionix_custom_base_url',
   CUSTOM_API_KEY: 'girionix_custom_api_key',
@@ -24,45 +34,45 @@ const STORAGE_KEYS = {
 // Default latest baseline models
 export const DEFAULT_MODEL_FAMILIES = {
   frontier: {
-    name: 'Frontier Flagship Intelligence',
-    currentId: 'deepseek/deepseek-r1',
-    fallbackId: 'anthropic/claude-3.7-sonnet',
-    patterns: [/claude-4/i, /claude-3\.7/i, /deepseek-r1/i, /deepseek-r2/i, /o3/i, /o1/i, /gpt-5/i, /gpt-4\.5/i],
+    name: 'Frontier Flagship Intelligence (550B / DeepSeek R1)',
+    currentId: 'nvidia/nemotron-3-ultra-550b-a55b:free',
+    fallbackId: 'deepseek/deepseek-r1',
+    patterns: [/nemotron-3-ultra/i, /claude-4/i, /claude-3\.7/i, /deepseek-r1/i, /deepseek-r2/i, /o3/i, /o1/i, /gpt-5/i, /gpt-4\.5/i],
     category: 'reasoning'
   },
   coding: {
-    name: 'Superhuman Coding Engine',
-    currentId: 'anthropic/claude-3.7-sonnet',
-    fallbackId: 'qwen/qwen-2.5-coder-32b-instruct',
-    patterns: [/claude-4/i, /claude-3\.7-sonnet/i, /qwen-2\.5-coder/i, /deepseek-coder/i, /codestral/i],
+    name: 'Superhuman Coding Engine (Cohere / Claude 3.7)',
+    currentId: 'cohere/north-mini-code:free',
+    fallbackId: 'anthropic/claude-3.7-sonnet',
+    patterns: [/north-mini-code/i, /claude-4/i, /claude-3\.7-sonnet/i, /qwen-2\.5-coder/i, /deepseek-coder/i, /codestral/i],
     category: 'coding'
   },
   math: {
-    name: 'Olympiad Math & Formal Logic',
-    currentId: 'openai/o3-mini',
-    fallbackId: 'deepseek/deepseek-r1',
-    patterns: [/o3/i, /o1/i, /deepseek-r1/i, /qwq-32b/i],
+    name: 'Olympiad Math & Formal Logic (30B Omni Reasoning / o3-mini)',
+    currentId: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    fallbackId: 'openai/o3-mini',
+    patterns: [/nemotron-3-nano/i, /o3/i, /o1/i, /deepseek-r1/i, /qwq-32b/i],
     category: 'reasoning'
   },
   multimodal: {
-    name: 'Omnimodal Vision & Analysis',
-    currentId: 'openai/gpt-4o',
-    fallbackId: 'google/gemini-2.5-flash',
-    patterns: [/gpt-5/i, /gpt-4\.5/i, /gpt-4o/i, /gemini-2\.5/i, /gemini-3/i, /claude-3\.7/i],
+    name: 'Omnimodal Vision & Analysis (GPT-4o / Gemini 2.0)',
+    currentId: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    fallbackId: 'openai/gpt-4o',
+    patterns: [/gpt-5/i, /gpt-4\.5/i, /gpt-4o/i, /gemini-2\.0-flash/i, /claude-3\.7/i],
     category: 'multimodal'
   },
   fast: {
     name: 'High-Speed Low Latency & High Accuracy',
-    currentId: 'google/gemini-2.0-flash-001',
-    fallbackId: 'openai/gpt-4o-mini',
-    patterns: [/gemini-2\.0-flash/i, /gemini-2\.5-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i, /mistral-nemo/i],
+    currentId: 'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+    fallbackId: 'dots-studio/dots-3-note-preview:free',
+    patterns: [/nemotron-3-nano/i, /dots-3-note/i, /gemini-2\.0-flash/i, /gpt-4o-mini/i, /llama-3\.3-70b/i],
     category: 'fast'
   },
   script: {
-    name: 'Screenplay & Narrative Cinema',
-    currentId: 'anthropic/claude-3.7-sonnet',
-    fallbackId: 'openai/gpt-4o',
-    patterns: [/claude-4/i, /claude-3\.7-sonnet/i, /gpt-4o/i, /gemini-2\.5-pro/i],
+    name: 'Screenplay & Narrative Cinema (MiniMax M3 / Claude 3.7)',
+    currentId: 'minimax/minimax-m3:free',
+    fallbackId: 'anthropic/claude-3.7-sonnet',
+    patterns: [/minimax-m3/i, /claude-4/i, /claude-3\.7-sonnet/i, /gpt-4o/i],
     category: 'script'
   }
 };

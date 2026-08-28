@@ -39,145 +39,145 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapStandard = {
     windows: {
-      file: '/downloads/Girionix_AI_Windows.zip',
-      name: 'Girionix_AI_Windows.zip',
+      file: '/downloads/Abyntra_AI_Windows.zip',
+      name: 'Abyntra_AI_Windows.zip',
       label: 'Download Portable App (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Setup.exe',
-      exeName: 'Girionix_AI_Setup.exe',
+      exeFile: '/downloads/Abyntra_AI_Setup.exe',
+      exeName: 'Abyntra_AI_Setup.exe',
       exeLabel: 'Windows Setup Wizard (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
+      scriptFile: '/downloads/Install-Abyntra-AI.bat',
+      scriptName: 'Install-Abyntra-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
-      uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
-      uninstallerName: 'Uninstall_Girionix_AI.exe'
+      uninstaller: '/downloads/Uninstall_Abyntra_AI.exe',
+      uninstallerName: 'Uninstall_Abyntra_AI.exe'
     },
     android: {
-      file: '/downloads/Girionix_AI.apk',
-      name: 'Girionix_AI.apk',
+      file: '/downloads/Abyntra_AI.apk',
+      name: 'Abyntra_AI.apk',
       label: 'Download Android App Package (.apk)',
-      uninstallGuide: 'Long-press Girionix AI icon on your Android home screen and tap "Uninstall".'
+      uninstallGuide: 'Long-press Abyntra AI icon on your Android home screen and tap "Uninstall".'
     },
     mac: {
-      file: '/downloads/Girionix_AI_macOS.dmg',
-      name: 'Girionix_AI_macOS.dmg',
+      file: '/downloads/Abyntra_AI_macOS.dmg',
+      name: 'Abyntra_AI_macOS.dmg',
       label: 'Download macOS Universal Bundle (.dmg)',
-      scriptFile: '/downloads/Install_Girionix_Mac.command',
-      scriptName: 'Install_Girionix_Mac.command',
+      scriptFile: '/downloads/Install_Abyntra_Mac.command',
+      scriptName: 'Install_Abyntra_Mac.command',
       scriptLabel: '1-Click Verified macOS Installer (.command)',
-      uninstaller: '/downloads/Uninstall_Girionix_Mac.command',
-      uninstallerName: 'Uninstall_Girionix_Mac.command'
+      uninstaller: '/downloads/Uninstall_Abyntra_Mac.command',
+      uninstallerName: 'Uninstall_Abyntra_Mac.command'
     },
     ios: {
-      file: '/downloads/Girionix_AI_iOS.mobileconfig',
-      name: 'Girionix_AI_iOS.mobileconfig',
+      file: '/downloads/Abyntra_AI_iOS.mobileconfig',
+      name: 'Abyntra_AI_iOS.mobileconfig',
       label: 'Download iOS Profile (.mobileconfig)',
-      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Girionix AI -> Remove Profile.'
+      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Abyntra AI -> Remove Profile.'
     },
     linux: {
-      file: '/downloads/Girionix_AI_Linux.AppImage',
-      name: 'Girionix_AI_Linux.AppImage',
+      file: '/downloads/Abyntra_AI_Linux.AppImage',
+      name: 'Abyntra_AI_Linux.AppImage',
       label: 'Download Linux Standalone (.AppImage)',
-      scriptFile: '/downloads/install_girionix_linux.sh',
-      scriptName: 'install_girionix_linux.sh',
+      scriptFile: '/downloads/install_abyntra_linux.sh',
+      scriptName: 'install_abyntra_linux.sh',
       scriptLabel: '1-Click Linux Native Installer (.sh)',
-      uninstaller: '/downloads/uninstall_girionix_linux.sh',
-      uninstallerName: 'uninstall_girionix_linux.sh'
+      uninstaller: '/downloads/uninstall_abyntra_linux.sh',
+      uninstallerName: 'uninstall_abyntra_linux.sh'
     }
   };
 
   const downloadMapTitan = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Windows.zip',
-      name: 'Girionix_AI_Titan_Windows.zip',
+      file: '/downloads/Abyntra_AI_Titan_Windows.zip',
+      name: 'Abyntra_AI_Titan_Windows.zip',
       label: 'Download Titan Portable (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Titan_Setup.exe',
-      exeName: 'Girionix_AI_Titan_Setup.exe',
+      exeFile: '/downloads/Abyntra_AI_Titan_Setup.exe',
+      exeName: 'Abyntra_AI_Titan_Setup.exe',
       exeLabel: 'Titan Setup Wizard (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
+      scriptFile: '/downloads/Install-Abyntra-AI.bat',
+      scriptName: 'Install-Abyntra-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
-      uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
-      uninstallerName: 'Uninstall_Girionix_AI.exe'
+      uninstaller: '/downloads/Uninstall_Abyntra_AI.exe',
+      uninstallerName: 'Uninstall_Abyntra_AI.exe'
     },
     android: {
-      file: '/downloads/Girionix_AI_Titan.apk',
-      name: 'Girionix_AI_Titan.apk',
+      file: '/downloads/Abyntra_AI_Titan.apk',
+      name: 'Abyntra_AI_Titan.apk',
       label: 'Download Titan Android Package (.apk - Hardware Verified)',
-      uninstallGuide: 'Long-press Girionix AI Titan icon and tap "Uninstall".'
+      uninstallGuide: 'Long-press Abyntra AI Titan icon and tap "Uninstall".'
     },
     mac: {
-      file: '/downloads/Girionix_AI_Titan_macOS.dmg',
-      name: 'Girionix_AI_Titan_macOS.dmg',
+      file: '/downloads/Abyntra_AI_Titan_macOS.dmg',
+      name: 'Abyntra_AI_Titan_macOS.dmg',
       label: 'Download Titan macOS Bundle (.dmg - Hardware Verified)',
-      scriptFile: '/downloads/Install_Girionix_Mac.command',
-      scriptName: 'Install_Girionix_Mac.command',
+      scriptFile: '/downloads/Install_Abyntra_Mac.command',
+      scriptName: 'Install_Abyntra_Mac.command',
       scriptLabel: '1-Click Verified macOS Installer (.command)',
-      uninstaller: '/downloads/Uninstall_Girionix_Mac.command',
-      uninstallerName: 'Uninstall_Girionix_Mac.command'
+      uninstaller: '/downloads/Uninstall_Abyntra_Mac.command',
+      uninstallerName: 'Uninstall_Abyntra_Mac.command'
     },
     ios: {
-      file: '/downloads/Girionix_AI_Titan_iOS.mobileconfig',
-      name: 'Girionix_AI_Titan_iOS.mobileconfig',
+      file: '/downloads/Abyntra_AI_Titan_iOS.mobileconfig',
+      name: 'Abyntra_AI_Titan_iOS.mobileconfig',
       label: 'Download Titan iOS Profile (.mobileconfig)',
-      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Girionix AI Titan -> Remove Profile.'
+      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Abyntra AI Titan -> Remove Profile.'
     },
     linux: {
-      file: '/downloads/Girionix_AI_Titan_Linux.AppImage',
-      name: 'Girionix_AI_Titan_Linux.AppImage',
+      file: '/downloads/Abyntra_AI_Titan_Linux.AppImage',
+      name: 'Abyntra_AI_Titan_Linux.AppImage',
       label: 'Download Titan Linux AppImage (.AppImage - Hardware Verified)',
-      scriptFile: '/downloads/install_girionix_linux.sh',
-      scriptName: 'install_girionix_linux.sh',
+      scriptFile: '/downloads/install_abyntra_linux.sh',
+      scriptName: 'install_abyntra_linux.sh',
       scriptLabel: '1-Click Linux Native Installer (.sh)',
-      uninstaller: '/downloads/uninstall_girionix_linux.sh',
-      uninstallerName: 'uninstall_girionix_linux.sh'
+      uninstaller: '/downloads/uninstall_abyntra_linux.sh',
+      uninstallerName: 'uninstall_abyntra_linux.sh'
     }
   };
 
   const downloadMapTitanLite = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Lite_Windows.zip',
-      name: 'Girionix_AI_Titan_Lite_Windows.zip',
+      file: '/downloads/Abyntra_AI_Titan_Lite_Windows.zip',
+      name: 'Abyntra_AI_Titan_Lite_Windows.zip',
       label: 'Download Titan Lite Portable (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Titan_Lite_Setup.exe',
-      exeName: 'Girionix_AI_Titan_Lite_Setup.exe',
+      exeFile: '/downloads/Abyntra_AI_Titan_Lite_Setup.exe',
+      exeName: 'Abyntra_AI_Titan_Lite_Setup.exe',
       exeLabel: 'Titan Lite Setup (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
+      scriptFile: '/downloads/Install-Abyntra-AI.bat',
+      scriptName: 'Install-Abyntra-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
-      uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
-      uninstallerName: 'Uninstall_Girionix_AI.exe'
+      uninstaller: '/downloads/Uninstall_Abyntra_AI.exe',
+      uninstallerName: 'Uninstall_Abyntra_AI.exe'
     },
     android: {
-      file: '/downloads/Girionix_AI_Titan_Lite.apk',
-      name: 'Girionix_AI_Titan_Lite.apk',
+      file: '/downloads/Abyntra_AI_Titan_Lite.apk',
+      name: 'Abyntra_AI_Titan_Lite.apk',
       label: 'Download Titan Lite Android APK (.apk - 2GB+ RAM)',
-      uninstallGuide: 'Long-press Girionix AI Titan Lite icon and tap "Uninstall".'
+      uninstallGuide: 'Long-press Abyntra AI Titan Lite icon and tap "Uninstall".'
     },
     mac: {
-      file: '/downloads/Girionix_AI_Titan_Lite_macOS.dmg',
-      name: 'Girionix_AI_Titan_Lite_macOS.dmg',
+      file: '/downloads/Abyntra_AI_Titan_Lite_macOS.dmg',
+      name: 'Abyntra_AI_Titan_Lite_macOS.dmg',
       label: 'Download Titan Lite macOS DMG (.dmg - Air & Intel Macs)',
-      scriptFile: '/downloads/Install_Girionix_Mac.command',
-      scriptName: 'Install_Girionix_Mac.command',
+      scriptFile: '/downloads/Install_Abyntra_Mac.command',
+      scriptName: 'Install_Abyntra_Mac.command',
       scriptLabel: '1-Click Verified macOS Installer (.command)',
-      uninstaller: '/downloads/Uninstall_Girionix_Mac.command',
-      uninstallerName: 'Uninstall_Girionix_Mac.command'
+      uninstaller: '/downloads/Uninstall_Abyntra_Mac.command',
+      uninstallerName: 'Uninstall_Abyntra_Mac.command'
     },
     ios: {
-      file: '/downloads/Girionix_AI_Titan_Lite_iOS.mobileconfig',
-      name: 'Girionix_AI_Titan_Lite_iOS.mobileconfig',
+      file: '/downloads/Abyntra_AI_Titan_Lite_iOS.mobileconfig',
+      name: 'Abyntra_AI_Titan_Lite_iOS.mobileconfig',
       label: 'Download Titan Lite iOS Profile (.mobileconfig)',
-      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Girionix AI Titan Lite -> Remove Profile.'
+      uninstallGuide: 'Go to iOS Settings -> General -> VPN & Device Management -> Abyntra AI Titan Lite -> Remove Profile.'
     },
     linux: {
-      file: '/downloads/Girionix_AI_Titan_Lite_Linux.AppImage',
-      name: 'Girionix_AI_Titan_Lite_Linux.AppImage',
+      file: '/downloads/Abyntra_AI_Titan_Lite_Linux.AppImage',
+      name: 'Abyntra_AI_Titan_Lite_Linux.AppImage',
       label: 'Download Titan Lite Linux AppImage (.AppImage - Low Spec)',
-      scriptFile: '/downloads/install_girionix_linux.sh',
-      scriptName: 'install_girionix_linux.sh',
+      scriptFile: '/downloads/install_abyntra_linux.sh',
+      scriptName: 'install_abyntra_linux.sh',
       scriptLabel: '1-Click Linux Native Installer (.sh)',
-      uninstaller: '/downloads/uninstall_girionix_linux.sh',
-      uninstallerName: 'uninstall_girionix_linux.sh'
+      uninstaller: '/downloads/uninstall_abyntra_linux.sh',
+      uninstallerName: 'uninstall_abyntra_linux.sh'
     }
   };
 
@@ -207,11 +207,11 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       name: 'Windows',
       tag: 'Win 7, 8, 10, 11 & 12',
       format: '.EXE & .BAT Installer',
-      fileName: 'Girionix_AI_Setup.exe',
-      uninstallerName: 'Uninstall_Girionix_AI.exe',
+      fileName: 'Abyntra_AI_Setup.exe',
+      uninstallerName: 'Uninstall_Abyntra_AI.exe',
       icon: <Monitor className="w-5 h-5 text-cyan-400" />,
       size: '7.25 MB Verified Setup',
-      localPath: '%LocalAppData%\\Girionix AI',
+      localPath: '%LocalAppData%\\Abyntra AI',
       compatibility: 'Windows 11, 10, 8.1, 7 SP1 (x64 / ARM64)',
       features: [
         'Verified Setup Wizard with Win32 Manifest & AsInvoker privileges',
@@ -226,7 +226,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       name: 'Android',
       tag: 'Android 8.0 to Android 16',
       format: '.APK Standalone Package',
-      fileName: 'Girionix_AI.apk',
+      fileName: 'Abyntra_AI.apk',
       icon: <Smartphone className="w-5 h-5 text-emerald-400" />,
       size: '6.95 MB Standalone APK',
       localPath: 'Android Internal Sandbox Storage',
@@ -244,15 +244,15 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       name: 'macOS',
       tag: 'Apple Silicon (M1-M4) & Intel',
       format: '.DMG & .command',
-      fileName: 'Girionix_AI_macOS.dmg',
-      uninstallerName: 'Uninstall_Girionix_Mac.command',
+      fileName: 'Abyntra_AI_macOS.dmg',
+      uninstallerName: 'Uninstall_Abyntra_Mac.command',
       icon: <Laptop className="w-5 h-5 text-rose-400" />,
       size: 'Universal Bundle',
-      localPath: '~/Library/Application Support/Girionix AI',
+      localPath: '~/Library/Application Support/Abyntra AI',
       compatibility: 'macOS Sequoia 15, Sonoma, Ventura, Monterey & Intel',
       features: [
         'Universal macOS bundle with 1-click Gatekeeper quarantine bypass',
-        'Dedicated local disk storage at ~/Library/Application Support/Girionix AI',
+        'Dedicated local disk storage at ~/Library/Application Support/Abyntra AI',
         '90-Day Extended Chat Retention & Local Vault',
         'Command (⌘) key shortcuts fully mapped with retina display scaling'
       ]
@@ -262,14 +262,14 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       name: 'Linux',
       tag: 'Ubuntu, Fedora, Arch, Debian',
       format: '.AppImage & .sh',
-      fileName: 'Girionix_AI_Linux.AppImage',
-      uninstallerName: 'uninstall_girionix_linux.sh',
+      fileName: 'Abyntra_AI_Linux.AppImage',
+      uninstallerName: 'uninstall_abyntra_linux.sh',
       icon: <Terminal className="w-5 h-5 text-amber-400" />,
       size: 'Native Standalone',
-      localPath: '~/.local/share/girionix-ai',
+      localPath: '~/.local/share/abyntra-ai',
       compatibility: 'All modern Linux distributions (GLIBC 2.27+, Wayland & X11)',
       features: [
-        '1-Click Native Installer creates ~/.local/share/applications/girionix-ai.desktop',
+        '1-Click Native Installer creates ~/.local/share/applications/abyntra-ai.desktop',
         'Automatic executable permission configuration (chmod +x)',
         'Full Wayland & X11 acceleration with hardware audio streaming',
         'Clean 1-line shell uninstaller included'
@@ -280,7 +280,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       name: 'iOS',
       tag: 'iPhone & iPad (iOS 15-18)',
       format: '.mobileconfig Profile',
-      fileName: 'Girionix_AI_iOS.mobileconfig',
+      fileName: 'Abyntra_AI_iOS.mobileconfig',
       icon: <Smartphone className="w-5 h-5 text-purple-400" />,
       size: 'Apple WebClip',
       localPath: 'Safari Local Storage Sandbox',
@@ -314,7 +314,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
             </div>
             <div>
               <h2 className="text-lg sm:text-xl font-bold text-white flex items-center gap-2">
-                <span>Download Girionix AI Standalone Apps</span>
+                <span>Download Abyntra AI Standalone Apps</span>
                 <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-300 border border-emerald-500/40">
                   🛡️ 100% Safe & Virus-Free
                 </span>
@@ -385,7 +385,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
               </div>
               <div>
                 <h3 className="text-base sm:text-lg font-bold text-white flex items-center gap-2">
-                  <span>Girionix AI for {activePlat.name}</span>
+                  <span>Abyntra AI for {activePlat.name}</span>
                   <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold border border-cyan-500/40">
                     {activePlat.size}
                   </span>
@@ -481,7 +481,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
                   <Monitor className="w-3.5 h-3.5" /> Windows SmartScreen:
                 </span>
                 <p className="text-gray-300 text-[11px] leading-relaxed">
-                  Windows flags newly published independent software as "Windows protected your PC". This is normal. Click <strong>"More info"</strong> $\rightarrow$ <strong>"Run anyway"</strong>, or run the verified open-source <code>Install-Girionix-AI.bat</code> script.
+                  Windows flags newly published independent software as "Windows protected your PC". This is normal. Click <strong>"More info"</strong> $\rightarrow$ <strong>"Run anyway"</strong>, or run the verified open-source <code>Install-Abyntra-AI.bat</code> script.
                 </p>
               </div>
 
@@ -490,7 +490,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
                   <Laptop className="w-3.5 h-3.5" /> macOS Gatekeeper:
                 </span>
                 <p className="text-gray-300 text-[11px] leading-relaxed">
-                  macOS attaches a quarantine attribute to downloaded files. Run <code>Install_Girionix_Mac.command</code> which automatically clears the quarantine flag (<code>xattr -dr com.apple.quarantine</code>) and launches the app.
+                  macOS attaches a quarantine attribute to downloaded files. Run <code>Install_Abyntra_Mac.command</code> which automatically clears the quarantine flag (<code>xattr -dr com.apple.quarantine</code>) and launches the app.
                 </p>
               </div>
 
@@ -508,7 +508,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
                   <Terminal className="w-3.5 h-3.5" /> Linux Permissions:
                 </span>
                 <p className="text-gray-300 text-[11px] leading-relaxed">
-                  Run <code>bash install_girionix_linux.sh</code>. It automatically sets executable permissions (<code>chmod +x</code>) and creates a native desktop menu shortcut.
+                  Run <code>bash install_abyntra_linux.sh</code>. It automatically sets executable permissions (<code>chmod +x</code>) and creates a native desktop menu shortcut.
                 </p>
               </div>
             </div>

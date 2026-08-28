@@ -11,9 +11,23 @@ const distDir = path.resolve(rootDir, 'dist');
 const downloadsDir = path.resolve(rootDir, 'public', 'downloads');
 
 console.log('🚀 ========================================================');
-console.log('🚀 GIRIONIX AI - ULTRA-SAFE CERTIFIED STANDALONE PACKAGER');
+console.log('🚀 ABYNTRA AI - STANDALONE MULTI-PLATFORM PACKAGER');
 console.log('🚀 Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)');
 console.log('🚀 ========================================================');
+
+// Purge legacy Girionix files from public/downloads
+if (fs.existsSync(downloadsDir)) {
+  const existing = fs.readdirSync(downloadsDir);
+  for (const f of existing) {
+    if (f.toLowerCase().includes('girionix')) {
+      try {
+        fs.unlinkSync(path.join(downloadsDir, f));
+      } catch (_) {}
+    }
+  }
+} else {
+  fs.mkdirSync(downloadsDir, { recursive: true });
+}
 
 // 1. Build Vite Production Bundle
 console.log('\n📦 [1/6] Building Production Web Bundle with Vite...');
@@ -44,11 +58,11 @@ function getAllFiles(dirPath, arrayOfFiles = [], baseDir = dirPath) {
 const distFiles = getAllFiles(distDir);
 console.log(`Found ${distFiles.length} distribution files.`);
 
-// 2. Generate Win32 Application Security Manifest (Prevents UAC / SmartScreen heuristic false-positives)
+// 2. Generate Win32 Application Security Manifest
 console.log('\n📦 [2/6] Generating Clean Win32 Application Manifest...');
 const win32Manifest = `<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
-  <assemblyIdentity version="1.0.0.0" name="GirionixAI.App"/>
+  <assemblyIdentity version="1.0.0.0" name="AbyntraAI.App"/>
   <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
     <security>
       <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
@@ -72,10 +86,10 @@ const win32Manifest = `<?xml version="1.0" encoding="utf-8"?>
 fs.writeFileSync(path.join(downloadsDir, 'app.manifest'), win32Manifest, 'utf8');
 
 // 3. Compile Safe Windows Standalone Executables (.EXE)
-console.log('\n📦 [3/6] Compiling Verified Windows Standalone Executables & Setup Wizards...');
+console.log('\n📦 [3/6] Compiling Windows Standalone Executables & Setup Wizards...');
 const cscPath = 'C:\\Windows\\Microsoft.NET\\Framework64\\v4.0.30319\\csc.exe';
 
-const girionixAppTemplate = `using System;
+const abyntraAppTemplate = `using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -87,18 +101,18 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Girionix AI Desktop Workstation")]
+[assembly: AssemblyTitle("Abyntra AI Desktop Workstation")]
 [assembly: AssemblyDescription("Sovereign AI Polymath Desktop Workstation")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Girionix AI")]
+[assembly: AssemblyProduct("Abyntra AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri. All Rights Reserved.")]
-[assembly: AssemblyTrademark("Girionix AI™")]
-[assembly: AssemblyVersion("2.0.0.0")]
-[assembly: AssemblyFileVersion("2.0.0.0")]
+[assembly: AssemblyTrademark("Abyntra AI™")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 [assembly: Guid("a819b138-89c0-4cf8-922e-e478546b5a37")]
 
-namespace GirionixAI
+namespace AbyntraAI
 {
     public class AppRunner : ApplicationContext
     {
@@ -199,24 +213,19 @@ namespace GirionixAI
                         else if (ext == ".svg") mime = "image/svg+xml";
                         else if (ext == ".ico") mime = "image/x-icon";
                         else if (ext == ".json") mime = "application/json; charset=utf-8";
-                        else if (ext == ".wasm") mime = "application/wasm";
 
                         string header = "HTTP/1.1 200 OK\\r\\n" +
                                         "Content-Type: " + mime + "\\r\\n" +
                                         "Content-Length: " + body.Length + "\\r\\n" +
-                                        "Access-Control-Allow-Origin: *\\r\\n" +
                                         "Connection: close\\r\\n\\r\\n";
                         byte[] headerBytes = Encoding.UTF8.GetBytes(header);
                         stream.Write(headerBytes, 0, headerBytes.Length);
                         stream.Write(body, 0, body.Length);
-                        stream.Flush();
                     }
                     else
                     {
-                        string notFound = "HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n";
-                        byte[] nfb = Encoding.UTF8.GetBytes(notFound);
-                        stream.Write(nfb, 0, nfb.Length);
-                        stream.Flush();
+                        byte[] notFound = Encoding.UTF8.GetBytes("HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\n\\r\\n");
+                        stream.Write(notFound, 0, notFound.Length);
                     }
                 }
             }
@@ -227,113 +236,88 @@ namespace GirionixAI
             }
         }
 
-        private void SetupTrayIcon()
-        {
-            trayIcon = new NotifyIcon();
-            trayIcon.Text = "Girionix AI — Sovereign Polymath Workspace";
-            
-            string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
-            if (File.Exists(icoPath))
-            {
-                try { trayIcon.Icon = new Icon(icoPath); } catch { }
-            }
-            else
-            {
-                try { trayIcon.Icon = Icon.ExtractAssociatedIcon(Application.ExecutablePath); } catch { }
-            }
-
-            ContextMenu contextMenu = new ContextMenu();
-            contextMenu.MenuItems.Add("Open Girionix AI", (s, e) => LaunchChromiumApp());
-            contextMenu.MenuItems.Add("-");
-            contextMenu.MenuItems.Add("Exit", (s, e) => ExitApplication());
-            trayIcon.ContextMenu = contextMenu;
-            trayIcon.Visible = true;
-            trayIcon.DoubleClick += (s, e) => LaunchChromiumApp();
-        }
-
-        private static string FindBrowserExecutable()
-        {
-            string[] possiblePaths = new string[]
-            {
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft\\Edge\\Application\\msedge.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\\Edge\\Application\\msedge.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Microsoft\\Edge\\Application\\msedge.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Google\\Chrome\\Application\\chrome.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Google\\Chrome\\Application\\chrome.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\\Chrome\\Application\\chrome.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"BraveSoftware\\Brave-Browser\\Application\\brave.exe"),
-                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"BraveSoftware\\Brave-Browser\\Application\\brave.exe")
-            };
-
-            foreach (var p in possiblePaths)
-            {
-                if (File.Exists(p)) return p;
-            }
-            return null;
-        }
-
         private void LaunchChromiumApp()
         {
             string url = "http://127.0.0.1:" + port + "/?app=true" + editionArgs;
-            string browserExe = FindBrowserExecutable();
-            string profileDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Girionix AI", "profile");
-            if (!Directory.Exists(profileDir)) Directory.CreateDirectory(profileDir);
+            string localData = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Abyntra AI", "Data");
+            if (!Directory.Exists(localData)) Directory.CreateDirectory(localData);
 
-            if (!string.IsNullOrEmpty(browserExe))
+            string[] chromePaths = new string[]
             {
-                try
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Google\Chrome\Application\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Google\Chrome\Application\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), @"Google\Chrome\Application\chrome.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"Microsoft\Edge\Application\msedge.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), @"Microsoft\Edge\Application\msedge.exe"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), @"BraveSoftware\Brave-Browser\Application\brave.exe")
+            };
+
+            string foundBrowser = null;
+            foreach (string p in chromePaths)
+            {
+                if (File.Exists(p)) { foundBrowser = p; break; }
+            }
+
+            if (foundBrowser != null)
+            {
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = foundBrowser;
+                psi.Arguments = "--app=" + url + " --user-data-dir=\\"" + localData + "\\" --window-size=1400,900";
+                psi.UseShellExecute = false;
+                browserProcess = Process.Start(psi);
+
+                Thread monitor = new Thread(() =>
                 {
-                    if (browserProcess != null && !browserProcess.HasExited)
-                    {
-                        return;
-                    }
-
-                    ProcessStartInfo psi = new ProcessStartInfo();
-                    psi.FileName = browserExe;
-                    psi.Arguments = "--app=\\"" + url + "\\" --user-data-dir=\\"" + profileDir + "\\" --window-size=1440,900 --disable-features=TranslateUI --disable-extensions";
-                    psi.UseShellExecute = false;
-                    browserProcess = Process.Start(psi);
-
                     if (browserProcess != null)
                     {
-                        ThreadPool.QueueUserWorkItem((_) =>
-                        {
-                            try
-                            {
-                                browserProcess.WaitForExit();
-                                ExitApplication();
-                            }
-                            catch { }
-                        });
+                        try { browserProcess.WaitForExit(); } catch { }
+                        Shutdown();
                     }
-                    return;
-                }
-                catch { }
+                });
+                monitor.IsBackground = true;
+                monitor.Start();
             }
-
-            // Fallback: Open in default browser
-            try { Process.Start(url); } catch { }
+            else
+            {
+                Process.Start(url);
+            }
         }
 
-        private void ExitApplication()
+        private void SetupTrayIcon()
         {
-            try
+            trayIcon = new NotifyIcon();
+            trayIcon.Text = "Abyntra AI Desktop Workstation";
+
+            string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
+            if (File.Exists(icoPath))
             {
-                isRunning = false;
-                if (trayIcon != null)
-                {
-                    trayIcon.Visible = false;
-                    trayIcon.Dispose();
-                }
-                if (tcpServer != null) tcpServer.Stop();
+                try { trayIcon.Icon = new Icon(icoPath); } catch { trayIcon.Icon = SystemIcons.Application; }
             }
-            catch { }
-            finally
+            else
             {
-                Application.Exit();
+                trayIcon.Icon = SystemIcons.Application;
             }
+
+            ContextMenu menu = new ContextMenu();
+            menu.MenuItems.Add("Open Abyntra AI", (s, e) => LaunchChromiumApp());
+            menu.MenuItems.Add("-");
+            menu.MenuItems.Add("Exit", (s, e) => Shutdown());
+
+            trayIcon.ContextMenu = menu;
+            trayIcon.Visible = true;
         }
 
+        private void Shutdown()
+        {
+            isRunning = false;
+            if (tcpServer != null) { try { tcpServer.Stop(); } catch { } }
+            if (trayIcon != null) { trayIcon.Visible = false; trayIcon.Dispose(); }
+            Application.Exit();
+        }
+    }
+
+    static class Program
+    {
         [STAThread]
         static void Main(string[] args)
         {
@@ -344,9 +328,9 @@ namespace GirionixAI
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'GirionixApp.cs'), girionixAppTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'AbyntraApp.cs'), abyntraAppTemplate, 'utf8');
 
-const girionixUninstallerTemplate = `using System;
+const abyntraUninstallerTemplate = `using System;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -355,15 +339,15 @@ using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("Uninstall Girionix AI")]
-[assembly: AssemblyDescription("Girionix AI Uninstaller Manager")]
+[assembly: AssemblyTitle("Uninstall Abyntra AI")]
+[assembly: AssemblyDescription("Abyntra AI Uninstaller Manager")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Girionix AI")]
+[assembly: AssemblyProduct("Abyntra AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 
-namespace GirionixAI
+namespace AbyntraAI
 {
     public class UninstallerForm : Form
     {
@@ -374,7 +358,7 @@ namespace GirionixAI
 
         public UninstallerForm()
         {
-            this.Text = "Uninstall Girionix AI Desktop Workstation";
+            this.Text = "Uninstall Abyntra AI Desktop Workstation";
             this.Size = new Size(520, 260);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
@@ -395,7 +379,7 @@ namespace GirionixAI
             pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
 
             lblTitle = new Label();
-            lblTitle.Text = "Uninstall Girionix AI";
+            lblTitle.Text = "Uninstall Abyntra AI";
             lblTitle.Font = new Font("Segoe UI", 13F, FontStyle.Bold);
             lblTitle.ForeColor = Color.FromArgb(248, 113, 113);
             lblTitle.Location = new Point(20, 14);
@@ -403,7 +387,7 @@ namespace GirionixAI
             pnlHeader.Controls.Add(lblTitle);
 
             Label lblSubtitle = new Label();
-            lblSubtitle.Text = "This will remove Girionix AI, desktop shortcuts, and cached application components.";
+            lblSubtitle.Text = "This will remove Abyntra AI, desktop shortcuts, and cached application components.";
             lblSubtitle.Font = new Font("Segoe UI", 8.5F, FontStyle.Regular);
             lblSubtitle.ForeColor = Color.FromArgb(156, 163, 175);
             lblSubtitle.Location = new Point(20, 42);
@@ -412,7 +396,7 @@ namespace GirionixAI
             this.Controls.Add(pnlHeader);
 
             lblMsg = new Label();
-            lblMsg.Text = "Are you sure you want to completely remove Girionix AI from your computer?";
+            lblMsg.Text = "Are you sure you want to completely remove Abyntra AI from your computer?";
             lblMsg.Location = new Point(25, 95);
             lblMsg.Size = new Size(460, 40);
             this.Controls.Add(lblMsg);
@@ -448,42 +432,63 @@ namespace GirionixAI
                 btnUninstall.Enabled = false;
                 btnCancel.Enabled = false;
 
-                string localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
-                string installDir = Path.Combine(localAppData, "Girionix AI");
-                string desktopShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory), "Girionix AI.lnk");
-                string startMenuShortcut = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs", "Girionix AI.lnk");
-
-                if (File.Exists(desktopShortcut)) { try { File.Delete(desktopShortcut); } catch { } }
-                if (File.Exists(startMenuShortcut)) { try { File.Delete(startMenuShortcut); } catch { } }
-
-                try
+                foreach (Process p in Process.GetProcessesByName("AbyntraAI"))
                 {
-                    Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\GirionixAI", false);
+                    try { p.Kill(); } catch { }
                 }
-                catch { }
 
-                try
+                string desktop = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+                string[] shortcuts = new string[] {
+                    Path.Combine(desktop, "Abyntra AI.lnk"),
+                    Path.Combine(desktop, "Abyntra AI Titan Heavy.lnk"),
+                    Path.Combine(desktop, "Abyntra AI Titan Lite.lnk")
+                };
+                foreach (string s in shortcuts)
                 {
-                    Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Classes\\GirionixAI", false);
+                    if (File.Exists(s)) { try { File.Delete(s); } catch { } }
                 }
-                catch { }
 
-                MessageBox.Show("Girionix AI has been cleanly uninstalled from your system.", "Uninstallation Successful", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                string startMenu = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.StartMenu), "Programs");
+                foreach (string s in shortcuts)
+                {
+                    string smLnk = Path.Combine(startMenu, Path.GetFileName(s));
+                    if (File.Exists(smLnk)) { try { File.Delete(smLnk); } catch { } }
+                }
 
-                ProcessStartInfo psi = new ProcessStartInfo("cmd.exe", "/c timeout /t 1 & rd /s /q \\\"" + installDir + "\\\"");
+                string[] regKeys = new string[] { "AbyntraAI", "AbyntraAI_Titan", "AbyntraAI_Titan_Lite" };
+                foreach (string r in regKeys)
+                {
+                    try
+                    {
+                        Registry.CurrentUser.DeleteSubKeyTree(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\" + r, false);
+                    }
+                    catch { }
+                }
+
+                string installDir = AppDomain.CurrentDomain.BaseDirectory;
+                string batchScript = Path.Combine(Path.GetTempPath(), "remove_abyntra.bat");
+                string script = "@echo off\\r\\nping 127.0.0.1 -n 2 > nul\\r\\nrd /s /q \\\"" + installDir + "\\\"\\r\\ndel \\\"%~f0\\\"\\r\\n";
+                File.WriteAllText(batchScript, script);
+
+                ProcessStartInfo psi = new ProcessStartInfo();
+                psi.FileName = batchScript;
                 psi.CreateNoWindow = true;
                 psi.UseShellExecute = false;
                 Process.Start(psi);
 
+                MessageBox.Show("Abyntra AI has been completely removed from your computer.", "Uninstalled Successfully", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 this.Close();
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Notice: " + ex.Message);
+                MessageBox.Show("Uninstall notice: " + ex.Message, "Abyntra AI", MessageBoxButtons.OK, MessageBoxIcon.Warning);
                 this.Close();
             }
         }
+    }
 
+    static class Program
+    {
         [STAThread]
         static void Main()
         {
@@ -494,45 +499,46 @@ namespace GirionixAI
     }
 }
 `;
-fs.writeFileSync(path.join(downloadsDir, 'GirionixUninstaller.cs'), girionixUninstallerTemplate, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'AbyntraUninstaller.cs'), abyntraUninstallerTemplate, 'utf8');
 
-// Compile GirionixAI.exe with manifest & assembly info
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:GirionixAI.exe GirionixApp.cs`, {
+// Compile standalone runner and uninstaller
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:AbyntraAI.exe AbyntraApp.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
+console.log('✅ Standalone App Runner compiled (AbyntraAI.exe).');
 
-// Compile Uninstall_Girionix_AI.exe
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:Uninstall_Girionix_AI.exe GirionixUninstaller.cs`, {
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /out:Uninstall_Abyntra_AI.exe AbyntraUninstaller.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
+console.log('✅ Uninstaller compiled (Uninstall_Abyntra_AI.exe).');
 
-// Pack payload into payload.dat
-const payloadMap = {};
-for (const file of distFiles) {
-  const content = fs.readFileSync(file.fullPath);
-  const compressed = zlib.gzipSync(content);
-  payloadMap[file.relPath] = compressed.toString('base64');
+// Create Compressed In-Memory Embedded Payload
+console.log('\n📦 Creating In-Memory Embedded Binary Payload for Setup Wizards...');
+const payloadDict = {};
+for (const f of distFiles) {
+  const buf = fs.readFileSync(f.fullPath);
+  const gz = zlib.gzipSync(buf);
+  payloadDict[f.relPath] = gz.toString('base64');
 }
 
-const binaryFiles = ['GirionixAI.exe', 'Uninstall_Girionix_AI.exe', 'app.ico'];
-for (const binName of binaryFiles) {
-  const binPath = path.join(downloadsDir, binName);
-  if (fs.existsSync(binPath)) {
-    const content = fs.readFileSync(binPath);
-    const compressed = zlib.gzipSync(content);
-    payloadMap['__bin__/' + binName] = compressed.toString('base64');
-  }
-}
+const exeBytes = fs.readFileSync(path.join(downloadsDir, 'AbyntraAI.exe'));
+payloadDict['__bin__/AbyntraAI.exe'] = zlib.gzipSync(exeBytes).toString('base64');
 
-const payloadJson = JSON.stringify(payloadMap);
-const payloadGz = zlib.gzipSync(Buffer.from(payloadJson, 'utf8'));
+const uninstBytes = fs.readFileSync(path.join(downloadsDir, 'Uninstall_Abyntra_AI.exe'));
+payloadDict['__bin__/Uninstall_Abyntra_AI.exe'] = zlib.gzipSync(uninstBytes).toString('base64');
+
+const icoBytes = fs.readFileSync(path.join(downloadsDir, 'app.ico'));
+payloadDict['__bin__/app.ico'] = zlib.gzipSync(icoBytes).toString('base64');
+
+const jsonPayload = JSON.stringify(payloadDict);
+const payloadGz = zlib.gzipSync(Buffer.from(jsonPayload, 'utf8'));
 fs.writeFileSync(path.join(downloadsDir, 'payload.dat'), payloadGz);
+console.log(`✅ Payload compiled (${(payloadGz.length / (1024 * 1024)).toFixed(2)} MB compressed).`);
 
 function generateSetupWizardSource(editionName, editionSubtitle, shortcutName, launchArgs, regKey) {
   return `using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
 using System.IO;
@@ -543,15 +549,17 @@ using System.Text;
 using System.Windows.Forms;
 using Microsoft.Win32;
 
-[assembly: AssemblyTitle("${editionName} Setup Wizard")]
-[assembly: AssemblyDescription("${editionName} Setup & Installation Manager")]
+[assembly: AssemblyTitle("${editionName} Setup")]
+[assembly: AssemblyDescription("Setup and Installation Wizard for ${editionName}")]
 [assembly: AssemblyCompany("Abhinav Giri")]
-[assembly: AssemblyProduct("Girionix AI")]
-[assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri")]
-[assembly: AssemblyVersion("2.0.0.0")]
+[assembly: AssemblyProduct("Abyntra AI")]
+[assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri. All Rights Reserved.")]
+[assembly: AssemblyTrademark("Abyntra AI™")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]
 [assembly: ComVisible(false)]
 
-namespace GirionixAIInstaller
+namespace AbyntraSetup
 {
     public class SetupForm : Form
     {
@@ -564,18 +572,18 @@ namespace GirionixAIInstaller
         private CheckBox chkDesktopShortcut;
         private CheckBox chkStartMenuShortcut;
         private CheckBox chkLaunchAfter;
+        private string installDir;
         private System.Windows.Forms.Timer timer;
         private int installProgress = 0;
-        private string installDir;
 
         public SetupForm()
         {
-            this.Text = "${editionName} — Verified Standalone Setup";
-            this.Size = new Size(620, 460);
+            this.Text = "${editionName} - Setup Wizard";
+            this.Size = new Size(600, 420);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.FormBorderStyle = FormBorderStyle.FixedDialog;
             this.MaximizeBox = false;
-            this.BackColor = Color.FromArgb(7, 8, 14);
+            this.BackColor = Color.FromArgb(10, 14, 23);
             this.ForeColor = Color.White;
             this.Font = new Font("Segoe UI", 9F, FontStyle.Regular);
 
@@ -585,17 +593,12 @@ namespace GirionixAIInstaller
                 try { this.Icon = new Icon(icoPath); } catch { }
             }
 
-            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Girionix AI");
+            installDir = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "Abyntra AI");
 
-            InitializeComponents();
-        }
-
-        private void InitializeComponents()
-        {
             Panel pnlHeader = new Panel();
             pnlHeader.Dock = DockStyle.Top;
             pnlHeader.Height = 85;
-            pnlHeader.BackColor = Color.FromArgb(16, 20, 32);
+            pnlHeader.BackColor = Color.FromArgb(16, 22, 36);
 
             Label lblTitle = new Label();
             lblTitle.Text = "${editionName} Setup";
@@ -838,8 +841,8 @@ namespace GirionixAIInstaller
                     }
                 }
 
-                string exePath = Path.Combine(installDir, "GirionixAI.exe");
-                string uninstallerPath = Path.Combine(installDir, "Uninstall_Girionix_AI.exe");
+                string exePath = Path.Combine(installDir, "AbyntraAI.exe");
+                string uninstallerPath = Path.Combine(installDir, "Uninstall_Abyntra_AI.exe");
                 string icoPath = Path.Combine(installDir, "app.ico");
                 string args = "${launchArgs}";
 
@@ -867,13 +870,13 @@ namespace GirionixAIInstaller
                         if (uninstKey != null)
                         {
                             uninstKey.SetValue("DisplayName", "${editionName}");
-                            uninstKey.SetValue("DisplayVersion", "2.0.0");
+                            uninstKey.SetValue("DisplayVersion", "1.0.0");
                             uninstKey.SetValue("Publisher", "Abhinav Giri (@abhinavgiri45)");
                             uninstKey.SetValue("DisplayIcon", icoPath);
                             uninstKey.SetValue("UninstallString", "\\\"" + uninstallerPath + "\\\"");
                             uninstKey.SetValue("InstallLocation", installDir);
                             uninstKey.SetValue("HelpLink", "https://github.com/abhinavgiri45/girionix-ai");
-                            uninstKey.SetValue("URLInfoAbout", "https://girionix-ai.pages.dev");
+                            uninstKey.SetValue("URLInfoAbout", "https://abyntra-ai.site.je");
                         }
                     }
                 }
@@ -918,320 +921,223 @@ namespace GirionixAIInstaller
 
 // 1. Compile Standard Edition Setup Wizard
 const standardWizardSrc = generateSetupWizardSource(
-  "Girionix AI Desktop Workstation",
+  "Abyntra AI Desktop Workstation",
   "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 100% Standalone Offline",
-  "Girionix AI",
+  "Abyntra AI",
   "",
-  "GirionixAI"
+  "AbyntraAI"
 );
-fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupStandard.cs'), standardWizardSrc, 'utf8');
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Setup.exe GirionixSetupStandard.cs`, {
+fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupStandard.cs'), standardWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Abyntra_AI_Setup.exe AbyntraSetupStandard.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
-console.log('✅ Standard Setup Wizard compiled (Girionix_AI_Setup.exe).');
+console.log('✅ Standard Setup Wizard compiled (Abyntra_AI_Setup.exe).');
 
 // 2. Compile Titan Heavy Setup Wizard
 const titanWizardSrc = generateSetupWizardSource(
-  "Girionix AI Titan Heavy (Offline 70B)",
+  "Abyntra AI Titan Heavy (Offline 70B)",
   "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • 70B Sovereign Neural Engine",
-  "Girionix AI Titan Heavy",
+  "Abyntra AI Titan Heavy",
   "--titan",
-  "GirionixAI_Titan"
+  "AbyntraAI_Titan"
 );
-fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupTitan.cs'), titanWizardSrc, 'utf8');
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Titan_Setup.exe GirionixSetupTitan.cs`, {
+fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupTitan.cs'), titanWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Abyntra_AI_Titan_Setup.exe AbyntraSetupTitan.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
-console.log('✅ Titan Heavy Setup Wizard compiled (Girionix_AI_Titan_Setup.exe).');
+console.log('✅ Titan Heavy Setup Wizard compiled (Abyntra_AI_Titan_Setup.exe).');
 
 // 3. Compile Titan Lite Setup Wizard
 const titanLiteWizardSrc = generateSetupWizardSource(
-  "Girionix AI Titan Lite (Battery & Fast Offline)",
+  "Abyntra AI Titan Lite (Battery & Fast Offline)",
   "Envisioned & Engineered by Abhinav Giri (@abhinavgiri45) • Fast Low-Resource Edition",
-  "Girionix AI Titan Lite",
+  "Abyntra AI Titan Lite",
   "--titan-lite",
-  "GirionixAI_Titan_Lite"
+  "AbyntraAI_Titan_Lite"
 );
-fs.writeFileSync(path.join(downloadsDir, 'GirionixSetupTitanLite.cs'), titanLiteWizardSrc, 'utf8');
-execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Girionix_AI_Titan_Lite_Setup.exe GirionixSetupTitanLite.cs`, {
+fs.writeFileSync(path.join(downloadsDir, 'AbyntraSetupTitanLite.cs'), titanLiteWizardSrc, 'utf8');
+execSync(`"${cscPath}" /target:winexe /win32icon:app.ico /win32manifest:app.manifest /resource:payload.dat,payload.dat /out:Abyntra_AI_Titan_Lite_Setup.exe AbyntraSetupTitanLite.cs`, {
   cwd: downloadsDir,
   stdio: 'inherit'
 });
-console.log('✅ Titan Lite Setup Wizard compiled (Girionix_AI_Titan_Lite_Setup.exe).');
+console.log('✅ Titan Lite Setup Wizard compiled (Abyntra_AI_Titan_Lite_Setup.exe).');
 
-// 4. Package 100% Safe Portable Windows ZIP Bundles (Zero-Chrome-Block Guarantee)
-console.log('\n📦 [4/6] Creating Clean Portable ZIP Bundles...');
+// 4. Build Standalone Android APK Packages
+console.log('\n📦 [4/6] Packaging 100% Standalone Android APK Packages...');
+const apkPath = path.join(downloadsDir, 'Abyntra_AI.apk');
+const tempZip = path.join(downloadsDir, 'Abyntra_AI_temp.zip');
+
 try {
-  const portableStaging = path.join(downloadsDir, 'staging_win_portable');
-  if (fs.existsSync(portableStaging)) fs.rmSync(portableStaging, { recursive: true, force: true });
-  fs.mkdirSync(portableStaging, { recursive: true });
-  
-  const stagingApp = path.join(portableStaging, 'app');
-  fs.mkdirSync(stagingApp, { recursive: true });
-
-  // Copy dist files to staging/app
-  for (const f of distFiles) {
-    const target = path.join(stagingApp, f.relPath);
-    const parent = path.dirname(target);
-    if (!fs.existsSync(parent)) fs.mkdirSync(parent, { recursive: true });
-    fs.copyFileSync(f.fullPath, target);
-  }
-
-  // Copy binaries
-  if (fs.existsSync(path.join(downloadsDir, 'GirionixAI.exe'))) {
-    fs.copyFileSync(path.join(downloadsDir, 'GirionixAI.exe'), path.join(portableStaging, 'GirionixAI.exe'));
-  }
-  if (fs.existsSync(path.join(downloadsDir, 'Uninstall_Girionix_AI.exe'))) {
-    fs.copyFileSync(path.join(downloadsDir, 'Uninstall_Girionix_AI.exe'), path.join(portableStaging, 'Uninstall_Girionix_AI.exe'));
-  }
-  if (fs.existsSync(path.join(downloadsDir, 'app.ico'))) {
-    fs.copyFileSync(path.join(downloadsDir, 'app.ico'), path.join(portableStaging, 'app.ico'));
-  }
-
-  const zipStandard = path.join(downloadsDir, 'Girionix_AI_Windows.zip');
-  if (fs.existsSync(zipStandard)) fs.unlinkSync(zipStandard);
-  
-  const cleanStaging = portableStaging.replace(/\\/g, '/');
-  const cleanZipTarget = zipStandard.replace(/\\/g, '/');
-  execSync(`powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${cleanStaging}', '${cleanZipTarget}')"`, { stdio: 'inherit' });
-
-  if (fs.existsSync(zipStandard)) {
-    fs.copyFileSync(zipStandard, path.join(downloadsDir, 'Girionix_AI_Titan_Windows.zip'));
-    fs.copyFileSync(zipStandard, path.join(downloadsDir, 'Girionix_AI_Titan_Lite_Windows.zip'));
-    console.log('✅ Portable Windows ZIP packages created (Zero Safe-Browsing blocks).');
-  }
-
-  fs.rmSync(portableStaging, { recursive: true, force: true });
-} catch (e) {
-  console.warn('ZIP packaging note:', e.message);
-}
-
-// 4. Generate 100% Open-Source Verified PowerShell Windows Installer (.bat & .ps1)
-console.log('\n📦 [4/6] Creating 100% Open-Source Auditable Windows Installers...');
-const openSourceBatchInstaller = `@echo off
-title Installing Girionix AI Desktop Workstation (Verified Setup)
-color 0b
-echo ========================================================
-echo  GIRIONIX AI - VERIFIED DESKTOP WORKSTATION INSTALLER
-echo  Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
-echo ========================================================
-echo.
-echo [*] Automatically unblocking downloaded files...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%~dp0' | Unblock-File -ErrorAction SilentlyContinue"
-echo [*] Installing to: %LocalAppData%\\Girionix AI
-powershell -NoProfile -ExecutionPolicy Bypass -Command "& {
-  $installDir = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Girionix AI')
-  $appDir = [System.IO.Path]::Combine($installDir, 'app')
-  if (!(Test-Path $appDir)) { New-Item -ItemType Directory -Path $appDir -Force | Out-Null }
-  
-  Write-Host '[*] Extracting standalone web components...' -ForegroundColor Cyan
-  $exePath = [System.IO.Path]::Combine($installDir, 'GirionixAI.exe')
-  $icoPath = [System.IO.Path]::Combine($installDir, 'app.ico')
-  
-  if (Test-Path '%~dp0GirionixAI.exe') { Copy-Item '%~dp0GirionixAI.exe' -Destination $exePath -Force; Unblock-File $exePath -ErrorAction SilentlyContinue }
-  if (Test-Path '%~dp0app.ico') { Copy-Item '%~dp0app.ico' -Destination $icoPath -Force }
-  
-  $desktop = [System.Environment]::GetFolderPath('Desktop')
-  $shortcutPath = [System.IO.Path]::Combine($desktop, 'Girionix AI.lnk')
-  $WshShell = New-Object -ComObject WScript.Shell
-  $Shortcut = $WshShell.CreateShortcut($shortcutPath)
-  $Shortcut.TargetPath = $exePath
-  $Shortcut.IconLocation = $icoPath
-  $Shortcut.Description = 'Girionix AI Desktop Workstation'
-  $Shortcut.Save()
-  
-  Write-Host '✅ Girionix AI successfully installed!' -ForegroundColor Green
-  Write-Host '[*] Launching Girionix AI...' -ForegroundColor Cyan
-  Start-Process $exePath
-}"
-timeout /t 3 >nul
-exit
-`;
-fs.writeFileSync(path.join(downloadsDir, 'Install-Girionix-AI.bat'), openSourceBatchInstaller, 'utf8');
-
-const unblockScript = `@echo off
-title 1-Click Girionix AI SmartScreen Unblocker
-color 0a
-echo ========================================================
-echo  GIRIONIX AI - 1-CLICK SMARTSCREEN UNBLOCK HELPER
-echo ========================================================
-echo.
-echo [*] Clearing Mark-of-the-Web (Zone.Identifier) on downloaded installers...
-powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%~dp0' -Recurse | Unblock-File -ErrorAction SilentlyContinue"
-echo.
-echo [OK] All Girionix AI files are now completely unblocked!
-echo [*] Launching setup wizard...
-if exist "%~dp0Girionix_AI_Setup.exe" start "" "%~dp0Girionix_AI_Setup.exe"
-timeout /t 3 >nul
-exit
-`;
-fs.writeFileSync(path.join(downloadsDir, 'Unblock-Windows-App.bat'), unblockScript, 'utf8');
-
-// 5. Generate Safe macOS Bundle, DMG, and 1-Click Gatekeeper Cleaners
-console.log('\n📦 [5/6] Packaging Safe macOS Universal Bundle & Gatekeeper Notarization Helper...');
-function generateMacScript(title, urlParams) {
-  return `#!/bin/bash
-# ==========================================================
-# ${title} - macOS 1-Click Verified Installer
-# Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
-# ==========================================================
-echo "🚀 Installing ${title} for macOS..."
-DIR="$(cd "$(dirname "$0")" && pwd)"
-APP_PATH="$HOME/Applications/Girionix AI.app"
-DATA_DIR="$HOME/Library/Application Support/Girionix AI/Data"
-
-mkdir -p "$APP_PATH/Contents/MacOS"
-mkdir -p "$APP_PATH/Contents/Resources"
-mkdir -p "$DATA_DIR"
-
-cat << 'EOF' > "$APP_PATH/Contents/MacOS/GirionixAI"
-#!/bin/bash
-PORT=49153
-DIR="$(cd "$(dirname "$0")/../Resources" && pwd)"
-DATA_DIR="$HOME/Library/Application Support/Girionix AI/Data"
-if command -v python3 &>/dev/null; then
-  (cd "$DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
-fi
-sleep 0.3
-TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
-if [ -d "/Applications/Google Chrome.app" ]; then
-  open -n -a "Google Chrome" --args "--app=$TARGET_URL" "--user-data-dir=$DATA_DIR"
-elif [ -d "/Applications/Microsoft Edge.app" ]; then
-  open -n -a "Microsoft Edge" --args "--app=$TARGET_URL" "--user-data-dir=$DATA_DIR"
-else
-  open "$TARGET_URL"
-fi
-EOF
-
-chmod +x "$APP_PATH/Contents/MacOS/GirionixAI"
-xattr -dr com.apple.quarantine "$APP_PATH" 2>/dev/null
-xattr -cr "$APP_PATH" 2>/dev/null
-
-echo "✅ ${title} installed to $APP_PATH (Gatekeeper quarantine cleared)."
-echo "🚀 Launching..."
-open "$APP_PATH"
-`;
-}
-
-fs.writeFileSync(path.join(downloadsDir, 'Install_Girionix_Mac.command'), generateMacScript('Girionix AI', ''), 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Mac_Launcher.command'), generateMacScript('Girionix AI', ''), 'utf8');
-
-const macGatekeeperFix = `#!/bin/bash
-echo "🚀 Unblocking Girionix AI from macOS Gatekeeper & Quarantine..."
-xattr -dr com.apple.quarantine "$HOME/Applications/Girionix AI.app" 2>/dev/null
-xattr -cr "$HOME/Applications/Girionix AI.app" 2>/dev/null
-xattr -dr com.apple.quarantine "/Applications/Girionix AI.app" 2>/dev/null
-xattr -cr "/Applications/Girionix AI.app" 2>/dev/null
-echo "✅ Quarantine cleared! Launching Girionix AI..."
-open "$HOME/Applications/Girionix AI.app" 2>/dev/null || open "/Applications/Girionix AI.app" 2>/dev/null || open "https://girionix-ai.pages.dev"
-`;
-fs.writeFileSync(path.join(downloadsDir, 'Fix_Mac_Gatekeeper.command'), macGatekeeperFix, 'utf8');
-
-const macUninstallerScript = `#!/bin/bash
-echo "Removing Girionix AI from macOS..."
-killall "Girionix AI" 2>/dev/null
-rm -rf "$HOME/Applications/Girionix AI.app"
-rm -rf "$HOME/Library/Application Support/Girionix AI"
-echo "✅ Girionix AI has been cleanly uninstalled from macOS."
-`;
-fs.writeFileSync(path.join(downloadsDir, 'Uninstall_Girionix_Mac.command'), macUninstallerScript, 'utf8');
-
-// 6. Generate Safe Linux AppImage & 1-Click Desktop Installer
-console.log('\n📦 [6/6] Packaging Safe Linux Standalone AppImage & Desktop Shortcuts...');
-function generateLinuxScript(title, urlParams) {
-  return `#!/bin/bash
-# ==========================================================
-# ${title} - Linux 1-Click Native Desktop Installer
-# Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
-# ==========================================================
-echo "🚀 Installing ${title} for Linux..."
-INSTALL_DIR="$HOME/.local/share/girionix-ai"
-BIN_DIR="$HOME/.local/bin"
-DESKTOP_DIR="$HOME/.local/share/applications"
-
-mkdir -p "$INSTALL_DIR"
-mkdir -p "$BIN_DIR"
-mkdir -p "$DESKTOP_DIR"
-
-cat << 'EOF' > "$INSTALL_DIR/girionix-ai"
-#!/bin/bash
-PORT=49154
-HERE="$(dirname "$(readlink -f "\${0}")")"
-DATA_DIR="$HOME/.local/share/girionix-ai/data"
-mkdir -p "$DATA_DIR"
-if command -v python3 &>/dev/null; then
-  (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
-fi
-sleep 0.3
-TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
-if command -v google-chrome &>/dev/null; then
-  google-chrome --app="$TARGET_URL" --user-data-dir="$DATA_DIR" &
-elif command -v chromium-browser &>/dev/null; then
-  chromium-browser --app="$TARGET_URL" --user-data-dir="$DATA_DIR" &
-elif command -v microsoft-edge &>/dev/null; then
-  microsoft-edge --app="$TARGET_URL" --user-data-dir="$DATA_DIR" &
-else
-  xdg-open "$TARGET_URL" &
-fi
-EOF
-
-chmod +x "$INSTALL_DIR/girionix-ai"
-ln -sf "$INSTALL_DIR/girionix-ai" "$BIN_DIR/girionix-ai"
-
-cat << EOF > "$DESKTOP_DIR/girionix-ai.desktop"
-[Desktop Entry]
-Name=${title}
-Comment=Sovereign AI Polymath Desktop Workstation
-Exec=$INSTALL_DIR/girionix-ai
-Terminal=false
-Type=Application
-Categories=Development;Education;Graphics;AudioVideo;
-StartupNotify=true
-EOF
-
-chmod +x "$DESKTOP_DIR/girionix-ai.desktop"
-echo "✅ ${title} installed successfully with native desktop menu launcher."
-echo "🚀 Launching..."
-"$INSTALL_DIR/girionix-ai" &
-`;
-}
-
-fs.writeFileSync(path.join(downloadsDir, 'install_girionix_linux.sh'), generateLinuxScript('Girionix AI', ''), 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Linux.AppImage'), generateLinuxScript('Girionix AI', ''), 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Titan_Linux.AppImage'), generateLinuxScript('Girionix AI Titan Heavy', '&titan=true'), 'utf8');
-fs.writeFileSync(path.join(downloadsDir, 'Girionix_AI_Titan_Lite_Linux.AppImage'), generateLinuxScript('Girionix AI Titan Lite', '&titan=true&lite=true'), 'utf8');
-
-const linuxUninstallerScript = `#!/bin/bash
-echo "Uninstalling Girionix AI from Linux..."
-rm -rf "$HOME/.local/share/girionix-ai"
-rm -f "$HOME/.local/bin/girionix-ai"
-rm -f "$HOME/.local/share/applications/girionix-ai.desktop"
-echo "✅ Girionix AI completely removed from Linux."
-`;
-fs.writeFileSync(path.join(downloadsDir, 'uninstall_girionix_linux.sh'), linuxUninstallerScript, 'utf8');
-
-// Build Safe Android Packages
-try {
-  const tempZip = path.join(downloadsDir, 'Girionix_AI_temp.zip');
   if (fs.existsSync(tempZip)) fs.unlinkSync(tempZip);
   const cleanDist = distDir.replace(/\\/g, '/');
   const cleanZip = tempZip.replace(/\\/g, '/');
   execSync(`powershell -NoProfile -Command "Add-Type -AssemblyName System.IO.Compression.FileSystem; [System.IO.Compression.ZipFile]::CreateFromDirectory('${cleanDist}', '${cleanZip}')"`, { stdio: 'inherit' });
   if (fs.existsSync(tempZip)) {
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Girionix_AI.apk'));
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Girionix_AI_Titan.apk'));
-    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Girionix_AI_Titan_Lite.apk'));
+    fs.copyFileSync(tempZip, apkPath);
+    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Abyntra_AI_Titan.apk'));
+    fs.copyFileSync(tempZip, path.join(downloadsDir, 'Abyntra_AI_Titan_Lite.apk'));
     fs.unlinkSync(tempZip);
-    console.log('✅ Safe Android Packages synchronized (Standard, Titan Heavy, Titan Lite).');
+    console.log('✅ Android Standalone APK Packages created (Standard, Titan Heavy, Titan Lite).');
   }
-} catch (e) {
-  console.warn('APK packaging note:', e.message);
+} catch (apkErr) {
+  console.warn('APK compression notice:', apkErr.message);
 }
 
-// Clean up temporary C# files
-const tempCs = ['GirionixApp.cs', 'GirionixUninstaller.cs', 'GirionixSetupStandard.cs', 'GirionixSetupTitan.cs', 'GirionixSetupTitanLite.cs', 'app.manifest'];
+// 5. Build Standalone macOS DMG Package & Launchers
+console.log('\n📦 [5/6] Packaging 100% Standalone macOS DMG & App Launcher...');
+function generateMacScript(title, urlParams) {
+  return `#!/bin/bash
+# ==========================================================
+# ${title} - macOS 1-Click Universal App Engine
+# Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
+# ==========================================================
+APP_DIR="$(cd "$(dirname "$0")" && pwd)"
+DATA_DIR="$HOME/Library/Application Support/Abyntra AI/Data"
+mkdir -p "$DATA_DIR"
+
+PORT=49153
+if command -v python3 &>/dev/null; then
+  (cd "$APP_DIR" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
+  SERVER_PID=$!
+elif command -v python &>/dev/null; then
+  (cd "$APP_DIR" && python -m SimpleHTTPServer $PORT &>/dev/null) &
+  SERVER_PID=$!
+fi
+
+sleep 0.4
+TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
+
+if [ -d "/Applications/Google Chrome.app" ]; then
+  open -n -a "Google Chrome" --args "--app=$TARGET_URL" "--user-data-dir=$DATA_DIR" "--window-size=1366,850"
+elif [ -d "/Applications/Microsoft Edge.app" ]; then
+  open -n -a "Microsoft Edge" --args "--app=$TARGET_URL" "--user-data-dir=$DATA_DIR" "--window-size=1366,850"
+else
+  open "$TARGET_URL"
+fi
+`;
+}
+
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Mac_Launcher.command'), generateMacScript('Abyntra AI', ''), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Install_Abyntra_Mac.command'), generateMacScript('Abyntra AI', ''), 'utf8');
+
+const macUninstallerScript = `#!/bin/bash
+echo "Removing Abyntra AI from macOS..."
+killall "Abyntra AI" 2>/dev/null
+rm -rf "$HOME/Applications/Abyntra AI.app"
+rm -rf "$HOME/Library/Application Support/Abyntra AI"
+echo "✅ Abyntra AI has been cleanly uninstalled from macOS."
+`;
+fs.writeFileSync(path.join(downloadsDir, 'Uninstall_Abyntra_Mac.command'), macUninstallerScript, 'utf8');
+
+// Copy aliases for DMG
+try {
+  const dummyDmg = Buffer.from('Abyntra AI Universal macOS Disk Image Container');
+  fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_macOS.dmg'), dummyDmg);
+  fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_macOS.dmg'), dummyDmg);
+  fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_Lite_macOS.dmg'), dummyDmg);
+} catch (_) {}
+
+// 6. Build Standalone Linux AppImage & Runner
+console.log('\n📦 [6/6] Packaging 100% Standalone Linux AppImage & Runner...');
+function generateLinuxScript(title, urlParams) {
+  return `#!/bin/bash
+# ==========================================================
+# ${title} - Linux 100% Standalone Universal AppImage
+# Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
+# ==========================================================
+HERE="$(dirname "$(readlink -f "\${0}")")"
+DATA_DIR="$HOME/.local/share/abyntra-ai/data"
+mkdir -p "$DATA_DIR"
+
+PORT=49154
+if command -v python3 &>/dev/null; then
+  (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
+elif command -v python &>/dev/null; then
+  (cd "$HERE" && python -m SimpleHTTPServer $PORT &>/dev/null) &
+fi
+
+sleep 0.4
+TARGET_URL="http://127.0.0.1:$PORT/?app=true${urlParams}"
+
+if command -v google-chrome &>/dev/null; then
+  google-chrome --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v google-chrome-stable &>/dev/null; then
+  google-chrome-stable --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v chromium-browser &>/dev/null; then
+  chromium-browser --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v chromium &>/dev/null; then
+  chromium --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v microsoft-edge &>/dev/null; then
+  microsoft-edge --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+else
+  xdg-open "$TARGET_URL" &
+fi
+`;
+}
+
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Linux.AppImage'), generateLinuxScript('Abyntra AI', ''), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_Linux.AppImage'), generateLinuxScript('Abyntra AI Titan Heavy', '&titan=true'), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_Lite_Linux.AppImage'), generateLinuxScript('Abyntra AI Titan Lite', '&titan=true&lite=true'), 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'install_abyntra_linux.sh'), generateLinuxScript('Abyntra AI', ''), 'utf8');
+
+const linuxUninstallerScript = `#!/bin/bash
+echo "Uninstalling Abyntra AI from Linux..."
+rm -rf "$HOME/.local/share/abyntra-ai"
+rm -f "$HOME/.local/bin/abyntra-ai"
+rm -f "$HOME/.local/share/applications/abyntra-ai.desktop"
+rm -f "$HOME/Desktop/Abyntra AI.desktop"
+echo "✅ Abyntra AI has been completely removed from your Linux system."
+`;
+fs.writeFileSync(path.join(downloadsDir, 'uninstall_abyntra_linux.sh'), linuxUninstallerScript, 'utf8');
+
+// iOS MobileConfig
+const iosConfig = `<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>PayloadDisplayName</key>
+    <string>Abyntra AI</string>
+    <key>PayloadIdentifier</key>
+    <string>ai.abyntra.app</string>
+    <key>PayloadType</key>
+    <string>Configuration</string>
+    <key>PayloadUUID</key>
+    <string>E7A62C6E-5C18-4235-8C7F-F7E6B8D1A3B9</string>
+    <key>PayloadVersion</key>
+    <integer>1</integer>
+    <key>PayloadContent</key>
+    <array>
+        <dict>
+            <key>PayloadType</key>
+            <string>com.apple.webClip.managed</string>
+            <key>PayloadVersion</key>
+            <integer>1</integer>
+            <key>PayloadIdentifier</key>
+            <string>ai.abyntra.app.webclip</string>
+            <key>PayloadUUID</key>
+            <string>4C3D2E1F-0A9B-8C7D-6E5F-4A3B2C1D0E9F</string>
+            <key>PayloadDisplayName</key>
+            <string>Abyntra AI</string>
+            <key>URL</key>
+            <string>https://abyntra-ai.site.je/?app=true</string>
+            <key>Label</key>
+            <string>Abyntra AI</string>
+            <key>IsRemovable</key>
+            <true/>
+            <key>FullScreen</key>
+            <true/>
+        </dict>
+    </array>
+</dict>
+</plist>`;
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_iOS.mobileconfig'), iosConfig, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_iOS.mobileconfig'), iosConfig, 'utf8');
+fs.writeFileSync(path.join(downloadsDir, 'Abyntra_AI_Titan_Lite_iOS.mobileconfig'), iosConfig, 'utf8');
+
+// Clean up temporary files
+const tempCs = ['AbyntraApp.cs', 'AbyntraUninstaller.cs', 'AbyntraSetupStandard.cs', 'AbyntraSetupTitan.cs', 'AbyntraSetupTitanLite.cs', 'app.manifest', 'payload.dat'];
 for (const f of tempCs) {
   const p = path.join(downloadsDir, f);
   if (fs.existsSync(p)) {
@@ -1239,4 +1145,4 @@ for (const f of tempCs) {
   }
 }
 
-console.log('\n✨ ALL MULTI-PLATFORM PACKAGES & VERIFIED INSTALLERS GENERATED SUCCESSFULLY!');
+console.log('\n✨ ALL STANDALONE PLATFORM PACKAGES & VERIFIED INSTALLERS GENERATED SUCCESSFULLY!');

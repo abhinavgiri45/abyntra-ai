@@ -1,0 +1,32 @@
+#!/bin/bash
+# ==========================================================
+# Abyntra AI - Linux 100% Standalone Universal AppImage
+# Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
+# ==========================================================
+HERE="$(dirname "$(readlink -f "${0}")")"
+DATA_DIR="$HOME/.local/share/abyntra-ai/data"
+mkdir -p "$DATA_DIR"
+
+PORT=49154
+if command -v python3 &>/dev/null; then
+  (cd "$HERE" && python3 -m http.server $PORT --bind 127.0.0.1 &>/dev/null) &
+elif command -v python &>/dev/null; then
+  (cd "$HERE" && python -m SimpleHTTPServer $PORT &>/dev/null) &
+fi
+
+sleep 0.4
+TARGET_URL="http://127.0.0.1:$PORT/?app=true"
+
+if command -v google-chrome &>/dev/null; then
+  google-chrome --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v google-chrome-stable &>/dev/null; then
+  google-chrome-stable --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v chromium-browser &>/dev/null; then
+  chromium-browser --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v chromium &>/dev/null; then
+  chromium --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+elif command -v microsoft-edge &>/dev/null; then
+  microsoft-edge --app="$TARGET_URL" --user-data-dir="$DATA_DIR" --window-size=1366,850 &
+else
+  xdg-open "$TARGET_URL" &
+fi
