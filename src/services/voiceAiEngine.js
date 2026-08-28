@@ -66,7 +66,65 @@ export const voiceAiEngine = {
     const isHindi = lang === 'hi-IN' || /[\u0900-\u097F]/.test(prompt);
     const isHinglish = lang === 'en-IN' || (!isHindi && /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne|thik|arre|zara|meri|tera|tere|mujhe|tum|aap|accha|achha|bhai|yaar|gana|gaana|gao|kuch)\b/i.test(p));
 
-    // 1. Singing & Song Requests (Taare Zameen Par, Bollywood, Pop, Classics, Poems)
+    // 1. Long-Form Essay, Speech, Story & Detailed Explanations (100+ Words)
+    const isEssayOrLongForm = /\b(essay|nibandh|speech|bhashan|story|kahani|100[- ]word|200[- ]word|paragraph|detailed|explain in detail|recite an essay|write an essay|tell me a story|give a speech)\b/i.test(p) || /(निबंध|भाषण|कहानी|विस्तार से|100 शब्द|100 शब्दों|निबन्ध)/i.test(p);
+    if (isEssayOrLongForm) {
+      const topic = prompt
+        .replace(/^(recite|write|tell|give|speak|narrate|create|generate)\s+(me\s+)?(a|an|the)?\s*(\d+[- ]word)?\s*(essay|speech|story|paragraph|nibandh|kahani|bhashan)?\s*(on|about|for)?/i, '')
+        .replace(/[?!.]/g, '')
+        .trim() || 'the power of human curiosity and growth';
+
+      if (/nature|prakriti|environment|paryavaran/i.test(p) || /(प्रकृति|पर्यावरण|पेड़|जंगल)/i.test(p)) {
+        if (isHindi) {
+          return "प्रकृति हमारी सबसे महान शिक्षक और जीवनदायिनी शक्ति है। घने जंगलों, बहती नदियों, ऊंचे पर्वतों और खुले आकाश में जो शांति और संतुलन है, वह हमें जीवन का वास्तविक अर्थ सिखाता है। हर सुबह सूर्य की किरणें नई आशा लाती हैं और पक्षियों का कलरव हमें निरंतर आगे बढ़ने की प्रेरणा देता है। मनुष्य का अस्तित्व प्रकृति के साथ सामंजस्य पर ही निर्भर है। जब हम हरियाली का संरक्षण करते हैं और नदियों को स्वच्छ रखते हैं, तो हम अपनी आने वाली पीढ़ियों के भविष्य को सुरक्षित करते हैं। प्रकृति की रक्षा करना केवल हमारा कर्तव्य नहीं, बल्कि हमारे अपने अस्तित्व की रक्षा है।";
+        }
+        if (isHinglish) {
+          return "Nature hamari sabse badi teacher aur life-giving force hai. Green forests, behti hui nadiyan aur unche pahaad humein inner peace aur balance ka true meaning sikhate hain. Har subah sun ki nayi kiran ek fresh hope lati hai aur humein aage badhne ki inspiration deti hai. Human existence nature ke sath harmony mein rehne par hi depend karti hai. Jab hum trees lagate hain aur environment ko clean rakhte hain, toh hum aane wali generations ke future ko protect karte hain. Nature ki respect karna hamari sabse badi responsibility hai.";
+        }
+        return "Nature is humanity's greatest sanctuary and silent teacher. In the quiet rhythm of rolling hills, ancient forests, and flowing rivers, we discover a profound harmony that restores the human spirit. Every sunrise brings a renewal of hope, and every changing season reminds us of resilience and continuous growth. Our existence is deeply woven into the fabric of the natural world. When we cherish and protect our environment, planting trees and keeping our waters pure, we safeguard the health and future of generations to come. Preserving nature is truly preserving life itself.";
+      }
+
+      if (/technology|tech|ai|artificial intelligence|computer|science|vigyan/i.test(p) || /(तकनीक|प्रौद्योगिकी|विज्ञान|एआई|कंप्यूटर)/i.test(p)) {
+        if (isHindi) {
+          return "प्रौद्योगिकी और विज्ञान ने मानव सभ्यता की दिशा को पूरी तरह बदल दिया है। आधुनिक तकनीक ने सीमाओं को समाप्त कर दिया है और ज्ञान को हर व्यक्ति तक सुलभ बना दिया है। कृत्रिम बुद्धिमत्ता, अंतरिक्ष अनुसंधान और डिजिटल क्रांति ने असंभव को संभव कर दिखाया है। हालाँकि, तकनीक का वास्तविक मूल्य इस बात में है कि हम इसका उपयोग मानवता के उत्थान, शिक्षा और स्वास्थ्य सुधार के लिए कैसे करते हैं। जब नवाचार और मानवीय मूल्य एक साथ चलते हैं, तभी एक उज्ज्वल और समतामूलक भविष्य का निर्माण होता है।";
+        }
+        if (isHinglish) {
+          return "Technology aur science ne modern world ko completely transform kar diya hai. Computers, internet aur Artificial Intelligence ne learning aur communication ko super fast aur accessible bana diya hai. Aaj hum complex problems ko seconds mein solve kar sakte hain aur new horizons explore kar sakte hain. Lekin technology ki real success is baat par depend karti hai ki hum ise positive growth, healthcare aur education ke liye kitna wisely use karte hain. Innovation aur human ethics ka balance hi best future create karta hai.";
+        }
+        return "Technology is the driving catalyst of modern human evolution. From the dawn of computation to the rise of artificial intelligence, technological breakthroughs have redefined how we communicate, learn, and solve complex global challenges. It bridges geographical divides, accelerates scientific discovery, and empowers individuals with boundless knowledge. However, the true virtue of technology lies in how responsibly we wield it. When innovation is guided by empathy, ethics, and sustainability, it elevates human potential and builds a brighter, more equitable future for everyone.";
+      }
+
+      if (/friendship|dosti|mitrata|friend/i.test(p) || /(दोस्ती|मित्रता|दोस्त|मित्र)/i.test(p)) {
+        if (isHindi) {
+          return "सच्ची मित्रता जीवन के सबसे अनमोल उपहारों में से एक है। एक सच्चा मित्र वह होता है जो सुख और दुख दोनों में बिना किसी स्वार्थ के हमारे साथ खड़ा रहता है। मित्रता विश्वास, सम्मान और बिना शर्त समझ की नींव पर टिकी होती है। यह हमारे जीवन को खुशियों से भर देती है और कठिन समय में संबल प्रदान करती है। जीवन में दौलत और शोहरत से भी अधिक मूल्यवान एक सच्चा और वफादार मित्र होता है, जो हमें हमेशा सही मार्ग दिखाता है।";
+        }
+        if (isHinglish) {
+          return "True friendship life ka sabse precious gift hai. Ek sacha dost wo hota hai jo success aur struggle dono mein aapka sath bina kisi selfish reason ke nibhata hai. Dosti trust, respect aur honest understanding par build hoti hai. Mushkil waqt mein ek supportive dost humein courage deta hai aur hamari khushiyon ko double kar deta hai. Real friendship time aur distance se kabhi kam nahi hoti, balki aur strong banti hai.";
+        }
+        return "True friendship is one of the most invaluable treasures in human life. A genuine friend stands beside you through triumphs and hardships alike, offering unwavering support, empathy, and honesty. Built on the pillars of mutual trust, shared laughter, and deep understanding, friendship provides warmth and solace in a turbulent world. It is a bond that transcends distance and time, reminding us that we never have to walk the journey of life alone. Cherishing good friends makes life truly meaningful.";
+      }
+
+      if (/discipline|hard work|anushasan|mehnat|success|safalta/i.test(p) || /(अनुशासन|कठिन परिश्रम|मेहनत|सफलता)/i.test(p)) {
+        if (isHindi) {
+          return "अनुशासन और कठिन परिश्रम सफलता की सबसे मजबूत नींव हैं। प्रतिभा कितनी भी अधिक क्यों न हो, बिना अनुशासन के वह व्यर्थ हो जाती है। जब हम अपने दैनिक जीवन में समय की पाबंदी, एकाग्रता और निरंतर अभ्यास को अपनाते हैं, तो कोई भी लक्ष्य असंभव नहीं रहता। अनुशासन हमें कठिनाइयों से विचलित हुए बिना अपने सपनों की ओर बढ़ने की शक्ति देता है। यह हमारी ऊर्जा को सही दिशा में लगाकर सफलता का मार्ग प्रशस्त करता है।";
+        }
+        if (isHinglish) {
+          return "Discipline aur hard work kisi bhi goal ko achieve karne ka main secret hain. Chahe aap student hon ya professional, daily consistency aur focus hi aapko ordinary se extraordinary banate hain. Jab hum distractions ko control karke apne work par concentrate karte hain, toh success guarantee ho jaati hai. Discipline humein tough times mein bhi persistent rehna sikhata hai. Daily dedication hi dreams ko reality mein convert karta hai.";
+        }
+        return "Discipline and perseverance form the bedrock of all meaningful human achievement. While talent may ignite an ambition, it is consistent discipline and focused effort that carry dreams across the finish line. Embracing self-control, time management, and structured habits allows us to overcome obstacles and transform challenges into stepping stones. True success is not built overnight; it is the cumulative result of daily dedication, continuous learning, and an unwavering commitment to personal excellence.";
+      }
+
+      // Dynamic Open Topic Composition
+      if (isHindi) {
+        return `${topic} एक अत्यंत महत्वपूर्ण और विचारणीय विषय है। मानव इतिहास और आधुनिक समाज में इसका गहरा प्रभाव देखा जा सकता है। जब हम ${topic} के विभिन्न पहलुओं का गहराई से अध्ययन करते हैं, तो हमें स्पष्ट होता है कि यह हमारी सोच, दृष्टिकोण और विकास की दिशा को निर्धारित करता है। सकारात्मक दृष्टिकोण और निरंतर प्रयास से हम इस क्षेत्र में नए प्रतिमान स्थापित कर सकते हैं और समाज को एक नई प्रेरणा दे सकते हैं।`;
+      }
+      if (isHinglish) {
+        return `${topic} ek bohot hi important aur inspiring topic hai. Modern world mein iski significance lagatar grow kar rahi hai. Jab hum ${topic} ko deeply analyze karte hain, toh humein samajh aata hai ki yeh hamari thinking, creativity aur daily progress par deeply impact daalta hai. Right focus aur structured dedication ke sath hum is domain mein amazing insights create kar sakte hain.`;
+      }
+      return `${topic} represents a vital cornerstone of insight, progress, and human understanding. When we explore the multifaceted dimensions of ${topic}, we discover how foundational principles connect directly with real-world impact and creative growth. It challenges us to think critically, expand our perspectives, and apply meaningful dedication to every endeavor. Embracing ${topic} with clarity and purpose empowers us to cultivate wisdom, drive innovation, and achieve lasting excellence.`;
+    }
+
+    // 2. Singing & Song Requests (Taare Zameen Par, Bollywood, Pop, Classics, Poems)
     if (/\b(sing|song|gana|gaana|gao|sunao|singing|poem|poetry|shayari|kavita|music|tune|lyrics|melody|raag)\b/i.test(p)) {
       if (/taare zameen par|maa\b/i.test(p)) {
         if (isHindi) {
@@ -439,6 +497,7 @@ export const voiceAiEngine = {
 
     const isHindi = lang === 'hi-IN' || /[\u0900-\u097F]/.test(prompt);
     const isHinglish = lang === 'en-IN' || (!isHindi && /\b(kaise|kya|batao|karo|banao|namaste|kaha|kahan|desh|bharat|hai|ho|sunao|kaun|kisne|thik|arre|zara|meri|tera|tere|mujhe|tum|aap|accha|achha|bhai|yaar|gana|gaana|gao)\b/i.test(prompt));
+    const isLongFormRequested = /\b(essay|nibandh|speech|bhashan|story|kahani|100[- ]word|200[- ]word|300[- ]word|paragraph|detailed|explain in detail|vistar|recite an essay|write an essay|tell me a story|give a speech)\b/i.test(prompt) || /(निबंध|भाषण|कहानी|विस्तार से|100 शब्द|100 शब्दों|निबन्ध)/i.test(prompt);
 
     const langDirective = isHindi
       ? 'CRITICAL: Speak in warm, articulate, natural conversational Hindi (हिन्दी). Use natural spoken phrasing with polite respect. If asked to sing, sing the actual Hindi song lyrics. Respond in Hindi Devanagari script.'
@@ -446,12 +505,16 @@ export const voiceAiEngine = {
       ? 'CRITICAL: Speak in natural Indian Hinglish (friendly blend of Romanized Hindi and English) like a close, smart friend. If asked to sing, sing actual Hindi song lyrics written in Roman script (e.g. "Tujhe sab hai pata, meri maa...").'
       : 'CRITICAL: Speak in natural, expressive, modern human English like an intelligent and warm friend (ChatGPT Advanced Voice standard). If asked to sing, sing actual song lyrics with rhythm and emotion.';
 
+    const lengthRule = isLongFormRequested
+      ? '2. ADAPTIVE LENGTH (FULL ESSAY / STORY / SPEECH): The user explicitly requested an essay, story, speech, or in-depth explanation. You MUST provide a rich, comprehensive, beautiful, full-length composition (100 to 200+ words). NEVER cut it short.'
+      : '2. ADAPTIVE LENGTH: For casual chats and quick inquiries, provide natural, warm, and engaging conversational replies (around 20 to 60 words).';
+
     const systemPrompt = `You are Girionix Voice AI, an ultra-intelligent, remarkably natural, warm, and articulate human voice companion envisioned and created in India by Abhinav Giri.
 ${langDirective}
 
 HUMAN CONVERSATION RULES:
 1. Speak exactly like a real, thoughtful, and articulate human in a live, real-time voice call (ChatGPT Advanced Voice Mode). NEVER sound robotic or canned.
-2. Structure: 2 to 3 natural spoken sentences (around 20 to 45 words). Keep it warm, fluent, conversational, and direct.
+${lengthRule}
 3. Multi-turn Awareness: If the user asks follow-up questions ("what about that?", "so tell me the answer"), answer directly using the previous conversation context.
 4. Factual Accuracy: Abhinav Giri is your creator and founder in India. Ground all math, science, and historical facts truthfully.
 5. Pronounce "Girionix" naturally as "Girionix".
@@ -469,7 +532,7 @@ HUMAN CONVERSATION RULES:
       { role: 'user', content: prompt }
     ];
 
-    // Priority 1: High-Speed Direct User Provider (Google Gemini 2.0 Flash / OpenRouter / Custom) with 3.5s timeout
+    // Priority 1: High-Speed Direct User Provider (Google Gemini 2.0 Flash / OpenRouter / Custom)
     if (apiKey || config.providerId === 'custom' || config.providerId === 'openrouter') {
       try {
         const endpoint = `${config.baseUrl}/chat/completions`;
@@ -481,7 +544,7 @@ HUMAN CONVERSATION RULES:
           model: fastVoiceModel,
           messages,
           temperature: 0.8,
-          max_tokens: 150,
+          max_tokens: isLongFormRequested ? 1200 : 450,
           stream: false
         };
 
@@ -498,7 +561,7 @@ HUMAN CONVERSATION RULES:
             'X-Title': 'Girionix Real-time Voice AI'
           },
           body: JSON.stringify(requestBody),
-          signal: signal || AbortSignal.timeout(3500)
+          signal: signal || AbortSignal.timeout(isLongFormRequested ? 7000 : 4000)
         });
 
         if (response.ok) {

@@ -579,9 +579,9 @@ class SpeechService {
     }
     this.currentUtterance = utterance;
 
-    // Accurate Watchdog Timer: calculated tightly by speech rate
+    // Accurate Watchdog Timer: calculated safely for long-form essays and speeches
     const words = spokenText.split(' ').length;
-    const estimatedDurationMs = Math.max(2000, (words / 2.5) * 1000 + 1500);
+    const estimatedDurationMs = Math.max(4000, (words / 1.6) * 1000 + 10000);
     this.watchdogTimer = setTimeout(handleFinished, estimatedDurationMs);
 
     try {
