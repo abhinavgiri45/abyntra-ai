@@ -461,7 +461,20 @@ export const voiceAiEngine = {
       return "I'm ready! What specific question or problem would you like me to answer for you?";
     }
 
-    // 13. Natural Human Conversation & Question Resolution (No template prefixes)
+    // 6B. Direct Mathematical Constants (Pi, Euler's constant)
+    if (/\b(value of pi|value of pie|what is pi|what is pie|\bpi\b|\bpie\b)\b/i.test(p) && /\b(value|exact|what is|equal|decimal|meaning)\b/i.test(p)) {
+      if (isHindi) return "पाई एक अपरिमेय संख्या है जिसका मान लगभग 3.14159 या 22 बटा 7 होता है। यह किसी वृत्त की परिधि और उसके व्यास का अनुपात है।";
+      if (isHinglish) return "Pi ek irrational number hai jiski value approximately 3.14159 ya 22 by 7 hoti hai. Yeh circle ki circumference aur diameter ka ratio hota hai.";
+      return "The exact value of pi is an irrational mathematical constant representing the ratio of a circle's circumference to its diameter, approximately 3.14159 or 22 over 7.";
+    }
+
+    if (/\b(value of e|what is eulers number|what is e\b)\b/i.test(p)) {
+      if (isHindi) return "ऑयलर संख्या e का मान लगभग 2.71828 होता है, जो प्राकृतिक लघुगणक का आधार है।";
+      if (isHinglish) return "Euler number e ki value approximately 2.71828 hoti hai, jo natural logarithm ka base hai.";
+      return "Euler's number e is an irrational constant approximately equal to 2.71828, serving as the base of natural logarithms.";
+    }
+
+    // 13. Natural Human Conversation & Direct Question Resolution
     if (isHindi) {
       const conversationalHindi = [
         "हाँ बिल्कुल! मैं इस विषय में आपकी पूरी मदद कर सकता हूँ। बताइए आप इसके बारे में विशेष रूप से क्या जानना चाहते हैं?",
@@ -483,7 +496,7 @@ export const voiceAiEngine = {
     const conversationalEn = [
       "I'd be glad to help with that! What specific part would you like to dive into first?",
       "That's an interesting question. Let's break it down simply and clearly together.",
-      "I understand completely. What particular aspect or question would you like to explore?"
+      "I understand completely. Let's explore this and solve it step by step."
     ];
     return this.pickDiverse(conversationalEn, 'conv_en');
   },
@@ -532,46 +545,64 @@ ${lengthRule}
       { role: 'user', content: prompt }
     ];
 
-    // Priority 1: High-Speed Direct User Provider (Google Gemini 2.0 Flash / OpenRouter / Custom)
+    // Build ordered candidate model list for automatic seamless cascading
+    const candidateModels = [];
+    const targetModel = universalApiEngine.resolveTargetModel('girionix-lite');
+    if (targetModel) candidateModels.push(targetModel);
+
+    // If using OpenRouter or default gateway, add verified high-parameter free models
+    if (config.providerId === 'openrouter' || !config.providerId) {
+      const freeVoiceCascade = [
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
+        'nvidia/nemotron-3-ultra-550b-a55b:free',
+        'minimax/minimax-m3:free',
+        'cohere/north-mini-code:free',
+        'dots-studio/dots-3-note-preview:free',
+        'google/gemini-2.0-flash-001'
+      ];
+      freeVoiceCascade.forEach(m => {
+        if (!candidateModels.includes(m)) candidateModels.push(m);
+      });
+    }
+
+    // Priority 1: Multi-Tier Live Neural Cascading
     if (apiKey || config.providerId === 'custom' || config.providerId === 'openrouter') {
-      try {
-        const endpoint = `${config.baseUrl}/chat/completions`;
-        const fastVoiceModel = config.providerId === 'openrouter' 
-          ? 'google/gemini-2.0-flash-001' 
-          : universalApiEngine.resolveTargetModel('girionix-lite');
+      for (const candidateModel of candidateModels) {
+        if (signal?.aborted) break;
 
-        const requestBody = {
-          model: fastVoiceModel,
-          messages,
-          temperature: 0.8,
-          max_tokens: isLongFormRequested ? 1200 : 450,
-          stream: false
-        };
+        try {
+          const endpoint = `${config.baseUrl}/chat/completions`;
+          const requestBody = {
+            model: candidateModel,
+            messages,
+            temperature: 0.75,
+            max_tokens: isLongFormRequested ? 1200 : 450,
+            stream: false
+          };
 
-        if (config.providerId === 'openrouter') {
-          requestBody.plugins = [{ id: 'web', max_results: 3 }];
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
+              'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
+              'X-Title': 'Girionix Real-time Voice AI'
+            },
+            body: JSON.stringify(requestBody),
+            signal: signal || AbortSignal.timeout(isLongFormRequested ? 8000 : 4500)
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            const rawContent = data.choices?.[0]?.message?.content || '';
+            const cleaned = this.cleanSpokenText(rawContent);
+            if (cleaned && cleaned.length > 2) {
+              return cleaned;
+            }
+          }
+        } catch (e) {
+          // Cascade silently to next candidate model
         }
-
-        const response = await fetch(endpoint, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
-            'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
-            'X-Title': 'Girionix Real-time Voice AI'
-          },
-          body: JSON.stringify(requestBody),
-          signal: signal || AbortSignal.timeout(isLongFormRequested ? 7000 : 4000)
-        });
-
-        if (response.ok) {
-          const data = await response.json();
-          const rawContent = data.choices?.[0]?.message?.content || '';
-          const cleaned = this.cleanSpokenText(rawContent);
-          if (cleaned && cleaned.length > 2) return cleaned;
-        }
-      } catch (e) {
-        console.warn('Fast API voice response notice:', e?.message);
       }
     }
 
