@@ -26,6 +26,9 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
   const [selectedScoreTheme, setSelectedScoreTheme] = useState('epic');
   const [isScorePlaying, setIsScorePlaying] = useState(false);
   const [volume, setVolume] = useState(75);
+  const [customMusicPrompt, setCustomMusicPrompt] = useState('Cinematic sci-fi orchestral soundtrack with heavy sub-bass and futuristic synth pads');
+  const [isRenderingDownload, setIsRenderingDownload] = useState(false);
+  const [downloadSuccess, setDownloadSuccess] = useState(null);
 
   // Voice TTS State
   const [voiceText, setVoiceText] = useState('Welcome to Girionix AI Studio. Envisioned and engineered by Abhinav Giri to empower polymath thinkers, creators, and developers worldwide.');
@@ -58,7 +61,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     { name: '⚡ Cyber Laser Beam Pulse', type: 'laser', freq: 1200, duration: 0.4 },
     { name: '🔮 Sci-Fi Hologram UI Chirp', type: 'ui', freq: 880, duration: 0.25 },
     { name: '🌊 Sub-Bass Drop Glissando', type: 'bassdrop', freq: 180, duration: 3.0 },
-    { name: '⚡ Energy Shield Activation', type: 'shield', freq: 440, duration: 1.2 }
+    { name: '🛡️ Energy Shield Activation', type: 'shield', freq: 440, duration: 1.2 }
   ];
 
   // Visualizer Animation Loop
@@ -150,6 +153,31 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     }
   };
 
+  // Export Theme to WAV File
+  const handleDownloadScore = async (themeId, name) => {
+    setIsRenderingDownload(true);
+    setDownloadSuccess(null);
+    try {
+      const blob = await cinematicAudio.renderScoreToWav(themeId, 12);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Girionix_Audio_${themeId}_44kHz.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        setDownloadSuccess(`✅ Downloaded ${name} (.wav)`);
+        setTimeout(() => setDownloadSuccess(null), 3500);
+      }
+    } catch (e) {
+      console.error(e);
+    } finally {
+      setIsRenderingDownload(false);
+    }
+  };
+
   // Browser Speech Synthesis for TTS
   const handleSpeakText = () => {
     if (typeof window === 'undefined' || !('speechSynthesis' in window)) return;
@@ -228,6 +256,26 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     gain.connect(ctx.destination);
     osc.start(now);
     osc.stop(now + sfx.duration);
+  };
+
+  // Export SFX to WAV
+  const handleDownloadSfx = async (sfx, e) => {
+    e.stopPropagation();
+    try {
+      const blob = await cinematicAudio.renderSfxToWav(sfx);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `Girionix_SFX_${sfx.type}.wav`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      }
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -341,7 +389,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
                 <div
                   key={theme.id}
                   onClick={() => handleScoreThemeSelect(theme.id)}
-                  className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-2 ${
+                  className={`p-4 rounded-2xl border transition-all cursor-pointer space-y-2 relative group ${
                     isSelected
                       ? 'bg-emerald-950/40 border-emerald-500/60 shadow-glow-emerald'
                       : 'bg-black/40 border-white/5 hover:border-white/20 hover:bg-white/[0.02]'
@@ -356,9 +404,22 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
                   <p className="text-[11px] text-gray-400">{theme.desc}</p>
                   <div className="flex items-center justify-between pt-1">
                     <span className="text-[10px] font-mono text-gray-500">{theme.mood}</span>
-                    <span className={`text-[10px] font-mono ${isSelected ? 'text-emerald-400 font-bold' : 'text-gray-600'}`}>
-                      {isCurrentlyPlayingThis ? '● PLAYING NOW' : isSelected ? '✓ SELECTED' : 'Click to select'}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDownloadScore(theme.id, theme.name);
+                        }}
+                        className="p-1 px-2 rounded-lg bg-white/10 hover:bg-emerald-500/20 text-emerald-300 text-[10px] font-mono flex items-center gap-1 transition-all"
+                        title="Download as 44.1kHz .WAV file"
+                      >
+                        <Download className="w-3 h-3" />
+                        <span>Export WAV</span>
+                      </button>
+                      <span className={`text-[10px] font-mono ${isSelected ? 'text-emerald-400 font-bold' : 'text-gray-600'}`}>
+                        {isCurrentlyPlayingThis ? '● PLAYING' : isSelected ? '✓ SELECTED' : ''}
+                      </span>
+                    </div>
                   </div>
                 </div>
               );
@@ -377,6 +438,12 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
               {isScorePlaying ? <Pause className="w-4 h-4" /> : <Play className="w-4 h-4 fill-current" />}
               <span>{isScorePlaying ? 'Stop Soundtrack Playback' : 'Play Selected Soundtrack Live'}</span>
             </button>
+
+            {downloadSuccess && (
+              <span className="text-xs font-mono text-emerald-400 animate-fadeIn">
+                {downloadSuccess}
+              </span>
+            )}
 
             <span className="text-xs font-mono text-gray-400">
               ⚡ Web Audio API 60FPS Multi-Oscillator Sound Engine
@@ -412,6 +479,27 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
             placeholder="Type text for neural voice narration..."
             className="w-full p-3.5 rounded-2xl bg-black/60 border border-white/10 text-white text-xs placeholder-gray-500 focus:outline-none focus:border-cyan-500/50 resize-none font-sans leading-relaxed"
           />
+
+          <div className="flex gap-2 flex-wrap text-[11px] font-mono">
+            <button
+              onClick={() => setVoiceText('In a world shaped by artificial intelligence, Girionix AI stands at the frontier of thought, creation, and exploration.')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white"
+            >
+              🎬 Movie Trailer
+            </button>
+            <button
+              onClick={() => setVoiceText('गिरिऑनिक्स एआई में आपका स्वागत है। सोचने, बनाने और खोजने की असीम क्षमता अब आपके हाथों में है।')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white"
+            >
+              🇮🇳 Hindi Welcome
+            </button>
+            <button
+              onClick={() => setVoiceText('Welcome to the developer sandbox. Here you can engineer, compile, and execute fullstack React applications in real time.')}
+              className="px-2.5 py-1 rounded-lg bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white"
+            >
+              💻 Dev Hook
+            </button>
+          </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
             {voiceOptions.map((voice) => {
@@ -496,15 +584,15 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
               <Zap className="w-4 h-4 text-amber-400" />
               <span>1-Click Real-Time Foley & Sound Effects Synthesizer</span>
             </h3>
-            <span className="text-[10px] font-mono text-gray-400">0ms Web Audio Generation</span>
+            <span className="text-[10px] font-mono text-gray-400">0ms Web Audio Generation • WAV Export</span>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
             {sfxPresets.map((sfx, idx) => (
-              <button
+              <div
                 key={idx}
                 onClick={() => triggerSfx(sfx)}
-                className="p-4 rounded-2xl bg-black/50 border border-white/10 hover:border-amber-500/50 hover:bg-amber-950/20 text-left transition-all group flex items-center justify-between hover:scale-[1.02]"
+                className="p-4 rounded-2xl bg-black/50 border border-white/10 hover:border-amber-500/50 hover:bg-amber-950/20 text-left transition-all group flex items-center justify-between cursor-pointer hover:scale-[1.02]"
               >
                 <div className="space-y-1">
                   <div className="font-bold text-white text-xs group-hover:text-amber-300 transition-colors">
@@ -514,10 +602,19 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
                     Base Freq: {sfx.freq} Hz • Length: {sfx.duration}s
                   </div>
                 </div>
-                <div className="p-2 rounded-xl bg-white/5 group-hover:bg-amber-500/20 text-amber-400 transition-colors">
-                  <Play className="w-4 h-4 fill-current" />
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={(e) => handleDownloadSfx(sfx, e)}
+                    className="p-2 rounded-xl bg-white/5 hover:bg-amber-500/20 text-amber-400 transition-colors"
+                    title="Download SFX .WAV file"
+                  >
+                    <Download className="w-4 h-4" />
+                  </button>
+                  <div className="p-2 rounded-xl bg-white/5 group-hover:bg-amber-500/20 text-amber-400 transition-colors">
+                    <Play className="w-4 h-4 fill-current" />
+                  </div>
                 </div>
-              </button>
+              </div>
             ))}
           </div>
         </div>
