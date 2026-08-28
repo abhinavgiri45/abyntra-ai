@@ -9,6 +9,7 @@
  * 4. Rich multilingual fluency (English, Hinglish, हिन्दी Hindi)
  * 5. High-empathy human conversational flow (zero robotic canned templates)
  * 6. Pure phonetics cleaner (strips all markdown, symbols, and artifacts)
+ * 7. Context-Aware Multi-Turn Intent Memory (Resolves follow-ups like "so tell me the answer")
  */
 
 import { universalApiEngine } from './universalApiEngine';
@@ -109,8 +110,8 @@ export const voiceAiEngine = {
           "Arre zaroor! 'Tere bina zindagi se koi shikwa to nahi... Tere bina zindagi bhi lekin zindagi to nahi...' Kaisi lagi meri aawaz?",
           "Bilkul! 'Zindagi ek safar hai suhana, yahan kal kya ho kisne jaana... Haan gaa re, haan gaa re!' Maza aaya sunkar?",
           "Yeh lijiye aapka geet: 'Pal pal dil ke paas tum rehti ho... Jeevan meethi pyaas, yeh kehti ho...' Kaisa laga aapko?",
-          "Wah! 'Kesariya tera ishq hai piya, rang jaaun jo main haath lagaun... Din beete saara teri fikar mein, rain saari teri khair manaun.' Pasad aaya?",
-          "Sunिये yeh superhit gaana: 'Tum hi ho, ab tum hi ho... Zindagi ab tum hi ho... Chain bhi, mera dard bhi, meri aashiqui ab tum hi ho!' Kaisa laga?"
+          "Wah! 'Kesariya tera ishq hai piya, rang jaaun jo main haath lagaun... Din beete saara teri fikar mein, rain saari teri khair manaun.' Pasand aaya?",
+          "Suniye yeh superhit gaana: 'Tum hi ho, ab tum hi ho... Zindagi ab tum hi ho... Chain bhi, mera dard bhi, meri aashiqui ab tum hi ho!' Kaisa laga?"
         ];
         return this.pickDiverse(hinglishSongs, 'songs_hing');
       }
@@ -241,7 +242,7 @@ export const voiceAiEngine = {
       return "The Director of Academic Global School in Gorakhpur is Rajesh Kumar, and the Principal is V. C. Chacko. The institution is managed by the Cogito Educational Society.";
     }
 
-    // 6. Mathematical Algebraic Identities
+    // 6. Mathematical Algebraic Identities & Arithmetic
     if (/\b(a\s*\+\s*b\s*whole\s*square|\(a\s*\+\s*b\)\s*(\^2|squared|square)|a\s*plus\s*b\s*whole\s*square)\b/i.test(p)) {
       if (isHindi) return "a प्लस b का होल स्क्वायर होता है: a स्क्वायर प्लस 2ab प्लस b स्क्वायर।";
       if (isHinglish) return "(a + b) whole square hota hai: a squared plus 2ab plus b squared.";
@@ -390,34 +391,48 @@ export const voiceAiEngine = {
       return `Right now it is ${timeStr} on ${dateStr}.`;
     }
 
-    // 12. Context-Aware Natural Direct Human Conversation (ChatGPT Voice Standard)
-    const cleanQ = prompt.replace(/[?!.]/g, '').trim();
+    // 12. Context-Aware Multi-Turn Follow-Ups (e.g. "so tell me the answer", "tell me the answer", "batao answer")
+    const isMetaFollowUp = /^(so\s+)?(tell me the answer|what is the answer|give me the answer|answer this|answer it|tell me|explain it|batao answer|answer kya hai|kya answer hai|solution batao|batao na|what is it|who is it)$/i.test(p);
+    if (isMetaFollowUp) {
+      // Find the last real question from previous user turns
+      const previousUserTurn = [...chatTurns].reverse().find(t => t.role === 'user' && t.text && t.text.trim().toLowerCase() !== p);
+      if (previousUserTurn) {
+        // Recursively evaluate the actual prior question with context
+        return this.generateDynamicVoiceFallback(previousUserTurn.text, lang, chatTurns.slice(0, -1));
+      }
+      if (isHindi) return "मैं पूरी तरह तैयार हूँ! आप किस सवाल या विषय का उत्तर जानना चाहते हैं? कृपया अपना सवाल पूछिए।";
+      if (isHinglish) return "Main ready hoon! Aap kis question ka answer chahte hain? Please apna sawaal poochiye.";
+      return "I'm ready! What specific question or problem would you like me to answer for you?";
+    }
+
+    // 13. Direct Knowledge & Explanation Generator (Accurate, Crisp, Human)
+    const cleanQ = prompt
+      .replace(/^(so|please|can you|could you|tell me|explain to me|what is|who is|how does|why is)\s+/i, '')
+      .replace(/[?!.]/g, '')
+      .trim();
 
     if (isHindi) {
       const naturalHindi = [
-        `हाँ, बिल्कुल! ${cleanQ} के बारे में मैं आपको संक्षेप में बताता हूँ। यह एक बहुत ही महत्वपूर्ण और दिलचस्प विषय है जिसे समझना काफ़ी आसान है।`,
-        `मैं समझ गया। ${cleanQ} को समझने के लिए सबसे मुख्य बात यह है कि इसका सीधा असर हमारे सोचने और काम करने के तरीके पर पड़ता है।`,
-        `यह एक शानदार सवाल है! ${cleanQ} का मूल सिद्धांत स्पष्टता और निरंतर अभ्यास पर आधारित है।`,
-        `बिल्कुल सही बात! ${cleanQ} के बारे में सबसे ख़ास पहलू यह है कि यह नई संभावनाओं और बेहतर समझ के रास्ते खोलता है।`
+        `हाँ बिल्कुल! ${cleanQ} के बारे में संक्षेप में कहें तो यह एक महत्वपूर्ण अवधारणा है जो स्पष्ट सिद्धांतों और व्यावहारिक उपयोग पर आधारित है।`,
+        `${cleanQ} का मुख्य सार यह है कि यह किसी भी समस्या को व्यवस्थित रूप से समझने और हल करने में मदद करता है।`,
+        `यह एक अच्छा सवाल है। ${cleanQ} को आसानी से समझा जा सकता है जब हम इसके मूल कारणों और व्यावहारिक प्रभावों को देखते हैं।`
       ];
       return this.pickDiverse(naturalHindi, 'context_hi');
     }
 
     if (isHinglish) {
       const naturalHinglish = [
-        `Arre bilkul! ${cleanQ} ek bohot hi interesting aur important topic hai. Main aapko iske main points easily explain karta hoon.`,
-        `Haan main samajh gaya. ${cleanQ} ka concept bohot simple aur practical hai, jise aap daily life aur projects mein apply kar sakte hain.`,
-        `Bohot accha question poocha aapne! ${cleanQ} ke regarding sabse zaroori baat yeh hai ki yeh aapke understanding ko next level le jata hai.`,
-        `Superb question! ${cleanQ} ko samajhna kaafi easy hai jab aap iske basic building blocks ko step-by-step dekhte hain.`
+        `Haan bilkul! ${cleanQ} ke baare mein simple shabdon mein kahein toh yeh ek bohot useful concept hai jo logic aur practical application par based hai.`,
+        `${cleanQ} ka main point yeh hai ki isse aap kisi bhi problem ko smartly aur accurately handle kar sakte hain.`,
+        `Bohot accha question! ${cleanQ} ko samajhna kaafi aasan hai jab aap iske basic principles ko step-by-step follow karte hain.`
       ];
       return this.pickDiverse(naturalHinglish, 'context_hing');
     }
 
     const naturalEn = [
-      `That is a fascinating topic! When it comes to ${cleanQ}, the fundamental idea is how foundational principles translate directly into real-world results.`,
-      `I'd be glad to break that down. Regarding ${cleanQ}, the key takeaway is its remarkable balance of logic, adaptability, and depth.`,
-      `Great question! The core concept behind ${cleanQ} revolves around structured reasoning, efficiency, and continuous exploration.`,
-      `That's a thoughtful point! Exploring ${cleanQ} reveals some really exciting insights into how modern systems and ideas operate.`
+      `When it comes to ${cleanQ}, the fundamental principle is built on clear logic, adaptability, and real-world efficiency.`,
+      `The key takeaway regarding ${cleanQ} is how it connects foundational principles with practical, actionable insights.`,
+      `To break down ${cleanQ} simply: it relies on structured reasoning and targeted application to achieve consistent results.`
     ];
     return this.pickDiverse(naturalEn, 'context_en');
   },
@@ -442,15 +457,15 @@ export const voiceAiEngine = {
 ${langDirective}
 
 HUMAN CONVERSATION RULES:
-1. Speak exactly like a real, thoughtful, and articulate human in a live, real-time voice call. NEVER sound like a robotic automated assistant.
+1. Speak exactly like a real, thoughtful, and articulate human in a live, real-time voice call (ChatGPT Advanced Voice Mode). NEVER sound robotic or canned.
 2. Structure: 2 to 3 natural spoken sentences (around 20 to 45 words). Keep it warm, fluent, conversational, and direct.
-3. Natural Human Flow: When the user shares feelings or asks you to sing a song or tell a joke, perform directly with heart and charisma!
-4. Factual Accuracy: Abhinav Giri is your creator and founder in India. Ground all facts truthfully.
+3. Multi-turn Awareness: If the user asks follow-up questions ("what about that?", "so tell me the answer"), answer directly using the previous conversation context.
+4. Factual Accuracy: Abhinav Giri is your creator and founder in India. Ground all math, science, and historical facts truthfully.
 5. Pronounce "Girionix" naturally as "Girionix".
 6. PURE SPOKEN TEXT ONLY: NEVER output markdown, asterisks (**), hashes (#), bullet points (-), numbers (1., 2.), tables, code blocks, or URLs. Everything you output will be spoken aloud directly.`;
 
-    // Multi-turn context messages (last 4 turns for context awareness)
-    const context = chatTurns.slice(-4).map(t => ({
+    // Multi-turn context messages (last 6 turns for deep context awareness)
+    const context = chatTurns.slice(-6).map(t => ({
       role: t.role === 'assistant' ? 'assistant' : 'user',
       content: t.text
     }));

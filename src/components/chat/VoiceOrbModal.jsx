@@ -310,60 +310,71 @@ export default function VoiceOrbModal({ isOpen, onClose, onExportToChat }) {
           ))}
         </div>
 
-        {/* Center Reactive Organic Neural Voice Orb */}
-        <div className="relative flex items-center justify-center my-4 sm:my-6 z-10">
-          {/* Multi-layered pulsating waves reacting to real microphone volume */}
+        {/* Center Reactive Organic ChatGPT-Grade Voice Orb */}
+        <div className="relative flex items-center justify-center my-6 sm:my-8 z-10">
+          {/* Multi-layered pulsating ethereal waves reacting to microphone volume */}
           <div 
-            className={`absolute rounded-full border transition-all duration-300 pointer-events-none ${
+            className={`absolute rounded-full transition-all duration-300 pointer-events-none ${
               connectionStatus === 'speaking' 
-                ? 'border-purple-500/40 animate-ping' 
+                ? 'bg-gradient-to-r from-purple-500/30 to-pink-500/30 blur-xl animate-pulse' 
                 : connectionStatus === 'listening' 
-                ? 'border-cyan-500/40' 
-                : 'border-white/10'
+                ? 'bg-gradient-to-r from-cyan-400/30 via-blue-500/30 to-indigo-500/30 blur-xl' 
+                : 'bg-white/5 blur-lg'
             }`}
             style={{
-              width: `${140 + (audioVolume * 0.8)}px`,
-              height: `${140 + (audioVolume * 0.8)}px`,
-              opacity: connectionStatus === 'listening' ? 0.35 + (audioVolume / 140) : 0.2
+              width: `${160 + (audioVolume * 1.2)}px`,
+              height: `${160 + (audioVolume * 1.2)}px`,
+              opacity: connectionStatus === 'listening' ? 0.6 + (audioVolume / 100) : 0.3
             }}
           />
 
           <div 
-            className={`absolute rounded-full border transition-all duration-500 pointer-events-none ${
+            className={`absolute rounded-full border border-white/20 transition-all duration-500 pointer-events-none ${
               connectionStatus === 'speaking' 
-                ? 'border-rose-500/50 animate-pulse' 
+                ? 'border-purple-400/40 animate-ping' 
                 : connectionStatus === 'listening' 
-                ? 'border-teal-400/40' 
+                ? 'border-cyan-300/30' 
                 : 'border-white/5'
             }`}
             style={{
-              width: `${175 + (audioVolume * 1.2)}px`,
-              height: `${175 + (audioVolume * 1.2)}px`,
-              opacity: connectionStatus === 'listening' ? 0.25 + (audioVolume / 180) : 0.1
+              width: `${200 + (audioVolume * 1.5)}px`,
+              height: `${200 + (audioVolume * 1.5)}px`,
+              opacity: connectionStatus === 'listening' ? 0.35 + (audioVolume / 140) : 0.15
             }}
           />
 
-          {/* Core Interactive Glowing Orb */}
+          {/* Core Interactive Glowing ChatGPT-Style Fluid Morphing Sphere */}
           <div 
             onClick={connectionStatus === 'speaking' ? handleInterrupt : () => startListeningTurn(voiceLang)}
-            className={`w-32 h-32 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all duration-300 shadow-2xl relative select-none ${
+            className={`w-36 h-36 sm:w-40 sm:h-40 rounded-full flex flex-col items-center justify-center cursor-pointer transition-all duration-300 shadow-2xl relative select-none overflow-hidden ${
               connectionStatus === 'speaking'
-                ? 'bg-gradient-to-tr from-purple-600 via-pink-500 to-amber-400 shadow-glow-purple scale-110 animate-pulse'
+                ? 'shadow-[0_0_60px_rgba(168,85,247,0.6)] scale-110'
                 : connectionStatus === 'listening'
-                ? 'bg-gradient-to-tr from-cyan-500 via-teal-400 to-indigo-600 shadow-glow-cyan scale-105'
+                ? 'shadow-[0_0_60px_rgba(56,189,248,0.6)] scale-105'
                 : connectionStatus === 'thinking'
-                ? 'bg-gradient-to-tr from-amber-500 via-orange-500 to-rose-500 shadow-glow-amber animate-spin'
-                : 'bg-gradient-to-tr from-slate-800 to-slate-900 border border-white/20 hover:scale-105'
+                ? 'shadow-[0_0_60px_rgba(245,158,11,0.6)] animate-pulse'
+                : 'shadow-[0_0_40px_rgba(255,255,255,0.2)] border border-white/20 hover:scale-105'
             }`}
             style={{
-              transform: connectionStatus === 'listening' ? `scale(${1 + (audioVolume * 0.0025)})` : undefined
+              background: connectionStatus === 'speaking'
+                ? 'radial-gradient(circle at 35% 30%, #ffffff 0%, #f472b6 25%, #a855f7 60%, #4c1d95 100%)'
+                : connectionStatus === 'listening'
+                ? 'radial-gradient(circle at 30% 30%, #ffffff 0%, #a5f3fc 20%, #38bdf8 50%, #1e40af 85%, #0f172a 100%)'
+                : connectionStatus === 'thinking'
+                ? 'radial-gradient(circle at 30% 30%, #ffffff 0%, #fed7aa 25%, #f97316 60%, #9a3412 100%)'
+                : 'radial-gradient(circle at 30% 30%, #ffffff 0%, #cbd5e1 30%, #475569 70%, #0f172a 100%)',
+              transform: connectionStatus === 'listening' ? `scale(${1 + (audioVolume * 0.003)})` : undefined
             }}
           >
-            <Sparkles className={`w-10 h-10 transition-all ${
-              connectionStatus === 'speaking' ? 'text-white animate-spin' : connectionStatus === 'listening' ? 'text-white animate-bounce' : connectionStatus === 'thinking' ? 'text-white' : 'text-gray-400'
+            {/* Fluid inner highlight shader */}
+            <div className="absolute inset-0 bg-gradient-to-tr from-white/30 via-transparent to-black/40 mix-blend-overlay pointer-events-none" />
+            
+            <Sparkles className={`w-10 h-10 transition-all drop-shadow-md ${
+              connectionStatus === 'speaking' ? 'text-white animate-spin' : connectionStatus === 'listening' ? 'text-white animate-pulse' : connectionStatus === 'thinking' ? 'text-white' : 'text-slate-200'
             }`} />
-            <span className="text-[9px] font-mono text-white/90 font-bold mt-1 uppercase tracking-wider">
-              {connectionStatus === 'speaking' ? 'Tap to Interrupt' : connectionStatus === 'listening' ? 'Listening' : connectionStatus === 'thinking' ? 'Reasoning' : 'Tap to Speak'}
+            
+            <span className="text-[10px] font-mono text-white font-extrabold mt-1.5 uppercase tracking-widest drop-shadow">
+              {connectionStatus === 'speaking' ? 'Interrupt' : connectionStatus === 'listening' ? 'Listening' : connectionStatus === 'thinking' ? 'Reasoning' : 'Tap to Speak'}
             </span>
           </div>
         </div>
