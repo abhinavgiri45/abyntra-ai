@@ -37,7 +37,7 @@ export default function CinematicVideoPlayer({
 }) {
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
-  const [duration, setDuration] = useState(12); // 12-second 4-shot video
+  const [duration, setDuration] = useState(videoData?.duration || 60); // 12s | 60s | 300s (5m) | 900s (15m) | 1800s (30m) | 3600s (1 Hour)
   const [activeShotIdx, setActiveShotIdx] = useState(0);
   const [cameraMode, setCameraMode] = useState('orbit'); // 'orbit' | 'dolly' | 'fpv' | 'pan'
   const [playbackSpeed, setPlaybackSpeed] = useState(1.0); // 0.5 | 1.0 | 1.5 | 2.0
@@ -53,6 +53,17 @@ export default function CinematicVideoPlayer({
   const animFrameRef = useRef(null);
   const loadedImagesRef = useRef([]);
   const containerRef = useRef(null);
+
+  const formatTimecode = (seconds) => {
+    const total = Math.max(0, Math.floor(seconds));
+    const hrs = Math.floor(total / 3600);
+    const mins = Math.floor((total % 3600) / 60);
+    const secs = total % 60;
+    if (hrs > 0 || duration >= 3600) {
+      return `${hrs.toString().padStart(2, '0')}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+  };
 
   // Particles for high-end cinematic volumetric dust & embers
   const particlesRef = useRef(
@@ -75,12 +86,14 @@ export default function CinematicVideoPlayer({
   const shot3Image = videoData?.shots?.[2]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dramatic intense hero close up shot, rim light, shallow depth of field, 8k')}&width=1280&height=720&seed=30303&model=flux&nologo=true`;
   const shot4Image = videoData?.shots?.[3]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', epic high altitude drone ascending finale reveal shot, golden hour twilight, 8k')}&width=1280&height=720&seed=40404&model=flux&nologo=true`;
 
+  const secPerAct = duration / 4;
+
   // Normalize shots from videoData into 4 distinct evolving scenes
   const shots = videoData?.shots || [
     {
       id: 1,
-      time: '00:00 - 00:03',
-      name: 'Shot 1: Panoramic Establishing Sweep',
+      time: `${formatTimecode(0)} - ${formatTimecode(secPerAct)}`,
+      name: 'Act I: Panoramic Establishing Sweep',
       camera: '360° Smooth Orbit & Wide Horizon Pan',
       lens: '35mm Master Anamorphic Prime (f/1.4)',
       image: shot1Image,
@@ -88,8 +101,8 @@ export default function CinematicVideoPlayer({
     },
     {
       id: 2,
-      time: '00:03 - 00:06',
-      name: 'Shot 2: Dynamic Action Tracking',
+      time: `${formatTimecode(secPerAct)} - ${formatTimecode(secPerAct * 2)}`,
+      name: 'Act II: Dynamic Action Tracking',
       camera: 'Hyper-Dolly Zoom & Speed Ramp Tracking',
       lens: '50mm Cinema Prime (f/1.2)',
       image: shot2Image,
@@ -97,8 +110,8 @@ export default function CinematicVideoPlayer({
     },
     {
       id: 3,
-      time: '00:06 - 00:09',
-      name: 'Shot 3: Hero Climax Close-Up',
+      time: `${formatTimecode(secPerAct * 2)} - ${formatTimecode(secPerAct * 3)}`,
+      name: 'Act III: Hero Climax Close-Up',
       camera: 'Slow Push-in with Volumetric Glow',
       lens: '85mm Blockbuster Prime (f/1.2)',
       image: shot3Image,
@@ -106,8 +119,8 @@ export default function CinematicVideoPlayer({
     },
     {
       id: 4,
-      time: '00:09 - 00:12',
-      name: 'Shot 4: Ascending Crane Finale',
+      time: `${formatTimecode(secPerAct * 3)} - ${formatTimecode(duration)}`,
+      name: 'Act IV: Ascending Crane Finale',
       camera: 'FPV Ascending Crane & Twilight Reveal',
       lens: '24mm Ultra-Wide Cine Prime (f/2.0)',
       image: shot4Image,
@@ -599,8 +612,33 @@ export default function CinematicVideoPlayer({
               ))}
             </div>
 
-            <div className="text-[11px] text-gray-300 font-mono px-2.5 py-1 rounded-xl bg-black/50 border border-white/5">
-              00:{Math.floor(currentTime).toString().padStart(2, '0')} / 00:12
+            {/* Video Duration Selector (12s to 1 Hour) */}
+            <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-amber-500/30">
+              {[
+                { sec: 12, label: '12s' },
+                { sec: 60, label: '60s' },
+                { sec: 300, label: '5m' },
+                { sec: 900, label: '15m' },
+                { sec: 1800, label: '30m' },
+                { sec: 3600, label: '1 Hr 🔥' }
+              ].map(d => (
+                <button
+                  key={d.sec}
+                  onClick={() => { setDuration(d.sec); setCurrentTime(0); }}
+                  className={`px-1.5 py-0.5 rounded text-[10px] font-mono font-bold transition-all ${
+                    duration === d.sec
+                      ? 'bg-gradient-to-r from-amber-400 to-rose-500 text-black shadow-sm'
+                      : 'text-gray-400 hover:text-white'
+                  }`}
+                  title={`Set Video Length to ${d.label}`}
+                >
+                  {d.label}
+                </button>
+              ))}
+            </div>
+
+            <div className="text-[11px] text-amber-300 font-mono px-2.5 py-1 rounded-xl bg-black/70 border border-amber-500/30 font-bold">
+              {formatTimecode(currentTime)} / {formatTimecode(duration)}
             </div>
           </div>
 
@@ -679,7 +717,7 @@ export default function CinematicVideoPlayer({
               <button
                 key={shot.id}
                 onClick={() => {
-                  setCurrentTime(idx * 3);
+                  setCurrentTime(idx * (duration / 4));
                   setActiveShotIdx(idx);
                 }}
                 className={`p-2 rounded-2xl border text-left transition-all flex items-center gap-2.5 overflow-hidden ${

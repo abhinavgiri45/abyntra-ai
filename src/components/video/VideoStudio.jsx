@@ -24,7 +24,8 @@ import {
   Clapperboard,
   SlidersHorizontal,
   Flame,
-  Palette
+  Palette,
+  Clock
 } from 'lucide-react';
 import { imageGenerator } from '../../services/imageGenerator';
 import CinematicVideoPlayer from './CinematicVideoPlayer';
@@ -37,8 +38,18 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
   const [aspectRatio, setAspectRatio] = useState('2.39:1 Anamorphic Cinema');
   const [audioGenre, setAudioGenre] = useState('epic');
   const [fps, setFps] = useState('60 FPS');
+  const [duration, setDuration] = useState(60); // 12 | 60 | 300 | 900 | 1800 | 3600
   const [isGenerating, setIsGenerating] = useState(false);
   const [activeVideoData, setActiveVideoData] = useState(null);
+
+  const durationOptions = [
+    { value: 12, label: '12s (Teaser / Preview)' },
+    { value: 60, label: '60s (Cinema Trailer)' },
+    { value: 300, label: '5 Min (Short Film)' },
+    { value: 900, label: '15 Min (Documentary)' },
+    { value: 1800, label: '30 Min (Featurette)' },
+    { value: 3600, label: '1 Hour (Long-Form Master 🔥)' }
+  ];
 
   const motions = [
     { label: '🔄 Orbit 360° Counter-Clockwise (Smooth Drone Pan)', value: 'Orbit 360° Counter-Clockwise' },
@@ -105,7 +116,10 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
         aspectRatio,
         cameraMotion
       })
-        .then(storyboard => setActiveVideoData(storyboard))
+        .then(storyboard => {
+          storyboard.duration = duration;
+          setActiveVideoData(storyboard);
+        })
         .catch(() => {});
     }
   }, []);
@@ -124,6 +138,7 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
         aspectRatio,
         cameraMotion
       });
+      storyboard.duration = duration;
       setActiveVideoData(storyboard);
     } catch (err) {
       console.error('Video generation error:', err);
@@ -214,7 +229,7 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
           </div>
 
           {/* Director Parameters Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5 text-xs font-mono pt-1 border-t border-white/5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 text-xs font-mono pt-1 border-t border-white/5">
             {/* Resolution Selector */}
             <div className="p-2.5 rounded-2xl bg-black/50 border border-white/5 space-y-1">
               <div className="flex items-center justify-between text-[11px] text-gray-400">
@@ -236,6 +251,23 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
                   </button>
                 ))}
               </div>
+            </div>
+
+            {/* Duration Selector (12s to 1 Hour) */}
+            <div className="p-2.5 rounded-2xl bg-black/50 border border-white/5 space-y-1">
+              <div className="flex items-center justify-between text-[11px] text-gray-400">
+                <span className="flex items-center gap-1"><Clock className="w-3.5 h-3.5 text-emerald-400" /> Duration:</span>
+                <span className="text-emerald-300 font-bold">{duration >= 3600 ? '1 Hour 🔥' : `${duration}s`}</span>
+              </div>
+              <select
+                value={duration}
+                onChange={(e) => setDuration(Number(e.target.value))}
+                className="w-full bg-black/60 text-amber-300 font-bold p-1.5 rounded-lg text-xs border border-white/10 focus:outline-none cursor-pointer truncate"
+              >
+                {durationOptions.map(d => (
+                  <option key={d.value} value={d.value} className="bg-gray-900 text-white">{d.label}</option>
+                ))}
+              </select>
             </div>
 
             {/* FPS Selector */}
