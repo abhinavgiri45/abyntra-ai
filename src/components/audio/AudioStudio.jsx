@@ -22,13 +22,26 @@ import {
 import { cinematicAudio } from '../../services/CinematicAudioEngine';
 
 export default function AudioStudio({ activeModel, isTitanMode = false }) {
-  const [activeSubTab, setActiveSubTab] = useState('singing'); // 'singing' | 'score' | 'voice' | 'sfx'
+  const [activeSubTab, setActiveSubTab] = useState('singing'); // 'singing' | 'score' | 'voice' | 'sfx' | 'mixer'
   const [selectedScoreTheme, setSelectedScoreTheme] = useState('epic');
   const [isScorePlaying, setIsScorePlaying] = useState(false);
   const [volume, setVolume] = useState(75);
   const [customMusicPrompt, setCustomMusicPrompt] = useState('Cinematic sci-fi orchestral soundtrack with heavy sub-bass and futuristic synth pads');
   const [isRenderingDownload, setIsRenderingDownload] = useState(false);
   const [downloadSuccess, setDownloadSuccess] = useState(null);
+
+  // 5-Track Studio Stem Mixer State
+  const [stems, setStems] = useState([
+    { id: 'lead', name: 'Vocal Lead', icon: '🎤', vol: 85, pan: 0, mute: false, solo: false, color: 'from-pink-500 to-rose-500' },
+    { id: 'strings', name: 'Symphony Strings', icon: '🎻', vol: 75, pan: -25, mute: false, solo: false, color: 'from-purple-500 to-indigo-500' },
+    { id: 'synth', name: 'Cyberpunk Arp', icon: '🎹', vol: 70, pan: 25, mute: false, solo: false, color: 'from-cyan-500 to-blue-500' },
+    { id: 'drums', name: '808 Sub Drums', icon: '🥁', vol: 90, pan: 0, mute: false, solo: false, color: 'from-amber-500 to-orange-500' },
+    { id: 'reverb', name: 'Cosmic Reverb', icon: '🌌', vol: 60, pan: 0, mute: false, solo: false, color: 'from-emerald-500 to-teal-500' }
+  ]);
+  const [mixerKey, setMixerKey] = useState('C Major');
+  const [mixerBpm, setMixerBpm] = useState(128);
+  const [stereoWidth, setStereoWidth] = useState(120);
+  const [isMixerPlaying, setIsMixerPlaying] = useState(false);
 
   // Singing Voice Synthesizer State
   const [singingLyrics, setSingingLyrics] = useState('Girionix AI shining like the stars tonight / Code and wisdom taking flight');
@@ -419,6 +432,18 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
             >
               <Zap className="w-3.5 h-3.5" />
               <span>Foley / SFX</span>
+            </button>
+
+            <button
+              onClick={() => setActiveSubTab('mixer')}
+              className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
+                activeSubTab === 'mixer' 
+                  ? 'bg-gradient-to-r from-purple-500 to-cyan-500 text-white font-bold shadow-glow-purple' 
+                  : 'text-gray-400 hover:text-white'
+              }`}
+            >
+              <Sliders className="w-3.5 h-3.5 text-cyan-400" />
+              <span>🎛️ Stem Mixer</span>
             </button>
           </div>
         </div>
@@ -856,6 +881,213 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {/* TAB 5: 5-TRACK MULTI-STEM STUDIO MIXER */}
+      {activeSubTab === 'mixer' && (
+        <div className="p-5 rounded-3xl bg-[#080B18] border border-purple-500/30 space-y-5 shadow-2xl">
+          {/* Mixer Top Bar */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 rounded-2xl bg-purple-500/20 text-purple-300 border border-purple-500/30 shadow-glow-purple">
+                <Sliders className="w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="text-sm font-bold text-white flex items-center gap-2">
+                  <span>5-Track Neural Multi-Stem Console</span>
+                  <span className="text-[10px] font-mono px-2 py-0.5 rounded-full bg-purple-500/20 text-purple-300 border border-purple-500/40 font-extrabold">
+                    {mixerBpm} BPM • {mixerKey}
+                  </span>
+                </h3>
+                <p className="text-xs text-gray-400 font-mono">
+                  Real-time Web Audio Gain Stages, Stereo Pan Fields & Master Limiter
+                </p>
+              </div>
+            </div>
+
+            {/* Master Transport & Export Buttons */}
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => {
+                  if (isMixerPlaying) {
+                    cinematicAudio.stop();
+                    setIsMixerPlaying(false);
+                  } else {
+                    cinematicAudio.playCinematicScore(selectedScoreTheme);
+                    setIsMixerPlaying(true);
+                  }
+                }}
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-purple-500 to-cyan-500 hover:opacity-90 text-white font-bold text-xs shadow-glow-purple flex items-center gap-1.5 cursor-pointer"
+              >
+                {isMixerPlaying ? <Pause className="w-3.5 h-3.5" /> : <Play className="w-3.5 h-3.5 fill-current" />}
+                <span>{isMixerPlaying ? 'Pause Master' : 'Play Master Stems'}</span>
+              </button>
+
+              <button
+                onClick={() => {
+                  setStems(prev => prev.map(s => ({ ...s, vol: 80, pan: 0, mute: false, solo: false })));
+                }}
+                className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-gray-400 hover:text-white border border-white/10 transition-colors"
+                title="Reset All Faders to Unity Gain"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+
+              <button
+                onClick={() => handleDownloadFullScore(selectedScoreTheme, 'Master_5Stem_Mix')}
+                disabled={isRenderingDownload}
+                className="px-3.5 py-2 rounded-xl bg-white/10 hover:bg-white/15 text-white border border-white/20 font-bold text-xs flex items-center gap-1.5 transition-all cursor-pointer"
+              >
+                <Download className="w-3.5 h-3.5 text-cyan-400" />
+                <span>Export Mix (.wav)</span>
+              </button>
+            </div>
+          </div>
+
+          {/* Master Transport Dials: Key, BPM, Stereo Width */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 p-3.5 rounded-2xl bg-black/40 border border-white/5 text-xs font-mono">
+            <div className="space-y-1">
+              <div className="flex justify-between text-gray-400">
+                <span>Tempo / BPM:</span>
+                <span className="text-amber-300 font-bold">{mixerBpm} BPM</span>
+              </div>
+              <input
+                type="range"
+                min="60"
+                max="180"
+                value={mixerBpm}
+                onChange={(e) => setMixerBpm(Number(e.target.value))}
+                className="w-full accent-amber-400 cursor-pointer"
+              />
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between text-gray-400">
+                <span>Root Musical Key:</span>
+                <span className="text-purple-300 font-bold">{mixerKey}</span>
+              </div>
+              <select
+                value={mixerKey}
+                onChange={(e) => setMixerKey(e.target.value)}
+                className="w-full bg-black/60 text-white p-1 rounded-lg border border-white/10 focus:outline-none"
+              >
+                {['C Major', 'C# Minor', 'D Dorian', 'E Minor', 'F Major', 'F# Minor', 'G Major', 'A Minor', 'Bb Major'].map(k => (
+                  <option key={k} value={k}>{k}</option>
+                ))}
+              </select>
+            </div>
+
+            <div className="space-y-1">
+              <div className="flex justify-between text-gray-400">
+                <span>Stereo Width:</span>
+                <span className="text-cyan-300 font-bold">{stereoWidth}%</span>
+              </div>
+              <input
+                type="range"
+                min="0"
+                max="200"
+                value={stereoWidth}
+                onChange={(e) => setStereoWidth(Number(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer"
+              />
+            </div>
+          </div>
+
+          {/* 5 Vertical Channel Strips */}
+          <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
+            {stems.map((stem, idx) => {
+              const isMuted = stem.mute || (stems.some(s => s.solo) && !stem.solo);
+
+              return (
+                <div
+                  key={stem.id}
+                  className={`p-3.5 rounded-2xl border transition-all flex flex-col justify-between space-y-3 ${
+                    isMuted 
+                      ? 'bg-black/30 border-white/5 opacity-50' 
+                      : 'bg-black/60 border-white/10 shadow-lg ring-1 ring-white/5'
+                  }`}
+                >
+                  {/* Channel Header */}
+                  <div className="flex items-center justify-between">
+                    <span className="text-base select-none">{stem.icon}</span>
+                    <span className="text-[10px] font-mono text-gray-400 font-bold">CH {idx + 1}</span>
+                  </div>
+
+                  <div>
+                    <div className="font-bold text-white text-xs truncate">{stem.name}</div>
+                    <div className="text-[10px] font-mono text-gray-400">
+                      {isMuted ? 'MUTED' : `${stem.vol}% • Pan ${stem.pan > 0 ? `+${stem.pan}` : stem.pan}`}
+                    </div>
+                  </div>
+
+                  {/* Volume Vertical Fader */}
+                  <div className="h-32 flex items-center justify-center py-2">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={stem.mute ? 0 : stem.vol}
+                      onChange={(e) => {
+                        const v = Number(e.target.value);
+                        setStems(prev => prev.map(s => s.id === stem.id ? { ...s, vol: v, mute: false } : s));
+                      }}
+                      className="h-28 -rotate-90 w-28 accent-cyan-400 cursor-pointer"
+                    />
+                  </div>
+
+                  {/* Pan Control */}
+                  <div className="space-y-1 pt-1 border-t border-white/5">
+                    <div className="flex justify-between text-[9px] text-gray-400 font-mono">
+                      <span>L</span>
+                      <span>PAN</span>
+                      <span>R</span>
+                    </div>
+                    <input
+                      type="range"
+                      min="-50"
+                      max="50"
+                      value={stem.pan}
+                      onChange={(e) => {
+                        const p = Number(e.target.value);
+                        setStems(prev => prev.map(s => s.id === stem.id ? { ...s, pan: p } : s));
+                      }}
+                      className="w-full accent-purple-400 cursor-pointer h-1"
+                    />
+                  </div>
+
+                  {/* Mute / Solo Buttons */}
+                  <div className="grid grid-cols-2 gap-1.5 pt-1">
+                    <button
+                      onClick={() => {
+                        setStems(prev => prev.map(s => s.id === stem.id ? { ...s, mute: !s.mute } : s));
+                      }}
+                      className={`py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${
+                        stem.mute
+                          ? 'bg-rose-500 text-white shadow-glow-rose'
+                          : 'bg-white/5 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      MUTE
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setStems(prev => prev.map(s => s.id === stem.id ? { ...s, solo: !s.solo } : s));
+                      }}
+                      className={`py-1 rounded-lg text-[10px] font-mono font-bold transition-all ${
+                        stem.solo
+                          ? 'bg-amber-400 text-black shadow-glow-amber'
+                          : 'bg-white/5 text-gray-400 hover:text-white'
+                      }`}
+                    >
+                      SOLO
+                    </button>
+                  </div>
+                </div>
+              );
+            })}
           </div>
         </div>
       )}

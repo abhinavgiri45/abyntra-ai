@@ -40,6 +40,18 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
     { label: 'ζ(s)', code: '\\zeta(s) ' }
   ];
 
+  const [showDerivative, setShowDerivative] = useState(true);
+  const [showIntegral, setShowIntegral] = useState(false);
+  const [hoverCoord, setHoverCoord] = useState(null);
+
+  const functionPresets = [
+    { name: 'sinc(x)', fn: 'Math.sin(x) / (x || 0.0001)', desc: 'Cardinal Sine' },
+    { name: 'Gaussian Wave', fn: 'Math.exp(-x*x/8) * Math.cos(3*x)', desc: 'Wave Packet' },
+    { name: 'Harmonics', fn: 'Math.sin(x) + 0.5 * Math.sin(3*x) + 0.25 * Math.sin(5*x)', desc: 'Fourier Sum' },
+    { name: 'Damped Oscillator', fn: 'Math.exp(-0.15 * Math.abs(x)) * Math.cos(2*x)', desc: 'Decaying Wave' },
+    { name: 'Cubic Poly', fn: '0.08 * (x*x*x - 7*x)', desc: 'Polynomial' }
+  ];
+
   useEffect(() => {
     if (plotMode !== '2d') return;
     const canvas = canvasRef.current;
@@ -58,6 +70,7 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
     const toScreenX = (x) => ((x - minX) / (maxX - minX)) * width;
     const toScreenY = (y) => height - ((y - minY) / (maxY - minY)) * height;
 
+    // Grid lines
     for (let x = Math.ceil(minX); x <= Math.floor(maxX); x += 2) {
       const sx = toScreenX(x);
       ctx.beginPath();
@@ -74,6 +87,7 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
       ctx.stroke();
     }
 
+    // Axes
     ctx.strokeStyle = 'rgba(168, 85, 247, 0.4)';
     ctx.lineWidth = 1.5;
     ctx.beginPath();
@@ -83,31 +97,111 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
     ctx.lineTo(toScreenX(0), height);
     ctx.stroke();
 
+    const evalFn = (x) => {
+      try {
+        const fn = new Function('x', `return ${activeFunction};`);
+        return fn(x);
+      } catch (_) {
+        return NaN;
+      }
+    };
+
+    const step = (maxX - minX) / width;
+    const h = 0.001;
+
+    // 1. Numerical Derivative f'(x) in Cyan (if enabled)
+    if (showDerivative) {
+      ctx.strokeStyle = 'rgba(6, 182, 212, 0.7)';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([4, 4]);
+      ctx.beginPath();
+      let started = false;
+      for (let x = minX; x <= maxX; x += step) {
+        const y1 = evalFn(x + h);
+        const y0 = evalFn(x - h);
+        const dy = (y1 - y0) / (2 * h);
+        if (!isNaN(dy) && isFinite(dy)) {
+          const sx = toScreenX(x);
+          const sy = toScreenY(dy);
+          if (!started) { ctx.moveTo(sx, sy); started = true; }
+          else { ctx.lineTo(sx, sy); }
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // 2. Numerical Integral in Emerald (if enabled)
+    if (showIntegral) {
+      ctx.strokeStyle = 'rgba(16, 185, 129, 0.7)';
+      ctx.lineWidth = 1.8;
+      ctx.setLineDash([2, 3]);
+      ctx.beginPath();
+      let started = false;
+      let accum = 0;
+      for (let x = minX; x <= maxX; x += step) {
+        const yVal = evalFn(x);
+        if (!isNaN(yVal) && isFinite(yVal)) {
+          accum += yVal * step;
+          const sx = toScreenX(x);
+          const sy = toScreenY(accum);
+          if (!started) { ctx.moveTo(sx, sy); started = true; }
+          else { ctx.lineTo(sx, sy); }
+        }
+      }
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // 3. Primary Function f(x) in Purple
     ctx.strokeStyle = '#A855F7';
-    ctx.lineWidth = 2.5;
+    ctx.lineWidth = 2.8;
     ctx.beginPath();
 
     let started = false;
-    const step = (maxX - minX) / width;
-
     for (let x = minX; x <= maxX; x += step) {
-      try {
-        const fn = new Function('x', `return ${activeFunction};`);
-        const y = fn(x);
-        if (!isNaN(y) && isFinite(y)) {
-          const sx = toScreenX(x);
-          const sy = toScreenY(y);
-          if (!started) {
-            ctx.moveTo(sx, sy);
-            started = true;
-          } else {
-            ctx.lineTo(sx, sy);
-          }
+      const y = evalFn(x);
+      if (!isNaN(y) && isFinite(y)) {
+        const sx = toScreenX(x);
+        const sy = toScreenY(y);
+        if (!started) {
+          ctx.moveTo(sx, sy);
+          started = true;
+        } else {
+          ctx.lineTo(sx, sy);
         }
-      } catch (_) {}
+      }
     }
     ctx.stroke();
-  }, [activeFunction, plotRange, plotMode]);
+
+    // 4. Hover Crosshair & Tangent Point
+    if (hoverCoord && hoverCoord.x !== null) {
+      const hx = hoverCoord.x;
+      const hy = evalFn(hx);
+      if (!isNaN(hy) && isFinite(hy)) {
+        const sx = toScreenX(hx);
+        const sy = toScreenY(hy);
+
+        // Vertical dashed guideline
+        ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+        ctx.setLineDash([2, 2]);
+        ctx.beginPath();
+        ctx.moveTo(sx, 0);
+        ctx.lineTo(sx, height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Highlight point
+        ctx.fillStyle = '#EC4899';
+        ctx.beginPath();
+        ctx.arc(sx, sy, 5, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.strokeStyle = '#FFFFFF';
+        ctx.lineWidth = 2;
+        ctx.stroke();
+      }
+    }
+  }, [activeFunction, plotRange, plotMode, showDerivative, showIntegral, hoverCoord]);
 
   const handleSolveCustom = async () => {
     if (!customEquation.trim()) return;
@@ -290,7 +384,26 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
                   <TrendingUp className="w-4 h-4 text-cyan-400" />
                   <span className="text-xs font-bold text-white">2D Function Visualizer</span>
                 </div>
-                <span className="text-[10px] font-mono text-cyan-400">Canvas 60fps</span>
+                {hoverCoord ? (
+                  <span className="text-[10px] font-mono text-pink-300 font-bold">
+                    x: {hoverCoord.x.toFixed(2)} | y: {hoverCoord.y.toFixed(2)}
+                  </span>
+                ) : (
+                  <span className="text-[10px] font-mono text-cyan-400">Canvas 60fps • Hover Inspector</span>
+                )}
+              </div>
+
+              {/* Function Presets Pills */}
+              <div className="flex items-center gap-1 overflow-x-auto pb-1">
+                {functionPresets.map((p, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveFunction(p.fn)}
+                    className="px-2 py-0.5 rounded-lg bg-white/5 hover:bg-cyan-500/20 text-gray-300 hover:text-cyan-300 text-[10px] font-mono border border-white/5 whitespace-nowrap transition-colors"
+                  >
+                    {p.name}
+                  </button>
+                ))}
               </div>
 
               <div>
@@ -303,7 +416,41 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
                 />
               </div>
 
-              <div className="w-full h-56 rounded-xl overflow-hidden border border-cyan-500/20 bg-[#070913]">
+              {/* Curve Layer Toggles */}
+              <div className="flex items-center gap-2 text-[10px] font-mono">
+                <button
+                  onClick={() => setShowDerivative(!showDerivative)}
+                  className={`px-2 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
+                    showDerivative ? 'bg-cyan-500/20 text-cyan-300 border-cyan-500/40 font-bold' : 'bg-white/5 text-gray-400 border-white/5'
+                  }`}
+                >
+                  <span>🔵 f'(x) Derivative</span>
+                </button>
+                <button
+                  onClick={() => setShowIntegral(!showIntegral)}
+                  className={`px-2 py-1 rounded-lg border transition-colors flex items-center gap-1 ${
+                    showIntegral ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold' : 'bg-white/5 text-gray-400 border-white/5'
+                  }`}
+                >
+                  <span>🟢 ∫ f(x)dx Integral</span>
+                </button>
+              </div>
+
+              <div 
+                className="w-full h-56 rounded-xl overflow-hidden border border-cyan-500/20 bg-[#070913] relative cursor-crosshair"
+                onMouseMove={(e) => {
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  const px = e.clientX - rect.left;
+                  const ratio = px / rect.width;
+                  const xVal = plotRange.minX + ratio * (plotRange.maxX - plotRange.minX);
+                  try {
+                    const fn = new Function('x', `return ${activeFunction};`);
+                    const yVal = fn(xVal);
+                    setHoverCoord({ x: xVal, y: isNaN(yVal) ? 0 : yVal });
+                  } catch (_) {}
+                }}
+                onMouseLeave={() => setHoverCoord(null)}
+              >
                 <canvas ref={canvasRef} className="w-full h-full" />
               </div>
             </div>
