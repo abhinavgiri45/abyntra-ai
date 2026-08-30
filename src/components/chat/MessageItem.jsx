@@ -277,12 +277,56 @@ function formatBlockMarkdown(text) {
 
   const flushQuote = () => {
     if (currentQuote.length > 0) {
+      const fullQuoteText = currentQuote.join('\n').trim();
+      const isAlert = /^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]/i.test(fullQuoteText);
+
+      let alertType = 'note';
+      let cleanQuote = fullQuoteText;
+
+      if (isAlert) {
+        const match = fullQuoteText.match(/^\s*\[!(NOTE|TIP|IMPORTANT|WARNING|CAUTION)\]\s*\n?/i);
+        if (match) {
+          alertType = match[1].toLowerCase();
+          cleanQuote = fullQuoteText.substring(match[0].length).trim();
+        }
+      } else if (fullQuoteText.startsWith('⚠️') || fullQuoteText.toLowerCase().includes('warning') || fullQuoteText.toLowerCase().includes('caution')) {
+        alertType = 'warning';
+      } else if (fullQuoteText.startsWith('💡') || fullQuoteText.startsWith('✨')) {
+        alertType = 'tip';
+      } else if (fullQuoteText.startsWith('🔥') || fullQuoteText.startsWith('⚡')) {
+        alertType = 'important';
+      }
+
+      const alertStyles = {
+        note: 'border-cyan-500/50 bg-cyan-950/25 text-cyan-100 shadow-glow-cyan/10',
+        tip: 'border-emerald-500/50 bg-emerald-950/25 text-emerald-100 shadow-glow-emerald/10',
+        important: 'border-purple-500/50 bg-purple-950/25 text-purple-100 shadow-glow-purple/10',
+        warning: 'border-amber-500/50 bg-amber-950/25 text-amber-100',
+        caution: 'border-rose-500/50 bg-rose-950/25 text-rose-100 shadow-glow-rose/10'
+      };
+
+      const alertIcons = {
+        note: '💡',
+        tip: '✨',
+        important: '🔥',
+        warning: '⚠️',
+        caution: '🚨'
+      };
+
       elements.push(
-        <blockquote key={`quote-${elements.length}`} className="border-l-2 border-cyan-400/80 bg-cyan-950/20 pl-3 py-1.5 rounded-r-xl my-2 text-gray-300 italic">
-          {currentQuote.map((qLine, qIdx) => (
-            <div key={qIdx}>{formatInlineMarkdown(qLine)}</div>
-          ))}
-        </blockquote>
+        <div 
+          key={`quote-${elements.length}`} 
+          className={`border-l-4 rounded-2xl p-3.5 my-3 text-xs sm:text-[13px] leading-relaxed shadow-lg backdrop-blur-md ${alertStyles[alertType] || alertStyles.note}`}
+        >
+          <div className="flex items-start gap-2.5">
+            <span className="text-base select-none mt-0.5">{alertIcons[alertType] || '💡'}</span>
+            <div className="flex-1 space-y-1">
+              {cleanQuote.split('\n').map((qLine, qIdx) => (
+                <div key={qIdx}>{formatInlineMarkdown(qLine)}</div>
+              ))}
+            </div>
+          </div>
+        </div>
       );
       currentQuote = [];
     }
@@ -291,20 +335,20 @@ function formatBlockMarkdown(text) {
   const flushTable = () => {
     if (currentTable) {
       elements.push(
-        <div key={`table-${elements.length}`} className="my-2.5 overflow-x-auto rounded-xl border border-white/10 bg-[#070913] shadow-lg">
-          <table className="w-full text-left text-xs border-collapse">
+        <div key={`table-${elements.length}`} className="my-3.5 overflow-x-auto rounded-2xl border border-cyan-500/20 bg-[#070915] shadow-xl">
+          <table className="w-full text-left text-xs sm:text-[12.5px] border-collapse">
             <thead>
-              <tr className="bg-white/[0.06] border-b border-white/10 text-cyan-300">
+              <tr className="bg-white/[0.08] border-b border-cyan-500/30 text-cyan-300 font-mono text-[11.5px] tracking-wide">
                 {currentTable.headers.map((h, hIdx) => (
-                  <th key={hIdx} className="px-3 py-2 font-semibold">{formatInlineMarkdown(h.trim())}</th>
+                  <th key={hIdx} className="px-4 py-2.5 font-bold uppercase">{formatInlineMarkdown(h.trim())}</th>
                 ))}
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-white/[0.04]">
               {currentTable.rows.map((r, rIdx) => (
-                <tr key={rIdx} className="border-b border-white/[0.04] hover:bg-white/[0.02]">
+                <tr key={rIdx} className="hover:bg-white/[0.04] transition-colors odd:bg-transparent even:bg-white/[0.015]">
                   {r.map((c, cIdx) => (
-                    <td key={cIdx} className="px-3 py-2 text-gray-200">{formatInlineMarkdown(c.trim())}</td>
+                    <td key={cIdx} className="px-4 py-2.5 text-gray-200 leading-relaxed font-sans">{formatInlineMarkdown(c.trim())}</td>
                   ))}
                 </tr>
               ))}
