@@ -66,16 +66,25 @@ export default function CinematicVideoPlayer({
     }))
   );
 
+  const cleanSubject = (videoData?.prompt || title || 'cinematic futuristic cyberpunk world')
+    .replace(/^(create a cinematic 3d multi-shot video scene for:|generate a video of|generate video of|create a video of|create video of|make a video of|video of|create video for|video scene for:?)/i, '')
+    .trim();
+
+  const shot1Image = videoData?.shots?.[0]?.image || videoData?.url || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', wide establishing vista shot, master anamorphic cinema, 8k')}&width=1280&height=720&seed=10101&model=flux&nologo=true`;
+  const shot2Image = videoData?.shots?.[1]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dynamic speed tracking action angle, volumetric fog, motion blur, 8k')}&width=1280&height=720&seed=20202&model=flux&nologo=true`;
+  const shot3Image = videoData?.shots?.[2]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dramatic intense hero close up shot, rim light, shallow depth of field, 8k')}&width=1280&height=720&seed=30303&model=flux&nologo=true`;
+  const shot4Image = videoData?.shots?.[3]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', epic high altitude drone ascending finale reveal shot, golden hour twilight, 8k')}&width=1280&height=720&seed=40404&model=flux&nologo=true`;
+
   // Normalize shots from videoData into 4 distinct evolving scenes
   const shots = videoData?.shots || [
     {
       id: 1,
       time: '00:00 - 00:03',
-      name: 'Shot 1: Panoramic Establishing Vista',
+      name: 'Shot 1: Panoramic Establishing Sweep',
       camera: '360° Smooth Orbit & Wide Horizon Pan',
       lens: '35mm Master Anamorphic Prime (f/1.4)',
-      image: videoData?.url || videoData?.image || videoData?.generatedImage?.url,
-      prompt: videoData?.prompt || 'Cinematic establishing landscape'
+      image: shot1Image,
+      prompt: `${cleanSubject}, wide establishing vista shot`
     },
     {
       id: 2,
@@ -83,8 +92,8 @@ export default function CinematicVideoPlayer({
       name: 'Shot 2: Dynamic Action Tracking',
       camera: 'Hyper-Dolly Zoom & Speed Ramp Tracking',
       lens: '50mm Cinema Prime (f/1.2)',
-      image: videoData?.url || videoData?.image || videoData?.generatedImage?.url,
-      prompt: videoData?.prompt || 'Dynamic action tracking'
+      image: shot2Image,
+      prompt: `${cleanSubject}, dynamic action tracking shot`
     },
     {
       id: 3,
@@ -92,8 +101,8 @@ export default function CinematicVideoPlayer({
       name: 'Shot 3: Hero Climax Close-Up',
       camera: 'Slow Push-in with Volumetric Glow',
       lens: '85mm Blockbuster Prime (f/1.2)',
-      image: videoData?.url || videoData?.image || videoData?.generatedImage?.url,
-      prompt: videoData?.prompt || 'Dramatic hero climax'
+      image: shot3Image,
+      prompt: `${cleanSubject}, dramatic hero climax`
     },
     {
       id: 4,
@@ -101,8 +110,8 @@ export default function CinematicVideoPlayer({
       name: 'Shot 4: Ascending Crane Finale',
       camera: 'FPV Ascending Crane & Twilight Reveal',
       lens: '24mm Ultra-Wide Cine Prime (f/2.0)',
-      image: videoData?.url || videoData?.image || videoData?.generatedImage?.url,
-      prompt: videoData?.prompt || 'Climactic finale sweep'
+      image: shot4Image,
+      prompt: `${cleanSubject}, climactic finale sweep`
     }
   ];
 
