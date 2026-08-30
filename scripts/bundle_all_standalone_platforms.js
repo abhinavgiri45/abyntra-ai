@@ -259,7 +259,6 @@ namespace GirionixAI
                 {
                     httpListener = new HttpListener();
                     httpListener.Prefixes.Add("http://127.0.0.1:" + p + "/");
-                    httpListener.Prefixes.Add("http://localhost:" + p + "/");
                     httpListener.Start();
                     port = p;
                     break;
@@ -293,7 +292,8 @@ namespace GirionixAI
         {
             try
             {
-                string reqPath = context.Request.Url.LocalPath.TrimStart('/');
+                string rawPath = context.Request.Url.LocalPath;
+                string reqPath = Uri.UnescapeDataString(rawPath).TrimStart('/');
                 if (string.IsNullOrEmpty(reqPath) || reqPath == "/") reqPath = "index.html";
 
                 string localPath = Path.Combine(appDir, reqPath.Replace('/', Path.DirectorySeparatorChar));
@@ -327,7 +327,7 @@ namespace GirionixAI
                     context.Response.ContentLength64 = data.Length;
                     context.Response.StatusCode = 200;
                     context.Response.AddHeader("Access-Control-Allow-Origin", "*");
-                    context.Response.AddHeader("Cache-Control", "public, max-age=86400");
+                    context.Response.AddHeader("Cache-Control", "no-cache");
                     context.Response.OutputStream.Write(data, 0, data.Length);
                     context.Response.OutputStream.Close();
                 }
