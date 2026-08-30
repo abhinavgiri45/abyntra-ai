@@ -360,7 +360,13 @@ export default function App() {
         isOpen={isAboutOpen}
         initialTab={introTab}
         onClose={handleCloseIntro}
-        onLaunchApp={handleCloseIntro}
+        onLaunchApp={(studioTab) => {
+          handleCloseIntro();
+          if (studioTab && typeof studioTab === 'string') {
+            setActiveStudioTab(studioTab);
+            setLayoutMode('split');
+          }
+        }}
         onOpenDownload={() => {
           handleCloseIntro();
           setIsDownloadOpen(true);

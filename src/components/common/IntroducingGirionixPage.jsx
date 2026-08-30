@@ -174,8 +174,9 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
     }
   };
 
-  const handleLaunch = () => {
-    if (onLaunchApp) onLaunchApp();
+  const handleLaunch = (studioTab = null) => {
+    const target = (typeof studioTab === 'string' ? studioTab : null) || interactiveStudio || 'code';
+    if (onLaunchApp) onLaunchApp(target);
     else if (onClose) onClose();
   };
 
@@ -512,8 +513,8 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs flex items-center gap-1.5 shadow-glow-cyan"
+                      onClick={() => handleLaunch('code')}
+                      className="px-4 py-2 rounded-xl bg-cyan-400 hover:bg-cyan-300 text-black font-bold text-xs flex items-center gap-1.5 shadow-glow-cyan cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Open in Full Code Studio</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -522,12 +523,15 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
                     {/* Code Editor View */}
-                    <div className="lg:col-span-7 p-4 rounded-2xl bg-black/80 border border-white/10 font-mono text-xs text-gray-300 space-y-2 overflow-x-auto">
-                      <div className="flex items-center justify-between text-[11px] text-gray-500 pb-2 border-b border-white/5">
-                        <span className="text-cyan-400 font-bold">App.jsx (Live Sandboxed Component)</span>
-                        <span>$O(n)$ Time • $O(1)$ Space</span>
+                    <div className="lg:col-span-7 p-4 rounded-2xl bg-[#050711] border border-cyan-500/20 font-mono text-xs text-gray-300 space-y-2 overflow-x-auto shadow-xl">
+                      <div className="flex items-center justify-between text-[11px] text-gray-400 pb-2 border-b border-white/10">
+                        <span className="text-cyan-400 font-bold flex items-center gap-1.5">
+                          <Code2 className="w-3.5 h-3.5" />
+                          <span>App.jsx (Live Sandboxed Component)</span>
+                        </span>
+                        <span className="text-emerald-400 font-bold">● Compiled</span>
                       </div>
-                      <pre className="text-cyan-200 leading-relaxed overflow-x-auto text-[11px]">
+                      <pre className="text-cyan-200 leading-relaxed overflow-x-auto text-[11px] bg-black/40 p-3 rounded-xl border border-white/5">
 {`import React, { useState } from 'react';
 
 export default function NeuralPulseSphere() {
@@ -546,14 +550,14 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     {/* Live Render Output Preview */}
-                    <div className="lg:col-span-5 p-5 rounded-2xl bg-black/60 border border-cyan-500/20 flex flex-col items-center justify-center text-center space-y-4 shadow-inner">
-                      <span className="text-[10px] font-mono uppercase text-gray-400">Live Virtual DOM Output:</span>
+                    <div className="lg:col-span-5 p-5 rounded-2xl bg-gradient-to-b from-[#090D1F] to-[#050711] border border-cyan-500/30 flex flex-col items-center justify-center text-center space-y-4 shadow-xl">
+                      <span className="text-[10px] font-mono uppercase text-cyan-300 font-bold tracking-wider">Live Virtual DOM Output:</span>
                       <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-rose-500 animate-pulse shadow-glow-cyan flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
                         <span className="text-black font-black text-xs font-mono tracking-wider">GIRIONIX</span>
                       </div>
-                      <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
+                      <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5 bg-emerald-950/40 px-3 py-1.5 rounded-xl border border-emerald-500/30">
                         <CheckCircle2 className="w-4 h-4" />
-                        <span>Compiled in 18ms with 0 defects</span>
+                        <span>Compiled in 18ms • 0 defects</span>
                       </div>
                     </div>
                   </div>
@@ -572,7 +576,7 @@ export default function NeuralPulseSphere() {
                         <h3 className="text-base font-bold text-white flex items-center gap-2">
                           <span>Girionix ScriptMaster Cinema (Screenplay & Story)</span>
                           <span className="px-2 py-0.5 rounded-full bg-indigo-500/20 text-indigo-300 text-[10px] font-mono border border-indigo-500/30">
-                            Fountain & FDX
+                            PDF • DOCX • Fountain
                           </span>
                         </h3>
                         <p className="text-xs text-gray-400 font-mono">Hollywood Formatting • Beat Sheets • YouTube Video Scripts • Table-Read Voice</p>
@@ -580,8 +584,8 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer"
+                      onClick={() => handleLaunch('script')}
+                      className="px-4 py-2 rounded-xl bg-indigo-500 hover:bg-indigo-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Open in Script Studio</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -589,21 +593,24 @@ export default function NeuralPulseSphere() {
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <div className="lg:col-span-7 p-5 rounded-2xl bg-black/80 border border-indigo-500/30 space-y-3 font-mono text-xs">
-                      <div className="text-white font-bold tracking-wide uppercase">INT. QUANTUM LAB - MIDNIGHT</div>
-                      <p className="text-gray-400 leading-relaxed text-[11px]">
+                    <div className="lg:col-span-7 p-5 rounded-2xl bg-[#07091A] border border-indigo-500/30 space-y-3 font-mono text-xs shadow-xl">
+                      <div className="text-white font-bold tracking-wide uppercase flex items-center justify-between border-b border-white/10 pb-2">
+                        <span>INT. QUANTUM LAB - MIDNIGHT</span>
+                        <span className="text-[10px] text-indigo-400">Scene 1/14</span>
+                      </div>
+                      <p className="text-gray-300 leading-relaxed text-[11px]">
                         Rain hammers against reinforced panoramic glass. Neon reflections shimmer across holographic terminal screens.
                       </p>
                       <div className="text-center text-amber-300 font-bold tracking-widest pt-2">KAI</div>
                       <div className="text-center text-gray-400 italic text-[11px]">(whispering urgently)</div>
-                      <p className="text-gray-300 text-center leading-relaxed text-[11px]">
+                      <p className="text-gray-200 text-center leading-relaxed text-[11px]">
                         Vesper, initiate extraction sequence. We have less than forty seconds before defense grids lock on this floor.
                       </p>
                       <div className="text-right text-indigo-400 font-bold tracking-wider pt-2">CUT TO:</div>
                     </div>
 
-                    <div className="lg:col-span-5 p-5 rounded-2xl bg-black/60 border border-indigo-500/20 flex flex-col items-center justify-center text-center space-y-3">
-                      <span className="text-[10px] font-mono uppercase text-gray-400">Screenplay Teleprompter & Table Read:</span>
+                    <div className="lg:col-span-5 p-5 rounded-2xl bg-gradient-to-b from-[#0B0E24] to-[#060815] border border-indigo-500/20 flex flex-col items-center justify-center text-center space-y-3 shadow-xl">
+                      <span className="text-[10px] font-mono uppercase text-indigo-300 font-bold">Screenplay Teleprompter & Table Read:</span>
                       <div className="w-full p-4 rounded-xl bg-gradient-to-br from-indigo-950/60 via-slate-900 to-cyan-950/60 border border-indigo-500/30 space-y-2">
                         <div className="text-xs font-bold text-indigo-300 font-mono flex items-center justify-center gap-1.5">
                           <Volume2 className="w-4 h-4 text-cyan-400 animate-pulse" />
@@ -639,8 +646,8 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      onClick={() => handleLaunch('math')}
+                      className="px-4 py-2 rounded-xl bg-purple-500 hover:bg-purple-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Open in Math Lab</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -648,9 +655,9 @@ export default function NeuralPulseSphere() {
                   </div>
 
                   <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-                    <div className="lg:col-span-7 p-4 rounded-2xl bg-black/80 border border-purple-500/30 space-y-3">
+                    <div className="lg:col-span-7 p-4 rounded-2xl bg-[#080718] border border-purple-500/30 space-y-3 shadow-xl">
                       <div className="text-xs font-bold text-purple-300 font-mono">Formal Riemann Zeta Functional Equation:</div>
-                      <div className="p-4 rounded-xl bg-purple-950/20 border border-purple-500/30 text-center overflow-x-auto touch-scroll">
+                      <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 text-center overflow-x-auto touch-scroll">
                         <KatexMath math="\zeta(s) = 2^s \pi^{s-1} \sin\left(\frac{\pi s}{2}\right) \Gamma(1-s) \zeta(1-s)" block={true} />
                       </div>
                       <div className="text-xs text-gray-300 font-sans leading-relaxed">
@@ -659,8 +666,8 @@ export default function NeuralPulseSphere() {
                       </div>
                     </div>
 
-                    <div className="lg:col-span-5 p-5 rounded-2xl bg-black/60 border border-purple-500/20 flex flex-col items-center justify-center text-center space-y-3">
-                      <span className="text-[10px] font-mono uppercase text-gray-400">3D Complex Surface Projection:</span>
+                    <div className="lg:col-span-5 p-5 rounded-2xl bg-gradient-to-b from-[#0D0B24] to-[#070514] border border-purple-500/20 flex flex-col items-center justify-center text-center space-y-3 shadow-xl">
+                      <span className="text-[10px] font-mono uppercase text-purple-300 font-bold">3D Complex Surface Projection:</span>
                       <div className="w-full h-32 rounded-xl bg-gradient-to-br from-purple-950/60 via-slate-900 to-indigo-950/80 border border-purple-500/30 flex items-center justify-center p-3">
                         <div className="text-center font-mono text-[11px] text-purple-300 space-y-1">
                           <RotateCcw className="w-6 h-6 text-purple-400 mx-auto animate-spin" />
@@ -693,8 +700,8 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      onClick={() => handleLaunch('image')}
+                      className="px-4 py-2 rounded-xl bg-rose-500 hover:bg-rose-400 text-white font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Create in 8K VisionForge</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
@@ -702,19 +709,19 @@ export default function NeuralPulseSphere() {
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3.5">
-                    <div className="p-3 rounded-2xl bg-black/60 border border-rose-500/20 space-y-2 group">
+                    <div className="p-3 rounded-2xl bg-[#0F0814] border border-rose-500/20 space-y-2 group shadow-xl">
                       <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=800&auto=format&fit=crop&q=80" alt="Cyberpunk 8K" className="w-full h-36 object-cover rounded-xl group-hover:scale-105 transition-transform" />
                       <div className="text-xs font-bold text-white">Cyberpunk Neo-Tokyo 8K</div>
                       <div className="text-[10px] font-mono text-rose-300">Volumetric Neon • 8K HDR • 16:9</div>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-black/60 border border-rose-500/20 space-y-2 group">
+                    <div className="p-3 rounded-2xl bg-[#0F0814] border border-rose-500/20 space-y-2 group shadow-xl">
                       <img src="https://images.unsplash.com/photo-1579783900882-c0d3dad7b119?w=800&auto=format&fit=crop&q=80" alt="Himalayan Peak" className="w-full h-36 object-cover rounded-xl group-hover:scale-105 transition-transform" />
                       <div className="text-xs font-bold text-white">Himalayan Golden Dawn</div>
                       <div className="text-[10px] font-mono text-amber-300">Arri Alexa 85mm • Natural Light</div>
                     </div>
 
-                    <div className="p-3 rounded-2xl bg-black/60 border border-rose-500/20 space-y-2 group">
+                    <div className="p-3 rounded-2xl bg-[#0F0814] border border-rose-500/20 space-y-2 group shadow-xl">
                       <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=800&auto=format&fit=crop&q=80" alt="Quantum AI Core" className="w-full h-36 object-cover rounded-xl group-hover:scale-105 transition-transform" />
                       <div className="text-xs font-bold text-white">Quantum Hologram Core</div>
                       <div className="text-[10px] font-mono text-cyan-300">Unreal Engine 5.4 • Sub-Pixel</div>
@@ -743,15 +750,15 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      onClick={() => handleLaunch('video')}
+                      className="px-4 py-2 rounded-xl bg-amber-500 hover:bg-amber-400 text-black font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Direct in MotionLab</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-black to-slate-900 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-6">
+                  <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-950/40 via-[#0B0914] to-slate-900 border border-amber-500/30 flex flex-col sm:flex-row items-center justify-between gap-6 shadow-xl">
                     <div className="space-y-2">
                       <div className="inline-flex items-center gap-1.5 px-3 py-0.5 rounded-md bg-amber-500/20 text-amber-300 text-[11px] font-mono font-bold">
                         <span>4-SHOT CONTINUOUS STORYBOARD SEQUENCE</span>
@@ -762,7 +769,7 @@ export default function NeuralPulseSphere() {
                       </p>
                     </div>
 
-                    <div className="p-4 rounded-xl bg-black/80 border border-white/10 text-center shrink-0 space-y-1">
+                    <div className="p-4 rounded-xl bg-black/80 border border-amber-500/20 text-center shrink-0 space-y-1">
                       <div className="text-xl font-black text-amber-400 font-mono">8K UHD (4320p)</div>
                       <div className="text-[10px] font-mono text-gray-400">120 FPS Hyper-Smooth</div>
                     </div>
@@ -790,21 +797,21 @@ export default function NeuralPulseSphere() {
                     </div>
 
                     <button
-                      onClick={handleLaunch}
-                      className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-black font-bold text-xs flex items-center gap-1.5 shadow-sm"
+                      onClick={() => handleLaunch('audio')}
+                      className="px-4 py-2 rounded-xl bg-teal-500 hover:bg-teal-400 text-black font-bold text-xs flex items-center gap-1.5 shadow-sm cursor-pointer transition-all hover:scale-105"
                     >
                       <span>Compose in AudioLab</span>
                       <ArrowUpRight className="w-3.5 h-3.5" />
                     </button>
                   </div>
 
-                  <div className="p-6 rounded-2xl bg-black/80 border border-teal-500/30 space-y-4">
+                  <div className="p-6 rounded-2xl bg-[#060D12] border border-teal-500/30 space-y-4 shadow-xl">
                     <div className="flex items-center justify-between">
                       <span className="text-xs font-mono text-teal-300 font-bold">Live 48-Band Frequency Spectrum Simulator:</span>
                       <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-teal-500/20 text-teal-300">48kHz Lossless Stereo</span>
                     </div>
 
-                    <div className="h-24 flex items-end justify-between gap-0.5 sm:gap-1 p-2 sm:p-3 bg-[#050B0E] rounded-xl border border-teal-500/20 overflow-hidden">
+                    <div className="h-24 flex items-end justify-between gap-0.5 sm:gap-1 p-2 sm:p-3 bg-[#03070A] rounded-xl border border-teal-500/20 overflow-hidden">
                       {simAudioFreq.map((h, i) => (
                         <div
                           key={i}
