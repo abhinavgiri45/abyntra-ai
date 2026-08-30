@@ -11,7 +11,7 @@ const distDir = path.resolve(rootDir, 'dist');
 const downloadsDir = path.resolve(rootDir, 'public', 'downloads');
 
 console.log('🚀 ========================================================');
-console.log('🚀 ABYNTRA AI - STANDALONE MULTI-PLATFORM PACKAGER');
+console.log('🚀 GIRIONIX AI - STANDALONE MULTI-PLATFORM PACKAGER');
 console.log('🚀 Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)');
 console.log('🚀 ========================================================');
 
@@ -19,7 +19,7 @@ console.log('🚀 ========================================================');
 if (fs.existsSync(downloadsDir)) {
   const existing = fs.readdirSync(downloadsDir);
   for (const f of existing) {
-    if (f.toLowerCase().includes('abyntra') || f.toLowerCase().includes('payload.dat')) {
+    if (f.toLowerCase().includes('girionix') || f.toLowerCase().includes('payload.dat')) {
       try {
         fs.unlinkSync(path.join(downloadsDir, f));
       } catch (_) {}

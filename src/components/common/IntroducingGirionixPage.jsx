@@ -389,7 +389,7 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
 
             <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-white/[0.05] border border-cyan-500/30 text-xs font-mono text-cyan-300 backdrop-blur-md shadow-glow-cyan/20">
               <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-spin" />
-              <span>ABYNTRA AI • THE OMNIPOTENT SOVEREIGN POLYMATH</span>
+              <span>GIRIONIX AI • THE OMNIPOTENT SOVEREIGN POLYMATH</span>
             </div>
 
             <h1 className="text-4xl sm:text-6xl md:text-7xl font-extrabold tracking-tight leading-[1.08] text-white">
@@ -449,7 +449,7 @@ export default function IntroducingGirionixPage({ isOpen, onClose, onLaunchApp, 
           </section>
 
           {/* ========================================================================= */}
-          {/* INTERACTIVE LIVE PLAYGROUND (TEST ABYNTRA AI RIGHT HERE ON THE PAGE!)      */}
+          {/* INTERACTIVE LIVE PLAYGROUND (TEST GIRIONIX AI RIGHT HERE ON THE PAGE!)      */}
           {/* ========================================================================= */}
           <section className="max-w-6xl mx-auto px-6 space-y-6">
             <div className="text-center space-y-2">
@@ -536,7 +536,7 @@ export default function NeuralPulseSphere() {
   return (
     <div className="flex flex-col items-center justify-center p-6 bg-[#04060C] rounded-2xl border border-cyan-500/30">
       <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-rose-500 animate-pulse shadow-glow-cyan flex items-center justify-center">
-        <span className="text-black font-black text-xs">ABYNTRA</span>
+        <span className="text-black font-black text-xs">GIRIONIX</span>
       </div>
       <p className="mt-4 text-xs font-mono text-cyan-300">⚡ 60 FPS AST Hardware Renderer</p>
     </div>
@@ -549,7 +549,7 @@ export default function NeuralPulseSphere() {
                     <div className="lg:col-span-5 p-5 rounded-2xl bg-black/60 border border-cyan-500/20 flex flex-col items-center justify-center text-center space-y-4 shadow-inner">
                       <span className="text-[10px] font-mono uppercase text-gray-400">Live Virtual DOM Output:</span>
                       <div className="w-28 h-28 rounded-full bg-gradient-to-tr from-cyan-400 via-purple-500 to-rose-500 animate-pulse shadow-glow-cyan flex items-center justify-center cursor-pointer hover:scale-110 transition-transform">
-                        <span className="text-black font-black text-xs font-mono tracking-wider">ABYNTRA</span>
+                        <span className="text-black font-black text-xs font-mono tracking-wider">GIRIONIX</span>
                       </div>
                       <div className="text-xs font-mono text-emerald-400 flex items-center gap-1.5">
                         <CheckCircle2 className="w-4 h-4" />
@@ -827,7 +827,7 @@ export default function NeuralPulseSphere() {
           </section>
 
           {/* ========================================================================= */}
-          {/* 6 SOVEREIGN TRUST & PRIVACY PILLARS (WHY MILLIONS TRUST ABYNTRA)          */}
+          {/* 6 SOVEREIGN TRUST & PRIVACY PILLARS (WHY MILLIONS TRUST GIRIONIX)          */}
           {/* ========================================================================= */}
           <section className="max-w-6xl mx-auto px-6 py-8 space-y-8 border-t border-white/10">
             <div className="text-center space-y-2">

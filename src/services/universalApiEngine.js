@@ -1,5 +1,5 @@
 /**
- * ABYNTRA AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
+ * GIRIONIX AI — UNIVERSAL API & DYNAMIC MODEL AUTO-UPGRADE ENGINE
  * Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
  * 
  * Capabilities:
@@ -12,13 +12,13 @@
 import { storage } from './storage';
 
 const STORAGE_KEYS = {
-  UNIVERSAL_PROVIDER: 'abyntra_universal_provider',
-  CUSTOM_BASE_URL: 'abyntra_custom_base_url',
-  CUSTOM_API_KEY: 'abyntra_custom_api_key',
-  AUTO_UPGRADE_ENABLED: 'abyntra_auto_upgrade_enabled',
-  DYNAMIC_MODEL_REGISTRY: 'abyntra_dynamic_model_registry',
-  LAST_MODEL_SYNC: 'abyntra_last_model_sync',
-  UPGRADE_HISTORY: 'abyntra_model_upgrade_history'
+  UNIVERSAL_PROVIDER: 'girionix_universal_provider',
+  CUSTOM_BASE_URL: 'girionix_custom_base_url',
+  CUSTOM_API_KEY: 'girionix_custom_api_key',
+  AUTO_UPGRADE_ENABLED: 'girionix_auto_upgrade_enabled',
+  DYNAMIC_MODEL_REGISTRY: 'girionix_dynamic_model_registry',
+  LAST_MODEL_SYNC: 'girionix_last_model_sync',
+  UPGRADE_HISTORY: 'girionix_model_upgrade_history'
 };
 
 const LEGACY_STORAGE_KEYS = {

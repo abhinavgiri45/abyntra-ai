@@ -145,7 +145,7 @@
 /* Dedicated Flawless Scrollbar for Large Modals and Introduction Page */
 .girionix-custom-scroll,
 .vedic-custom-scroll,
-.abyntra-custom-scroll {
+.girionix-custom-scroll {
   overflow-y: auto !important;
   overflow-x: hidden !important;
   -webkit-overflow-scrolling: touch !important;
@@ -156,21 +156,21 @@
 
 .girionix-custom-scroll::-webkit-scrollbar,
 .vedic-custom-scroll::-webkit-scrollbar,
-.abyntra-custom-scroll::-webkit-scrollbar {
+.girionix-custom-scroll::-webkit-scrollbar {
   width: 10px !important;
   height: 10px !important;
 }
 
 .girionix-custom-scroll::-webkit-scrollbar-track,
 .vedic-custom-scroll::-webkit-scrollbar-track,
-.abyntra-custom-scroll::-webkit-scrollbar-track {
+.girionix-custom-scroll::-webkit-scrollbar-track {
   background: rgba(6, 8, 16, 0.95) !important;
   border-left: 1px solid rgba(255, 255, 255, 0.1) !important;
 }
 
 .girionix-custom-scroll::-webkit-scrollbar-thumb,
 .vedic-custom-scroll::-webkit-scrollbar-thumb,
-.abyntra-custom-scroll::-webkit-scrollbar-thumb {
+.girionix-custom-scroll::-webkit-scrollbar-thumb {
   background: linear-gradient(180deg, #00f0ff, #a855f7) !important;
   border-radius: 9999px !important;
   border: 2px solid rgba(6, 8, 16, 0.95) !important;
@@ -179,7 +179,7 @@
 
 .girionix-custom-scroll::-webkit-scrollbar-thumb:hover,
 .vedic-custom-scroll::-webkit-scrollbar-thumb:hover,
-.abyntra-custom-scroll::-webkit-scrollbar-thumb:hover {
+.girionix-custom-scroll::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(180deg, #38bdf8, #c084fc) !important;
   box-shadow: 0 0 14px rgba(0, 240, 255, 0.8) !important;
 }
