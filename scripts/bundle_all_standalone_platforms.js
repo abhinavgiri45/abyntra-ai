@@ -164,7 +164,7 @@ const psScriptPath = path.join(downloadsDir, 'gen_icons.ps1');
 fs.writeFileSync(psScriptPath, psIconScript, 'utf8');
 execSync(`powershell.exe -ExecutionPolicy Bypass -File "${psScriptPath}"`, { cwd: rootDir, stdio: 'inherit' });
 
-// 2. Generate Win32 Application Security Manifest
+// 2. Generate Win32 Application Security Manifest (Windows 10 & 11 Optimized)
 console.log('\n📦 [2/6] Generating Clean Win32 Application Manifest...');
 const win32Manifest = `<?xml version="1.0" encoding="utf-8"?>
 <assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
@@ -178,14 +178,8 @@ const win32Manifest = `<?xml version="1.0" encoding="utf-8"?>
   </trustInfo>
   <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
     <application>
-      <!-- Windows 10 and Windows 11 -->
+      <!-- Windows 10 and Windows 11 Modern OS -->
       <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}" />
-      <!-- Windows 8.1 -->
-      <supportedOS Id="{1f676c76-80e1-4239-95bb-83d0f6d0da78}" />
-      <!-- Windows 8 -->
-      <supportedOS Id="{4a2f28e3-53b9-4441-ba9c-d69d4a4a6e38}" />
-      <!-- Windows 7 -->
-      <supportedOS Id="{35138b9a-5d96-4fbd-8e2d-a2440225f93a}" />
     </application>
   </compatibility>
 </assembly>`;
@@ -200,15 +194,14 @@ using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Net;
-using System.Net.Sockets;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 
-[assembly: AssemblyTitle("Girionix AI Desktop Workstation")]
-[assembly: AssemblyDescription("Sovereign AI Polymath Desktop Workstation")]
+[assembly: AssemblyTitle("Girionix AI")]
+[assembly: AssemblyDescription("Girionix AI - Think • Create • Explore")]
 [assembly: AssemblyCompany("Abhinav Giri")]
 [assembly: AssemblyProduct("Girionix AI")]
 [assembly: AssemblyCopyright("Copyright © 2026 Abhinav Giri. All Rights Reserved.")]
@@ -222,7 +215,7 @@ namespace GirionixAI
 {
     public class AppRunner : ApplicationContext
     {
-        private TcpListener tcpServer;
+        private HttpListener httpListener;
         private Thread serverThread;
         private bool isRunning = true;
         private string appDir;
@@ -253,33 +246,38 @@ namespace GirionixAI
                 appDir = AppDomain.CurrentDomain.BaseDirectory;
             }
 
-            StartTcpServer();
+            StartHttpServer();
             SetupTrayIcon();
             LaunchChromiumApp();
         }
 
-        private void StartTcpServer()
+        private void StartHttpServer()
         {
-            for (int p = 3456; p < 3556; p++)
+            for (int p = 3456; p < 3600; p++)
             {
                 try
                 {
-                    tcpServer = new TcpListener(IPAddress.Loopback, p);
-                    tcpServer.Start();
+                    httpListener = new HttpListener();
+                    httpListener.Prefixes.Add("http://127.0.0.1:" + p + "/");
+                    httpListener.Prefixes.Add("http://localhost:" + p + "/");
+                    httpListener.Start();
                     port = p;
                     break;
                 }
-                catch { }
+                catch
+                {
+                    if (httpListener != null) { try { httpListener.Close(); } catch { } }
+                }
             }
 
             serverThread = new Thread(() =>
             {
-                while (isRunning)
+                while (isRunning && httpListener != null && httpListener.IsListening)
                 {
                     try
                     {
-                        TcpClient client = tcpServer.AcceptTcpClient();
-                        ThreadPool.QueueUserWorkItem((_) => HandleClient(client));
+                        HttpListenerContext context = httpListener.GetContext();
+                        ThreadPool.QueueUserWorkItem((_) => ProcessRequest(context));
                     }
                     catch
                     {
@@ -291,78 +289,55 @@ namespace GirionixAI
             serverThread.Start();
         }
 
-        private void HandleClient(TcpClient client)
+        private void ProcessRequest(HttpListenerContext context)
         {
             try
             {
-                using (NetworkStream stream = client.GetStream())
+                string reqPath = context.Request.Url.LocalPath.TrimStart('/');
+                if (string.IsNullOrEmpty(reqPath) || reqPath == "/") reqPath = "index.html";
+
+                string localPath = Path.Combine(appDir, reqPath.Replace('/', Path.DirectorySeparatorChar));
+                if (!File.Exists(localPath))
                 {
-                    byte[] buffer = new byte[8192];
-                    int bytesRead = stream.Read(buffer, 0, buffer.Length);
-                    if (bytesRead <= 0) { client.Close(); return; }
-
-                    string req = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    string[] lines = req.Split(new string[] { "\\r\\n", "\\n" }, StringSplitOptions.None);
-                    if (lines.Length == 0) { client.Close(); return; }
-
-                    string[] parts = lines[0].Split(' ');
-                    if (parts.Length < 2) { client.Close(); return; }
-
-                    string reqPath = parts[1];
-                    int qIdx = reqPath.IndexOf('?');
-                    if (qIdx != -1) reqPath = reqPath.Substring(0, qIdx);
-                    reqPath = reqPath.TrimStart('/');
-                    if (string.IsNullOrEmpty(reqPath)) reqPath = "index.html";
-
-                    string localPath = Path.Combine(appDir, reqPath.Replace('/', Path.DirectorySeparatorChar));
-                    if (!File.Exists(localPath))
+                    if (!reqPath.StartsWith("assets") && !reqPath.Contains("."))
                     {
-                        if (!reqPath.StartsWith("assets") && !reqPath.Contains("."))
-                        {
-                            localPath = Path.Combine(appDir, "index.html");
-                        }
+                        localPath = Path.Combine(appDir, "index.html");
                     }
+                }
 
-                    if (File.Exists(localPath))
-                    {
-                        byte[] body = File.ReadAllBytes(localPath);
-                        string ext = Path.GetExtension(localPath).ToLowerInvariant();
-                        string mime = "text/html; charset=utf-8";
-                        if (ext == ".js" || ext == ".mjs") mime = "application/javascript; charset=utf-8";
-                        else if (ext == ".css") mime = "text/css; charset=utf-8";
-                        else if (ext == ".png") mime = "image/png";
-                        else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
-                        else if (ext == ".svg") mime = "image/svg+xml";
-                        else if (ext == ".ico") mime = "image/x-icon";
-                        else if (ext == ".wasm") mime = "application/wasm";
-                        else if (ext == ".woff2") mime = "font/woff2";
-                        else if (ext == ".woff") mime = "font/woff";
-                        else if (ext == ".ttf") mime = "font/ttf";
-                        else if (ext == ".webp") mime = "image/webp";
-                        else if (ext == ".json") mime = "application/json; charset=utf-8";
+                if (File.Exists(localPath))
+                {
+                    byte[] data = File.ReadAllBytes(localPath);
+                    string ext = Path.GetExtension(localPath).ToLowerInvariant();
+                    string mime = "text/html; charset=utf-8";
+                    if (ext == ".js" || ext == ".mjs") mime = "application/javascript; charset=utf-8";
+                    else if (ext == ".css") mime = "text/css; charset=utf-8";
+                    else if (ext == ".png") mime = "image/png";
+                    else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
+                    else if (ext == ".svg") mime = "image/svg+xml";
+                    else if (ext == ".ico") mime = "image/x-icon";
+                    else if (ext == ".wasm") mime = "application/wasm";
+                    else if (ext == ".woff2") mime = "font/woff2";
+                    else if (ext == ".woff") mime = "font/woff";
+                    else if (ext == ".ttf") mime = "font/ttf";
+                    else if (ext == ".webp") mime = "image/webp";
+                    else if (ext == ".json") mime = "application/json; charset=utf-8";
 
-                        string header = "HTTP/1.1 200 OK\\r\\n" +
-                                        "Content-Type: " + mime + "\\r\\n" +
-                                        "Content-Length: " + body.Length + "\\r\\n" +
-                                        "Access-Control-Allow-Origin: *\\r\\n" +
-                                        "Cache-Control: public, max-age=3600\\r\\n" +
-                                        "Connection: close\\r\\n\\r\\n";
-                        byte[] headerBytes = Encoding.UTF8.GetBytes(header);
-                        stream.Write(headerBytes, 0, headerBytes.Length);
-                        stream.Write(body, 0, body.Length);
-                    }
-                    else
-                    {
-                        byte[] notFound = Encoding.UTF8.GetBytes("HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n");
-                        stream.Write(notFound, 0, notFound.Length);
-                    }
+                    context.Response.ContentType = mime;
+                    context.Response.ContentLength64 = data.Length;
+                    context.Response.StatusCode = 200;
+                    context.Response.AddHeader("Access-Control-Allow-Origin", "*");
+                    context.Response.AddHeader("Cache-Control", "public, max-age=86400");
+                    context.Response.OutputStream.Write(data, 0, data.Length);
+                    context.Response.OutputStream.Close();
+                }
+                else
+                {
+                    context.Response.StatusCode = 404;
+                    context.Response.Close();
                 }
             }
             catch { }
-            finally
-            {
-                try { client.Close(); } catch { }
-            }
         }
 
         private void LaunchChromiumApp()
@@ -391,7 +366,7 @@ namespace GirionixAI
             {
                 ProcessStartInfo psi = new ProcessStartInfo();
                 psi.FileName = foundBrowser;
-                psi.Arguments = "--app=" + url + " --user-data-dir=\\"" + localData + "\\" --window-size=1400,900";
+                psi.Arguments = "--app=" + url + " --user-data-dir=\\"" + localData + "\\" --window-size=1400,900 --no-first-run --no-default-browser-check --disable-background-timer-throttling --ignore-gpu-blocklist";
                 psi.UseShellExecute = false;
                 browserProcess = Process.Start(psi);
 
@@ -415,7 +390,7 @@ namespace GirionixAI
         private void SetupTrayIcon()
         {
             trayIcon = new NotifyIcon();
-            trayIcon.Text = "Girionix AI Desktop Workstation";
+            trayIcon.Text = "Girionix AI";
 
             string icoPath = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app.ico");
             if (File.Exists(icoPath))
@@ -439,7 +414,7 @@ namespace GirionixAI
         private void Shutdown()
         {
             isRunning = false;
-            if (tcpServer != null) { try { tcpServer.Stop(); } catch { } }
+            if (httpListener != null) { try { httpListener.Stop(); httpListener.Close(); } catch { } }
             if (trayIcon != null) { trayIcon.Visible = false; trayIcon.Dispose(); }
             Application.Exit();
         }
