@@ -386,16 +386,19 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
     
     // Clean and transform ES6 imports & exports for in-browser Babel execution
     let transformedCode = appFile
-      .replace(/import\s+React\s*,\s*\{([^}]+)\}\s+from\s+['"]react['"];?/g, 'const { $1 } = React;')
-      .replace(/import\s+React\s+from\s+['"]react['"];?/g, '')
-      .replace(/import\s*\{([^}]+)\}\s+from\s+['"]react['"];?/g, 'const { $1 } = React;')
+      .replace(/import\s+React\s*,\s*\{([^}]+)\}\s+from\s+['"][^'"]+['"];?/g, 'const { $1 } = (window.React || {});')
+      .replace(/import\s+React\s+from\s+['"][^'"]+['"];?/g, '')
+      .replace(/import\s*\{([^}]+)\}\s+from\s+['"]react['"];?/g, 'const { $1 } = (window.React || {});')
       .replace(/import\s*\{([^}]+)\}\s+from\s+['"]lucide-react['"];?/g, 'const { $1 } = (window.LucideIcons || {});')
       .replace(/import\s+([A-Za-z0-9_]+)\s+from\s+['"]lucide-react['"];?/g, 'const $1 = (window.LucideIcons && window.LucideIcons.$1) || (window.LucideIcons?.Sparkles);')
+      .replace(/import\s+.*?from\s+['"][^'"]+['"];?/g, '')
       .replace(/export\s+default\s+function\s+([A-Za-z0-9_]+)/g, 'window.__DEFAULT_EXPORT__ = $1; function $1')
       .replace(/export\s+default\s+class\s+([A-Za-z0-9_]+)/g, 'window.__DEFAULT_EXPORT__ = $1; class $1')
       .replace(/export\s+default\s+([A-Za-z0-9_]+);?/g, 'window.__DEFAULT_EXPORT__ = $1;')
       .replace(/export\s+default\s+/g, 'window.__DEFAULT_EXPORT__ = ')
       .replace(/export\s+\{[^}]+\};?/g, '');
+
+    const escapedCode = JSON.stringify(transformedCode);
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -403,9 +406,10 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <!-- Multi-CDN Fallback Engine for React 18 & Babel Standalone -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js" crossorigin></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.5/babel.min.js"></script>
   <style>
     body { background-color: #07080F; color: #FFFFFF; font-family: system-ui, -apple-system, sans-serif; margin: 0; padding: 12px; }
     ::-webkit-scrollbar { width: 6px; height: 6px; }
@@ -413,14 +417,16 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
   </style>
   <script>
     const sendLog = (level, msg) => {
-      window.parent.postMessage({ type: 'GIRIONIX_CONSOLE_LOG', level, message: String(msg) }, '*');
+      try {
+        window.parent.postMessage({ type: 'GIRIONIX_CONSOLE_LOG', level, message: String(msg) }, '*');
+      } catch(_) {}
     };
     console.log = (...args) => sendLog('log', args.join(' '));
     console.warn = (...args) => sendLog('warn', args.join(' '));
     console.error = (...args) => sendLog('error', args.join(' '));
-    window.onerror = (msg) => { sendLog('error', msg); return true; };
+    window.onerror = (msg, url, line) => { sendLog('error', msg + (line ? ' (Line ' + line + ')' : '')); return true; };
 
-    // Universal Lucide React SVG Icon Proxy Generator
+    // Universal Lucide React SVG Icon Proxy Generator (Ensures Zero Icon Crash)
     window.LucideIcons = new Proxy({}, {
       get: function(target, prop) {
         return function DynamicIcon(props) {
@@ -447,34 +453,76 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
 </head>
 <body>
   <div id="root"></div>
-  <script type="text/babel">
-    try {
-      window.__DEFAULT_EXPORT__ = null;
-      ${transformedCode}
+  <script>
+    window.addEventListener('DOMContentLoaded', () => {
+      if (typeof window.React === 'undefined' || typeof window.ReactDOM === 'undefined' || typeof window.Babel === 'undefined') {
+        document.getElementById('root').innerHTML = '<div class="p-6 rounded-2xl bg-amber-950/30 border border-amber-500/30 text-amber-300 font-mono text-xs space-y-2"><div class="font-bold text-sm text-white">⚡ Initializing React 18 Engine...</div><div>Setting up in-memory sandbox.</div></div>';
+        return;
+      }
 
-      let RootComponent = window.__DEFAULT_EXPORT__ || (typeof App !== 'undefined' ? App : (typeof MainExport !== 'undefined' ? MainExport : null));
+      // Pre-inject React Hooks into Global Sandbox Context
+      const { useState, useEffect, useRef, useMemo, useCallback, useContext, useReducer, useId, useLayoutEffect } = window.React;
+      window.useState = useState;
+      window.useEffect = useEffect;
+      window.useRef = useRef;
+      window.useMemo = useMemo;
+      window.useCallback = useCallback;
+      window.useContext = useContext;
+      window.useReducer = useReducer;
+      window.useId = useId;
+      window.useLayoutEffect = useLayoutEffect;
 
-      if (!RootComponent) {
-        // Search global functions for any defined component
-        const candidates = ['App', 'GirionixQuantumSphere', 'StandaloneSnakeGame', 'TitanEngineDashboard', 'Dashboard', 'Component', 'Main'];
-        for (const name of candidates) {
-          if (typeof window[name] === 'function') {
-            RootComponent = window[name];
-            break;
+      // Error Boundary Component
+      class ErrorBoundary extends React.Component {
+        constructor(props) {
+          super(props);
+          this.state = { hasError: false, error: null };
+        }
+        static getDerivedStateFromError(error) {
+          return { hasError: true, error };
+        }
+        componentDidCatch(error, info) {
+          console.error("Component Error: " + error.message);
+        }
+        render() {
+          if (this.state.hasError) {
+            return React.createElement('div', {
+              className: 'p-6 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-rose-200 font-mono text-xs space-y-3'
+            },
+              React.createElement('div', { className: 'font-bold text-sm text-rose-300 flex items-center gap-2' }, '⚠️ Runtime Execution Error'),
+              React.createElement('div', { className: 'p-3 rounded-xl bg-black/60 border border-rose-500/20 text-rose-400 select-all overflow-x-auto' }, this.state.error?.message || 'Unknown error'),
+              React.createElement('div', { className: 'text-[11px] text-gray-400' }, 'Click "Auto-Fix" in the top bar to have Girionix AI resolve this error automatically.')
+            );
           }
+          return this.props.children;
         }
       }
 
-      if (RootComponent) {
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<RootComponent />);
-      } else {
-        document.getElementById('root').innerHTML = '<div class="p-6 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 text-cyan-300 font-mono text-xs text-center space-y-2"><div class="font-bold text-sm text-white">⚡ Component Ready</div><div>Type or paste your React 18 / Tailwind component in the editor.</div></div>';
+      try {
+        const rawCode = ${escapedCode};
+        window.__DEFAULT_EXPORT__ = null;
+
+        // Transform JSX to standard JS with Babel Standalone
+        const transformed = Babel.transform(rawCode, {
+          presets: ['react'],
+          filename: 'App.jsx'
+        }).code;
+
+        // Execute Transformed Code
+        const execFn = new Function('React', 'ReactDOM', 'LucideIcons', 'useState', 'useEffect', 'useRef', 'useMemo', 'useCallback', transformed + '\\nreturn window.__DEFAULT_EXPORT__ || (typeof App !== "undefined" ? App : null) || (typeof SnakeGame !== "undefined" ? SnakeGame : null) || (typeof Dashboard !== "undefined" ? Dashboard : null) || (typeof QuantumVisualizer !== "undefined" ? QuantumVisualizer : null);');
+        const Component = execFn(React, ReactDOM, window.LucideIcons, useState, useEffect, useRef, useMemo, useCallback);
+
+        if (Component) {
+          const root = ReactDOM.createRoot(document.getElementById('root'));
+          root.render(React.createElement(ErrorBoundary, null, React.createElement(Component)));
+        } else {
+          document.getElementById('root').innerHTML = '<div class="p-6 rounded-2xl bg-cyan-950/20 border border-cyan-500/30 text-cyan-300 font-mono text-xs text-center space-y-2"><div class="font-bold text-sm text-white">⚡ Component Ready</div><div>Type or paste your React 18 / Tailwind component in the editor.</div></div>';
+        }
+      } catch (err) {
+        console.error("Syntax / Compile Error: " + err.message);
+        document.getElementById('root').innerHTML = '<div class="p-6 rounded-2xl bg-rose-950/40 border border-rose-500/40 text-rose-200 font-mono text-xs space-y-3"><div class="font-bold text-sm text-rose-300">⚠️ Syntax / Compilation Error</div><div class="p-3 rounded-xl bg-black/60 border border-rose-500/20 text-rose-400 select-all overflow-x-auto">' + err.message + '</div><div class="text-[11px] text-gray-400">Click <strong>Auto-Fix</strong> in the top bar to resolve this syntax error with AI.</div></div>';
       }
-    } catch (err) {
-      console.error(err.message);
-      document.getElementById('root').innerHTML = '<div class="p-4 rounded-xl bg-rose-950/40 border border-rose-500/30 text-rose-300 font-mono text-xs"><strong>Runtime Notice:</strong> ' + err.message + '</div>';
-    }
+    });
   </script>
 </body>
 </html>`;
