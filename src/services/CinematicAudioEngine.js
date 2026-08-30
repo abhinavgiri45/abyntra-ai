@@ -394,6 +394,70 @@ class CinematicAudioEngine {
     }
   }
 
+  /**
+   * Synthesize real-time realistic canine / animal barks via dual vocal tract formants
+   */
+  triggerBark(now = null) {
+    this.init();
+    if (!this.ctx) return;
+    const t = now || this.ctx.currentTime;
+
+    // Double Bark (Woof-Woof rhythm)
+    [0, 0.26].forEach((offset) => {
+      const bt = t + offset;
+      
+      const osc = this.ctx.createOscillator();
+      const oscGain = this.ctx.createGain();
+      const formant1 = this.ctx.createBiquadFilter();
+      const formant2 = this.ctx.createBiquadFilter();
+
+      osc.type = 'sawtooth';
+      osc.frequency.setValueAtTime(340, bt);
+      osc.frequency.exponentialRampToValueAtTime(130, bt + 0.18);
+
+      formant1.type = 'bandpass';
+      formant1.frequency.setValueAtTime(460, bt);
+      formant1.frequency.linearRampToValueAtTime(820, bt + 0.08);
+      formant1.Q.setValueAtTime(3.5, bt);
+
+      formant2.type = 'peaking';
+      formant2.frequency.setValueAtTime(1250, bt);
+      formant2.gain.setValueAtTime(8, bt);
+
+      oscGain.gain.setValueAtTime(0, bt);
+      oscGain.gain.linearRampToValueAtTime(0.5, bt + 0.03);
+      oscGain.gain.exponentialRampToValueAtTime(0.001, bt + 0.22);
+
+      osc.connect(formant1);
+      formant1.connect(formant2);
+      formant2.connect(oscGain);
+      oscGain.connect(this.masterGain);
+
+      osc.start(bt);
+      osc.stop(bt + 0.25);
+      this.activeNodes.push(osc, oscGain, formant1, formant2);
+    });
+  }
+
+  /**
+   * Automatically detect prompt intent and trigger matching sound effects & foley
+   */
+  triggerPromptFoley(promptText, now = null) {
+    if (!promptText) return;
+    const p = promptText.toLowerCase();
+    const t = now || (this.ctx?.currentTime || 0);
+
+    if (/\b(dog|dogs|puppy|bark|barking|canine|hound|wolf|howl)\b/i.test(p)) {
+      this.triggerBark(t);
+    } else if (/\b(laser|lasers|phaser|blaster|sci-fi|cyber|plasma)\b/i.test(p)) {
+      this.triggerSFX({ type: 'laser', freq: 1200, duration: 0.4 });
+    } else if (/\b(explosion|bomb|blast|nuke|dynamite|impact|crash|thunder)\b/i.test(p)) {
+      this.triggerSFX({ type: 'impact', freq: 45, duration: 2.2 });
+    } else if (/\b(car|supercar|race|drift|engine|speed|hypercar|vehicle)\b/i.test(p)) {
+      this.triggerSFX({ type: 'bassdrop', freq: 140, duration: 2.0 });
+    }
+  }
+
   stop() {
     this.isPlaying = false;
     if (this.loopInterval) {

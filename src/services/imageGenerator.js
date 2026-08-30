@@ -196,6 +196,7 @@ export const imageGenerator = {
   }) {
     const cleanSubject = prompt
       .replace(/^(create a cinematic 3d multi-shot video scene for:|generate a video of|generate video of|create a video of|create video of|make a video of|video of|create video for|video scene for:?)/i, '')
+      .replace(/\b(with barking effect|with bark effect|barking effect|barking sound|barking|with sound effect|sound effect|audio effect|sound effects|with audio)\b/gi, '')
       .trim() || prompt;
 
     const baseSeed = Math.floor(Math.random() * 900000) + 1000;

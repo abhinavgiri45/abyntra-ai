@@ -84,10 +84,10 @@ export default function CinematicVideoPlayer({
     .replace(/^(create a cinematic 3d multi-shot video scene for:|generate a video of|generate video of|create a video of|create video of|make a video of|video of|create video for|video scene for:?)/i, '')
     .trim();
 
-  const shot1Image = videoData?.shots?.[0]?.image || videoData?.url || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', wide establishing vista shot, master anamorphic cinema, 8k')}&width=1280&height=720&seed=10101&model=flux&nologo=true`;
-  const shot2Image = videoData?.shots?.[1]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dynamic speed tracking action angle, volumetric fog, motion blur, 8k')}&width=1280&height=720&seed=20202&model=flux&nologo=true`;
-  const shot3Image = videoData?.shots?.[2]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dramatic intense hero close up shot, rim light, shallow depth of field, 8k')}&width=1280&height=720&seed=30303&model=flux&nologo=true`;
-  const shot4Image = videoData?.shots?.[3]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', epic high altitude drone ascending finale reveal shot, golden hour twilight, 8k')}&width=1280&height=720&seed=40404&model=flux&nologo=true`;
+  const shot1Image = videoData?.shots?.[0]?.image || videoData?.url || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', wide establishing vista shot, master anamorphic cinema, 8k')}?width=1280&height=720&seed=10101&model=flux&nologo=true`;
+  const shot2Image = videoData?.shots?.[1]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dynamic speed tracking action angle, volumetric fog, motion blur, 8k')}?width=1280&height=720&seed=20202&model=flux&nologo=true`;
+  const shot3Image = videoData?.shots?.[2]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', dramatic intense hero close up shot, rim light, shallow depth of field, 8k')}?width=1280&height=720&seed=30303&model=flux&nologo=true`;
+  const shot4Image = videoData?.shots?.[3]?.image || `https://image.pollinations.ai/prompt/${encodeURIComponent(cleanSubject + ', epic high altitude drone ascending finale reveal shot, golden hour twilight, 8k')}?width=1280&height=720&seed=40404&model=flux&nologo=true`;
 
   const secPerAct = duration / 4;
 
@@ -148,7 +148,6 @@ export default function CinematicVideoPlayer({
       };
 
       img.onerror = () => {
-        // Retry with cache-busted URL
         const retryImg = new Image();
         retryImg.crossOrigin = 'anonymous';
         retryImg.src = shot.image + '&retry=' + Date.now();
@@ -160,17 +159,18 @@ export default function CinematicVideoPlayer({
     });
   }, [videoData]);
 
-  // Audio Playback Synchronization
+  // Audio Playback Synchronization with Foley
   useEffect(() => {
     if (isPlaying && !isMuted) {
       cinematicAudio.playCinematicScore(videoData?.audioTrack || 'epic');
+      cinematicAudio.triggerPromptFoley(cleanSubject);
     } else {
       cinematicAudio.stop();
     }
     return () => {
       cinematicAudio.stop();
     };
-  }, [isPlaying, isMuted, videoData?.audioTrack]);
+  }, [isPlaying, isMuted, videoData?.audioTrack, cleanSubject]);
 
   // Main 60-120 FPS HTML5 Canvas Cinema Rendering Loop
   useEffect(() => {
@@ -180,7 +180,7 @@ export default function CinematicVideoPlayer({
 
     let localCurrentTime = currentTime;
     const shotCount = shots.length;
-    const secondsPerShot = duration / shotCount; // 3.0 seconds per shot
+    const secondsPerShot = duration / shotCount;
 
     const render = () => {
       const parent = canvas.parentElement;
@@ -197,7 +197,7 @@ export default function CinematicVideoPlayer({
       canvas.height = height;
 
       if (isPlaying) {
-        localCurrentTime += 0.0166 * playbackSpeed; // 60 FPS tick with speed multiplier
+        localCurrentTime += 0.0166 * playbackSpeed;
         if (localCurrentTime >= duration) {
           localCurrentTime = 0;
         }
@@ -211,6 +211,7 @@ export default function CinematicVideoPlayer({
         setActiveShotIdx(currentShotIndex);
         if (isPlaying && !isMuted) {
           cinematicAudio.triggerActTransition(currentShotIndex + 1);
+          cinematicAudio.triggerPromptFoley(cleanSubject);
         }
       }
 
@@ -360,55 +361,58 @@ export default function CinematicVideoPlayer({
         }
 
       } else {
-        // High-Tech Procedural Raymarched Shader Grid for 100% Offline / Buffering
+        // Ultra-Modern Cinematic Neural Frame Preloading State
         const time = localCurrentTime;
         const gradBg = ctx.createLinearGradient(0, 0, width, height);
-        gradBg.addColorStop(0, '#060A1A');
-        gradBg.addColorStop(0.5, '#0B1229');
-        gradBg.addColorStop(1, '#050711');
+        gradBg.addColorStop(0, '#05070E');
+        gradBg.addColorStop(0.5, '#090D1C');
+        gradBg.addColorStop(1, '#04060C');
         ctx.fillStyle = gradBg;
         ctx.fillRect(0, 0, width, height);
 
-        // Dynamic 3D Horizon Grid
-        ctx.strokeStyle = 'rgba(0, 240, 255, 0.15)';
-        ctx.lineWidth = 1;
-        const horizonY = height * 0.55;
+        // Animated Luminous Camera Aperture Rings
+        const cx = width / 2;
+        const cy = height / 2 - 25;
+        const ringRadius = Math.min(width, height) * 0.14;
 
-        for (let x = -width; x < width * 2; x += 50) {
-          ctx.beginPath();
-          ctx.moveTo(width / 2 + Math.sin(time * 0.5) * 40, horizonY);
-          ctx.lineTo(x + ((time * 30) % 50), height);
-          ctx.stroke();
-        }
+        ctx.save();
+        ctx.translate(cx, cy);
+        ctx.rotate(time * 1.5);
+        ctx.strokeStyle = 'rgba(0, 240, 255, 0.4)';
+        ctx.lineWidth = 2.5;
+        ctx.setLineDash([18, 12]);
+        ctx.beginPath();
+        ctx.arc(0, 0, ringRadius, 0, Math.PI * 2);
+        ctx.stroke();
 
-        // Horizontal Grid Lines
-        for (let i = 1; i <= 10; i++) {
-          const y = horizonY + Math.pow(i / 10, 2) * (height - horizonY);
-          ctx.beginPath();
-          ctx.moveTo(0, y);
-          ctx.lineTo(width, y);
-          ctx.stroke();
-        }
+        ctx.rotate(-time * 2.8);
+        ctx.strokeStyle = 'rgba(245, 158, 11, 0.5)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([8, 8]);
+        ctx.beginPath();
+        ctx.arc(0, 0, ringRadius * 0.72, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.restore();
 
-        // Starfield
-        ctx.fillStyle = '#FFFFFF';
-        for (let s = 0; s < 35; s++) {
-          const sx = (s * 37 + time * 10) % width;
-          const sy = (s * 19) % horizonY;
-          ctx.fillRect(sx, sy, 1.5, 1.5);
-        }
-
-        // Center HUD
+        // Glowing Center Camera Glyph
         ctx.fillStyle = '#00F0FF';
-        ctx.font = 'bold 13px monospace';
+        ctx.beginPath();
+        ctx.arc(cx, cy, 6, 0, Math.PI * 2);
+        ctx.fill();
+
+        // Modern Cinematic Telemetry Loading Text
+        ctx.fillStyle = '#FFFFFF';
+        ctx.font = 'bold 14px sans-serif';
         ctx.textAlign = 'center';
-        ctx.fillText(`⚡ GIRIONIX TITAN CINE-ENGINE • SHOT ${currentShotIndex + 1}/4`, width / 2, height / 2 - 15);
-        ctx.fillStyle = '#E2E8F0';
+        ctx.fillText(`🎬 Synthesizing Shot ${currentShotIndex + 1}/4 (${resolution.toUpperCase()} FLUX Cinema)`, cx, cy + ringRadius + 28);
+
+        ctx.fillStyle = '#94A3B8';
         ctx.font = '11px monospace';
-        ctx.fillText(`${shots[currentShotIndex]?.name || 'Synthesizing Scene Motion'}`, width / 2, height / 2 + 10);
+        ctx.fillText(`${shots[currentShotIndex]?.name || '4K FLUX Neural Frame Rendering...'}`, cx, cy + ringRadius + 48);
+
         ctx.fillStyle = '#F59E0B';
         ctx.font = '10px monospace';
-        ctx.fillText(`[ ${resolution.toUpperCase()} • ${fps} • PHYSICAL GPU SHADERS ACTIVE ]`, width / 2, height / 2 + 30);
+        ctx.fillText(`[ ${fps} • Hollywood Camera Tracking Active ]`, cx, cy + ringRadius + 68);
       }
 
       // Volumetric Particle Dust & Embers
