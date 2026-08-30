@@ -54,6 +54,7 @@ class CinematicAudioEngine {
 
   /**
    * Play an evolving cinematic soundtrack (Epic Hollywood, Cyberpunk, Ambient Sci-Fi, Suspense)
+   * Continuous multi-layer scheduler supports infinite 1-Hour continuous generation
    */
   playCinematicScore(theme = 'epic') {
     this.init();
@@ -61,89 +62,110 @@ class CinematicAudioEngine {
     this.isPlaying = true;
     this.currentTheme = theme;
 
-    try {
+    let measureIndex = 0;
+    const scheduleNext = () => {
+      if (!this.isPlaying || !this.ctx) return;
       const now = this.ctx.currentTime;
+      this.playMeasure(theme, now, measureIndex);
+      measureIndex++;
+    };
 
-      if (theme === 'cyberpunk') {
-        this.playCyberpunkScore(now);
-      } else if (theme === 'ambient') {
-        this.playAmbientScore(now);
-      } else if (theme === 'suspense') {
-        this.playSuspenseScore(now);
-      } else {
-        this.playEpicScore(now);
-      }
-    } catch (err) {
-      console.error('Audio synthesizer error:', err);
+    scheduleNext();
+    // Schedule every 3.0 seconds seamlessly
+    this.loopInterval = setInterval(scheduleNext, 2950);
+  }
+
+  playMeasure(theme, now, measureIndex) {
+    if (theme === 'cyberpunk') {
+      this.playCyberpunkMeasure(now, measureIndex);
+    } else if (theme === 'ambient') {
+      this.playAmbientMeasure(now, measureIndex);
+    } else if (theme === 'suspense') {
+      this.playSuspenseMeasure(now, measureIndex);
+    } else {
+      this.playEpicMeasure(now, measureIndex);
     }
   }
 
-  playEpicScore(now) {
-    // 1. Deep Sub-Bass Cinematic Drone (55Hz A1)
-    const subOsc = this.ctx.createOscillator();
+  playEpicMeasure(now, measureIndex) {
+    const chordProgression = [
+      { root: 55, freqs: [220, 261.63, 329.63, 440], name: 'Am' },
+      { root: 43.65, freqs: [174.61, 220, 261.63, 349.23], name: 'F' },
+      { root: 65.41, freqs: [130.81, 164.81, 196.00, 261.63], name: 'C' },
+      { root: 49.00, freqs: [196.00, 246.94, 293.66, 392.00], name: 'G' }
+    ];
+
+    const currentChord = chordProgression[measureIndex % chordProgression.length];
+
+    // 1. Hans Zimmer Sub-Bass Braam Swell (Dual Detuned Sawtooths)
+    const subOsc1 = this.ctx.createOscillator();
+    const subOsc2 = this.ctx.createOscillator();
     const subGain = this.ctx.createGain();
     const subFilter = this.ctx.createBiquadFilter();
 
-    subOsc.type = 'sawtooth';
-    subOsc.frequency.setValueAtTime(55, now);
+    subOsc1.type = 'sawtooth';
+    subOsc1.frequency.setValueAtTime(currentChord.root, now);
+    subOsc2.type = 'sawtooth';
+    subOsc2.frequency.setValueAtTime(currentChord.root * 1.005, now); // Detune 5 cents
+
     subFilter.type = 'lowpass';
-    subFilter.frequency.setValueAtTime(140, now);
+    subFilter.frequency.setValueAtTime(80, now);
+    subFilter.frequency.exponentialRampToValueAtTime(550, now + 1.2);
+    subFilter.frequency.exponentialRampToValueAtTime(120, now + 2.9);
+    subFilter.Q.setValueAtTime(3.5, now);
 
-    subGain.gain.setValueAtTime(0, now);
-    subGain.gain.linearRampToValueAtTime(0.3, now + 1.5);
+    subGain.gain.setValueAtTime(0.01, now);
+    subGain.gain.linearRampToValueAtTime(0.35, now + 0.8);
+    subGain.gain.exponentialRampToValueAtTime(0.01, now + 2.95);
 
-    subOsc.connect(subFilter);
+    subOsc1.connect(subFilter);
+    subOsc2.connect(subFilter);
     subFilter.connect(subGain);
     subGain.connect(this.masterGain);
-    subOsc.start(now);
-    this.activeNodes.push(subOsc, subGain, subFilter);
 
-    // 2. Evolving Warm Pad Chord Swells (Am -> F -> C -> G)
-    const chordFreqs = [
-      [220, 261.63, 329.63], // Am (0-3s)
-      [174.61, 220, 261.63], // F (3-6s)
-      [130.81, 164.81, 196.00], // C (6-9s)
-      [196.00, 246.94, 293.66]  // G (9-12s)
-    ];
+    subOsc1.start(now);
+    subOsc2.start(now);
+    subOsc1.stop(now + 3.0);
+    subOsc2.stop(now + 3.0);
+    this.activeNodes.push(subOsc1, subOsc2, subGain, subFilter);
 
-    chordFreqs.forEach((chord, chordIdx) => {
-      const chordStart = now + chordIdx * 3;
-      chord.forEach((freq) => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
-        const filter = this.ctx.createBiquadFilter();
+    // 2. Hollywood Strings & Brass Polyphony
+    currentChord.freqs.forEach((freq, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const filter = this.ctx.createBiquadFilter();
 
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(freq, chordStart);
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(800, chordStart);
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, now);
 
-        gain.gain.setValueAtTime(0, chordStart);
-        gain.gain.linearRampToValueAtTime(0.08, chordStart + 1.0);
-        gain.gain.linearRampToValueAtTime(0.06, chordStart + 2.5);
-        gain.gain.linearRampToValueAtTime(0, chordStart + 3.2);
+      filter.type = 'lowpass';
+      filter.frequency.setValueAtTime(700 + idx * 200, now);
 
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(this.masterGain);
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.06, now + 0.8);
+      gain.gain.linearRampToValueAtTime(0.04, now + 2.2);
+      gain.gain.linearRampToValueAtTime(0, now + 2.95);
 
-        osc.start(chordStart);
-        osc.stop(chordStart + 3.3);
-        this.activeNodes.push(osc, gain, filter);
-      });
+      osc.connect(filter);
+      filter.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 3.0);
+      this.activeNodes.push(osc, gain, filter);
     });
 
-    // 3. Cinematic Heartbeat / Taiko Drum Pulse
-    for (let t = 0; t < 12; t += 1.5) {
-      const hitTime = now + t;
+    // 3. Cinematic Taiko Drums & 808 Pulses (Beat 1 and Beat 3)
+    [0, 1.5].forEach((offset, idx) => {
+      const hitTime = now + offset;
       const drumOsc = this.ctx.createOscillator();
       const drumGain = this.ctx.createGain();
 
       drumOsc.type = 'sine';
-      drumOsc.frequency.setValueAtTime(110, hitTime);
-      drumOsc.frequency.exponentialRampToValueAtTime(30, hitTime + 0.35);
+      drumOsc.frequency.setValueAtTime(idx === 0 ? 110 : 85, hitTime);
+      drumOsc.frequency.exponentialRampToValueAtTime(32, hitTime + 0.35);
 
-      drumGain.gain.setValueAtTime(0.35, hitTime);
+      drumGain.gain.setValueAtTime(0.4, hitTime);
       drumGain.gain.exponentialRampToValueAtTime(0.001, hitTime + 0.4);
 
       drumOsc.connect(drumGain);
@@ -152,41 +174,89 @@ class CinematicAudioEngine {
       drumOsc.start(hitTime);
       drumOsc.stop(hitTime + 0.45);
       this.activeNodes.push(drumOsc, drumGain);
+    });
+
+    // 4. Evolving High Arpeggio (16th-Note Shimmer)
+    const arpNotes = [currentChord.freqs[0] * 2, currentChord.freqs[1] * 2, currentChord.freqs[2] * 2, currentChord.freqs[3] * 2];
+    for (let step = 0; step < 8; step++) {
+      const arpTime = now + step * 0.375;
+      const arpOsc = this.ctx.createOscillator();
+      const arpGain = this.ctx.createGain();
+
+      arpOsc.type = 'sine';
+      arpOsc.frequency.setValueAtTime(arpNotes[step % arpNotes.length], arpTime);
+
+      arpGain.gain.setValueAtTime(0.035, arpTime);
+      arpGain.gain.exponentialRampToValueAtTime(0.001, arpTime + 0.3);
+
+      arpOsc.connect(arpGain);
+      arpGain.connect(this.masterGain);
+
+      arpOsc.start(arpTime);
+      arpOsc.stop(arpTime + 0.32);
+      this.activeNodes.push(arpOsc, arpGain);
     }
   }
 
-  playCyberpunkScore(now) {
-    // Fast arpeggiated bassline + synth saw lead
+  playCyberpunkMeasure(now, measureIndex) {
     const bassNotes = [110, 130.81, 146.83, 164.81];
-    for (let t = 0; t < 12; t += 0.375) {
-      const hitTime = now + t;
+    const root = bassNotes[measureIndex % bassNotes.length];
+
+    // 1. Detuned Moog Saw Bassline Arp (8 steps per measure)
+    for (let step = 0; step < 8; step++) {
+      const stepTime = now + step * 0.375;
       const osc = this.ctx.createOscillator();
       const gain = this.ctx.createGain();
       const filter = this.ctx.createBiquadFilter();
 
-      const note = bassNotes[Math.floor((t / 0.375) % bassNotes.length)];
+      const note = step % 2 === 0 ? root : root * 1.5;
       osc.type = 'sawtooth';
-      osc.frequency.setValueAtTime(note, hitTime);
+      osc.frequency.setValueAtTime(note, stepTime);
 
       filter.type = 'lowpass';
-      filter.frequency.setValueAtTime(600, hitTime);
-      filter.Q.setValueAtTime(4, hitTime);
+      filter.frequency.setValueAtTime(650, stepTime);
+      filter.frequency.exponentialRampToValueAtTime(200, stepTime + 0.3);
+      filter.Q.setValueAtTime(5, stepTime);
 
-      gain.gain.setValueAtTime(0.2, hitTime);
-      gain.gain.exponentialRampToValueAtTime(0.01, hitTime + 0.3);
+      gain.gain.setValueAtTime(0.22, stepTime);
+      gain.gain.exponentialRampToValueAtTime(0.01, stepTime + 0.32);
 
       osc.connect(filter);
       filter.connect(gain);
       gain.connect(this.masterGain);
 
-      osc.start(hitTime);
-      osc.stop(hitTime + 0.35);
+      osc.start(stepTime);
+      osc.stop(stepTime + 0.35);
       this.activeNodes.push(osc, gain, filter);
     }
+
+    // 2. Vangelis CS-80 Neon Synth Pad
+    const leadOsc = this.ctx.createOscillator();
+    const leadGain = this.ctx.createGain();
+    const leadFilter = this.ctx.createBiquadFilter();
+
+    leadOsc.type = 'sawtooth';
+    leadOsc.frequency.setValueAtTime(root * 2, now);
+    leadOsc.frequency.linearRampToValueAtTime(root * 2.25, now + 2.0);
+
+    leadFilter.type = 'bandpass';
+    leadFilter.frequency.setValueAtTime(1200, now);
+    leadFilter.Q.setValueAtTime(2.0, now);
+
+    leadGain.gain.setValueAtTime(0, now);
+    leadGain.gain.linearRampToValueAtTime(0.08, now + 0.6);
+    leadGain.gain.exponentialRampToValueAtTime(0.001, now + 2.9);
+
+    leadOsc.connect(leadFilter);
+    leadFilter.connect(leadGain);
+    leadGain.connect(this.masterGain);
+
+    leadOsc.start(now);
+    leadOsc.stop(now + 3.0);
+    this.activeNodes.push(leadOsc, leadGain, leadFilter);
   }
 
-  playAmbientScore(now) {
-    // Celestial piano pad & calm strings
+  playAmbientMeasure(now, measureIndex) {
     const ambientChords = [
       [261.63, 329.63, 392.00, 523.25], // Cmaj7
       [220.00, 261.63, 329.63, 440.00], // Am7
@@ -194,54 +264,142 @@ class CinematicAudioEngine {
       [196.00, 246.94, 293.66, 392.00]  // G6
     ];
 
-    ambientChords.forEach((chord, chordIdx) => {
-      const chordStart = now + chordIdx * 3;
-      chord.forEach((freq) => {
-        const osc = this.ctx.createOscillator();
-        const gain = this.ctx.createGain();
+    const chord = ambientChords[measureIndex % ambientChords.length];
 
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(freq, chordStart);
+    // Deep Calm Sub Drone
+    const droneOsc = this.ctx.createOscillator();
+    const droneGain = this.ctx.createGain();
+    droneOsc.type = 'sine';
+    droneOsc.frequency.setValueAtTime(chord[0] / 4, now);
+    droneGain.gain.setValueAtTime(0, now);
+    droneGain.gain.linearRampToValueAtTime(0.18, now + 1.0);
+    droneGain.gain.linearRampToValueAtTime(0, now + 3.0);
+    droneOsc.connect(droneGain);
+    droneGain.connect(this.masterGain);
+    droneOsc.start(now);
+    droneOsc.stop(now + 3.0);
+    this.activeNodes.push(droneOsc, droneGain);
 
-        gain.gain.setValueAtTime(0, chordStart);
-        gain.gain.linearRampToValueAtTime(0.06, chordStart + 1.2);
-        gain.gain.linearRampToValueAtTime(0, chordStart + 3.0);
+    // Ethereal Sine Chords
+    chord.forEach((freq) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
 
-        osc.connect(gain);
-        gain.connect(this.masterGain);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, now);
 
-        osc.start(chordStart);
-        osc.stop(chordStart + 3.1);
-        this.activeNodes.push(osc, gain);
-      });
+      gain.gain.setValueAtTime(0, now);
+      gain.gain.linearRampToValueAtTime(0.06, now + 1.2);
+      gain.gain.linearRampToValueAtTime(0, now + 3.0);
+
+      osc.connect(gain);
+      gain.connect(this.masterGain);
+
+      osc.start(now);
+      osc.stop(now + 3.1);
+      this.activeNodes.push(osc, gain);
     });
   }
 
-  playSuspenseScore(now) {
-    // 808 sub drops + tense ticking
-    for (let t = 0; t < 12; t += 3.0) {
-      const dropTime = now + t;
-      const sub = this.ctx.createOscillator();
-      const subGain = this.ctx.createGain();
+  playSuspenseMeasure(now, measureIndex) {
+    // 1. Deep 808 Sub Drop
+    const sub = this.ctx.createOscillator();
+    const subGain = this.ctx.createGain();
 
-      sub.type = 'sine';
-      sub.frequency.setValueAtTime(90, dropTime);
-      sub.frequency.exponentialRampToValueAtTime(35, dropTime + 1.2);
+    sub.type = 'sine';
+    sub.frequency.setValueAtTime(95, now);
+    sub.frequency.exponentialRampToValueAtTime(32, now + 1.4);
 
-      subGain.gain.setValueAtTime(0.4, dropTime);
-      subGain.gain.exponentialRampToValueAtTime(0.001, dropTime + 1.5);
+    subGain.gain.setValueAtTime(0.45, now);
+    subGain.gain.exponentialRampToValueAtTime(0.001, now + 1.6);
 
-      sub.connect(subGain);
-      subGain.connect(this.masterGain);
+    sub.connect(subGain);
+    subGain.connect(this.masterGain);
 
-      sub.start(dropTime);
-      sub.stop(dropTime + 1.6);
-      this.activeNodes.push(sub, subGain);
+    sub.start(now);
+    sub.stop(now + 1.7);
+    this.activeNodes.push(sub, subGain);
+
+    // 2. High Metallic Clock Ticking
+    for (let t = 0; t < 3.0; t += 0.375) {
+      const tickTime = now + t;
+      const tick = this.ctx.createOscillator();
+      const tickGain = this.ctx.createGain();
+
+      tick.type = 'triangle';
+      tick.frequency.setValueAtTime(1800 + (measureIndex % 2) * 200, tickTime);
+
+      tickGain.gain.setValueAtTime(0.08, tickTime);
+      tickGain.gain.exponentialRampToValueAtTime(0.001, tickTime + 0.08);
+
+      tick.connect(tickGain);
+      tickGain.connect(this.masterGain);
+
+      tick.start(tickTime);
+      tick.stop(tickTime + 0.09);
+      this.activeNodes.push(tick, tickGain);
+    }
+  }
+
+  /**
+   * Trigger Dynamic Cinematic Sound FX for Shot & Act Transitions
+   */
+  triggerActTransition(actIndex = 1) {
+    this.init();
+    if (!this.ctx) return;
+    const now = this.ctx.currentTime;
+
+    if (actIndex === 3) {
+      // Act 3 Hero Climax Impact (Sub-Boom Impact)
+      const impactOsc = this.ctx.createOscillator();
+      const impactGain = this.ctx.createGain();
+      impactOsc.type = 'sine';
+      impactOsc.frequency.setValueAtTime(120, now);
+      impactOsc.frequency.exponentialRampToValueAtTime(25, now + 1.8);
+
+      impactGain.gain.setValueAtTime(0.55, now);
+      impactGain.gain.exponentialRampToValueAtTime(0.001, now + 2.0);
+
+      impactOsc.connect(impactGain);
+      impactGain.connect(this.masterGain);
+      impactOsc.start(now);
+      impactOsc.stop(now + 2.1);
+      this.activeNodes.push(impactOsc, impactGain);
+    } else {
+      // Cinematic Whoosh Riser Transition
+      const riserOsc = this.ctx.createOscillator();
+      const riserGain = this.ctx.createGain();
+      const riserFilter = this.ctx.createBiquadFilter();
+
+      riserOsc.type = 'sawtooth';
+      riserOsc.frequency.setValueAtTime(180, now);
+      riserOsc.frequency.exponentialRampToValueAtTime(880, now + 0.8);
+
+      riserFilter.type = 'bandpass';
+      riserFilter.frequency.setValueAtTime(400, now);
+      riserFilter.frequency.exponentialRampToValueAtTime(1600, now + 0.8);
+      riserFilter.Q.setValueAtTime(3.0, now);
+
+      riserGain.gain.setValueAtTime(0.01, now);
+      riserGain.gain.linearRampToValueAtTime(0.2, now + 0.6);
+      riserGain.gain.exponentialRampToValueAtTime(0.001, now + 0.9);
+
+      riserOsc.connect(riserFilter);
+      riserFilter.connect(riserGain);
+      riserGain.connect(this.masterGain);
+
+      riserOsc.start(now);
+      riserOsc.stop(now + 0.95);
+      this.activeNodes.push(riserOsc, riserGain, riserFilter);
     }
   }
 
   stop() {
     this.isPlaying = false;
+    if (this.loopInterval) {
+      clearInterval(this.loopInterval);
+      this.loopInterval = null;
+    }
     this.activeNodes.forEach(node => {
       try {
         if (node.stop) node.stop();

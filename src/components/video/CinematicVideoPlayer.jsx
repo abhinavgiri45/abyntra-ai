@@ -53,6 +53,7 @@ export default function CinematicVideoPlayer({
   const animFrameRef = useRef(null);
   const loadedImagesRef = useRef([]);
   const containerRef = useRef(null);
+  const lastShotIdxRef = useRef(0);
 
   const formatTimecode = (seconds) => {
     const total = Math.max(0, Math.floor(seconds));
@@ -203,7 +204,13 @@ export default function CinematicVideoPlayer({
 
       // Determine active shot based on 4-shot cycle
       const currentShotIndex = Math.min(Math.floor(localCurrentTime / secondsPerShot), shotCount - 1);
-      setActiveShotIdx(currentShotIndex);
+      if (currentShotIndex !== lastShotIdxRef.current) {
+        lastShotIdxRef.current = currentShotIndex;
+        setActiveShotIdx(currentShotIndex);
+        if (isPlaying && !isMuted) {
+          cinematicAudio.triggerActTransition(currentShotIndex + 1);
+        }
+      }
 
       const shotProgress = (localCurrentTime % secondsPerShot) / secondsPerShot; // 0.0 to 1.0 within current shot
       const img = loadedImagesRef.current[currentShotIndex];
