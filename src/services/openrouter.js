@@ -191,10 +191,6 @@ export const openrouter = {
             stream: true
           };
 
-          if (webSearchEnabled && (config.providerId === 'openrouter' || !config.providerId)) {
-            requestBody.plugins = [{ id: 'web', max_results: 5 }];
-          }
-
           const response = await fetch(endpoint, {
             method: 'POST',
             headers: requestHeaders,
