@@ -47,6 +47,8 @@ export default function CinematicVideoPlayer({
   const [isMuted, setIsMuted] = useState(false);
   const [showDirectorNotes, setShowDirectorNotes] = useState(false);
   const [showParticles, setShowParticles] = useState(true);
+  const [colorLut, setColorLut] = useState('teal-orange'); // 'teal-orange' | 'neon-cyber' | 'kodak-portra' | 'imax-noir'
+  const [enableFilmGrain, setEnableFilmGrain] = useState(true);
   const [loadedImagesMap, setLoadedImagesMap] = useState({});
 
   const canvasRef = useRef(null);
@@ -292,23 +294,70 @@ export default function CinematicVideoPlayer({
 
         ctx.restore();
 
-        // Cinematic Color Grade & Vignette Shader
-        const grad = ctx.createRadialGradient(width / 2, height / 2, height * 0.35, width / 2, height / 2, height * 0.9);
+        // 1. Cinematic Radial Vignette Shader
+        const grad = ctx.createRadialGradient(width / 2, height / 2, height * 0.35, width / 2, height / 2, height * 0.95);
         grad.addColorStop(0, 'rgba(0, 0, 0, 0)');
-        grad.addColorStop(1, 'rgba(0, 0, 0, 0.70)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0.72)');
         ctx.fillStyle = grad;
         ctx.fillRect(0, 0, width, height);
 
-        // Dynamic Atmosphere Lighting & Anamorphic Lens Streak
+        // 2. Cinematic LUT Color Grade Filter
+        ctx.save();
+        if (colorLut === 'teal-orange') {
+          // Teal shadows & Warm gold highlights
+          ctx.globalCompositeOperation = 'soft-light';
+          const lutGrad = ctx.createLinearGradient(0, 0, width, height);
+          lutGrad.addColorStop(0, 'rgba(0, 180, 216, 0.35)'); // Teal
+          lutGrad.addColorStop(1, 'rgba(255, 140, 0, 0.35)'); // Orange
+          ctx.fillStyle = lutGrad;
+          ctx.fillRect(0, 0, width, height);
+        } else if (colorLut === 'neon-cyber') {
+          ctx.globalCompositeOperation = 'color-dodge';
+          const lutGrad = ctx.createLinearGradient(0, 0, width, height);
+          lutGrad.addColorStop(0, 'rgba(0, 240, 255, 0.20)');
+          lutGrad.addColorStop(1, 'rgba(236, 72, 153, 0.20)');
+          ctx.fillStyle = lutGrad;
+          ctx.fillRect(0, 0, width, height);
+        } else if (colorLut === 'kodak-portra') {
+          ctx.globalCompositeOperation = 'multiply';
+          ctx.fillStyle = 'rgba(255, 235, 205, 0.15)';
+          ctx.fillRect(0, 0, width, height);
+        } else if (colorLut === 'imax-noir') {
+          ctx.globalCompositeOperation = 'saturation';
+          ctx.fillStyle = 'rgba(0, 0, 0, 1)';
+          ctx.fillRect(0, 0, width, height);
+        }
+        ctx.restore();
+
+        // 3. Anamorphic Horizontal Blue Streak Lens Flare
         ctx.save();
         ctx.globalCompositeOperation = 'screen';
-        const streakGrad = ctx.createLinearGradient(0, height * 0.45, width, height * 0.45);
-        streakGrad.addColorStop(0, 'rgba(0, 240, 255, 0)');
-        streakGrad.addColorStop(0.5, 'rgba(0, 240, 255, 0.08)');
-        streakGrad.addColorStop(1, 'rgba(0, 240, 255, 0)');
+        const streakY = height * (0.42 + Math.sin(shotProgress * Math.PI) * 0.08);
+        const flareX = width / 2 + panX * 1.5;
+        const streakGrad = ctx.createRadialGradient(flareX, streakY, 2, flareX, streakY, width * 0.6);
+        streakGrad.addColorStop(0, 'rgba(0, 240, 255, 0.35)');
+        streakGrad.addColorStop(0.2, 'rgba(0, 200, 255, 0.15)');
+        streakGrad.addColorStop(1, 'rgba(0, 200, 255, 0)');
         ctx.fillStyle = streakGrad;
-        ctx.fillRect(0, height * 0.44, width, 4);
+        ctx.fillRect(0, streakY - 6, width, 12);
+
+        // Horizontal anamorphic streak beam
+        ctx.fillStyle = 'rgba(0, 240, 255, 0.12)';
+        ctx.fillRect(0, streakY - 1, width, 2);
         ctx.restore();
+
+        // 4. 35mm Dynamic Organic Film Grain
+        if (enableFilmGrain) {
+          ctx.save();
+          ctx.globalCompositeOperation = 'overlay';
+          ctx.fillStyle = 'rgba(255, 255, 255, 0.045)';
+          for (let g = 0; g < 40; g++) {
+            const gx = (Math.sin(g * 19 + localCurrentTime * 40) * 0.5 + 0.5) * width;
+            const gy = (Math.cos(g * 29 + localCurrentTime * 35) * 0.5 + 0.5) * height;
+            ctx.fillRect(gx, gy, Math.random() * 2 + 1, Math.random() * 2 + 1);
+          }
+          ctx.restore();
+        }
 
       } else {
         // High-Tech Procedural Raymarched Shader Grid for 100% Offline / Buffering
@@ -649,7 +698,7 @@ export default function CinematicVideoPlayer({
             </div>
           </div>
 
-          {/* Center Controls: 3D Camera Trajectory Modes */}
+          {/* Center Controls: 3D Camera Trajectory & LUT Optics */}
           <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/5">
             {[
               { id: 'orbit', label: '360° Orbit' },
@@ -660,7 +709,7 @@ export default function CinematicVideoPlayer({
               <button
                 key={mode.id}
                 onClick={() => setCameraMode(mode.id)}
-                className={`px-2.5 py-1 rounded-lg text-[10px] font-mono transition-all ${
+                className={`px-2 py-1 rounded-lg text-[10px] font-mono transition-all ${
                   cameraMode === mode.id
                     ? 'bg-amber-400 text-black font-extrabold shadow-sm'
                     : 'text-gray-400 hover:text-white'
@@ -671,8 +720,42 @@ export default function CinematicVideoPlayer({
             ))}
           </div>
 
-          {/* Right Controls: Director Notes, Export Button, Fullscreen */}
+          {/* LUT Color Grade Selector */}
+          <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10">
+            {[
+              { id: 'teal-orange', label: '🎬 Teal & Orange' },
+              { id: 'neon-cyber', label: '🌆 Neon Cyber' },
+              { id: 'kodak-portra', label: '🎞️ 35mm Film' },
+              { id: 'imax-noir', label: '🖤 Noir' }
+            ].map(lut => (
+              <button
+                key={lut.id}
+                onClick={() => setColorLut(lut.id)}
+                className={`px-1.5 py-0.5 rounded text-[10px] font-mono transition-all ${
+                  colorLut === lut.id
+                    ? 'bg-gradient-to-r from-cyan-400 to-amber-400 text-black font-bold shadow-sm'
+                    : 'text-gray-400 hover:text-white'
+                }`}
+              >
+                {lut.label}
+              </button>
+            ))}
+          </div>
+
+          {/* Right Controls: Film Grain, Particles, Director Notes, Export Button, Fullscreen */}
           <div className="flex items-center gap-2">
+            <button
+              onClick={() => setEnableFilmGrain(!enableFilmGrain)}
+              className={`px-2 py-1.5 rounded-xl border text-[11px] font-mono transition-colors flex items-center gap-1 ${
+                enableFilmGrain 
+                  ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40 font-bold' 
+                  : 'bg-white/[0.04] text-gray-400 hover:text-white border-white/5'
+              }`}
+              title="Toggle 35mm Film Grain Texture"
+            >
+              <span>Grain</span>
+            </button>
+
             <button
               onClick={() => setShowParticles(!showParticles)}
               className={`px-2.5 py-1.5 rounded-xl border text-[11px] font-mono transition-colors flex items-center gap-1 ${
