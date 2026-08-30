@@ -15,7 +15,9 @@ import {
   Palette,
   Eye,
   Camera,
-  X
+  X,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import { DEMO_IMAGE_PROMPTS } from '../../data/demoData';
 import { openrouter } from '../../services/openrouter';
@@ -194,6 +196,72 @@ export default function ImageStudio({ activeModel, isTitanMode = false }) {
     document.body.removeChild(a);
   };
 
+  const handleExportImageProject = () => {
+    const projectData = {
+      version: '1.0.0',
+      type: 'girionix_image_gallery',
+      exportedAt: new Date().toISOString(),
+      prompt,
+      negativePrompt,
+      selectedStyle,
+      selectedModel,
+      aspectRatio,
+      resolution,
+      gallery
+    };
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_VisionGallery_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportImageProject = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        if (file.name.endsWith('.json')) {
+          const data = JSON.parse(evt.target.result);
+          if (data.prompt) setPrompt(data.prompt);
+          if (data.negativePrompt) setNegativePrompt(data.negativePrompt);
+          if (data.selectedStyle) setSelectedStyle(data.selectedStyle);
+          if (data.aspectRatio) setAspectRatio(data.aspectRatio);
+          if (data.resolution) setResolution(data.resolution);
+          if (data.gallery && Array.isArray(data.gallery)) setGallery(data.gallery);
+        } else if (file.type.startsWith('image/')) {
+          // Import image as reference into gallery
+          const dataUrl = evt.target.result;
+          const newImg = {
+            id: `imported-${Date.now()}`,
+            title: file.name.replace(/\.[^/.]+$/, ''),
+            prompt: `Imported Reference: ${file.name}`,
+            url: dataUrl,
+            style: 'Reference Image',
+            aspect: '1:1',
+            model: 'Custom Upload',
+            timestamp: new Date().toLocaleTimeString()
+          };
+          setGallery(prev => [newImg, ...prev]);
+          setActiveTab('gallery');
+        }
+      } catch (err) {
+        console.error('Import error:', err);
+      }
+    };
+    if (file.name.endsWith('.json')) {
+      reader.readAsText(file);
+    } else {
+      reader.readAsDataURL(file);
+    }
+    e.target.value = '';
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#07080F] overflow-y-auto p-4 space-y-4">
       {/* Top Banner Control Hub */}
@@ -217,6 +285,22 @@ export default function ImageStudio({ activeModel, isTitanMode = false }) {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Export & Import Buttons */}
+            <button
+              onClick={handleExportImageProject}
+              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Export Gallery & Recipes (.json)"
+            >
+              <FileDown className="w-3.5 h-3.5 text-rose-400" />
+              <span>Export</span>
+            </button>
+
+            <label className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer">
+              <Upload className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Import</span>
+              <input type="file" accept=".json,image/*" onChange={handleImportImageProject} className="hidden" />
+            </label>
+
             <div className="flex items-center gap-1 bg-black/60 p-1 rounded-xl border border-white/10 text-[10px] font-mono">
               {['1080p', '4k', '8k'].map(r => (
                 <button

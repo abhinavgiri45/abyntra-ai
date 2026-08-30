@@ -17,7 +17,9 @@ import {
   Check,
   RefreshCw,
   Cpu,
-  Crown
+  Crown,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import { cinematicAudio } from '../../services/CinematicAudioEngine';
 
@@ -362,6 +364,66 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
     }
   };
 
+  const handleExportAudioProject = () => {
+    const audioProject = {
+      version: '1.0.0',
+      type: 'girionix_audio_project',
+      exportedAt: new Date().toISOString(),
+      activeSubTab,
+      lyrics: singingLyrics,
+      singer: selectedSinger,
+      scale: selectedScale,
+      tempo: singingTempo,
+      scoreTheme: selectedScoreTheme,
+      voiceText,
+      voicePitch,
+      voiceRate,
+      selectedVoice,
+      stems,
+      mixerKey,
+      mixerBpm,
+      stereoWidth
+    };
+    const blob = new Blob([JSON.stringify(audioProject, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_AudioCraft_Project_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportAudioProject = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.activeSubTab) setActiveSubTab(data.activeSubTab);
+        if (data.lyrics) setSingingLyrics(data.lyrics);
+        if (data.singer) setSelectedSinger(data.singer);
+        if (data.scale) setSelectedScale(data.scale);
+        if (data.tempo) setSingingTempo(data.tempo);
+        if (data.scoreTheme) setSelectedScoreTheme(data.scoreTheme);
+        if (data.voiceText) setVoiceText(data.voiceText);
+        if (data.voicePitch) setVoicePitch(data.voicePitch);
+        if (data.voiceRate) setVoiceRate(data.voiceRate);
+        if (data.selectedVoice) setSelectedVoice(data.selectedVoice);
+        if (data.stems) setStems(data.stems);
+        if (data.mixerKey) setMixerKey(data.mixerKey);
+        if (data.mixerBpm) setMixerBpm(data.mixerBpm);
+        if (data.stereoWidth) setStereoWidth(data.stereoWidth);
+      } catch (err) {
+        console.error('Invalid audio project JSON:', err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#060812] overflow-y-auto p-4 space-y-4">
       {/* Studio Header Card */}
@@ -384,8 +446,25 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
             </div>
           </div>
 
-          {/* Sub-Tab Navigation Switcher */}
-          <div className="flex items-center gap-1.5 p-1 bg-black/60 rounded-2xl border border-white/10 flex-wrap">
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Export & Import Buttons */}
+            <button
+              onClick={handleExportAudioProject}
+              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Export AudioCraft Project (.json)"
+            >
+              <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+              <span>Export</span>
+            </button>
+
+            <label className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer">
+              <Upload className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Import</span>
+              <input type="file" accept=".json" onChange={handleImportAudioProject} className="hidden" />
+            </label>
+
+            {/* Sub-Tab Navigation Switcher */}
+            <div className="flex items-center gap-1.5 p-1 bg-black/60 rounded-2xl border border-white/10 flex-wrap">
             <button
               onClick={() => setActiveSubTab('singing')}
               className={`px-3 py-1.5 rounded-xl text-xs font-mono transition-all flex items-center gap-1.5 ${
@@ -447,6 +526,7 @@ export default function AudioStudio({ activeModel, isTitanMode = false }) {
             </button>
           </div>
         </div>
+      </div>
 
         {/* Real-time Audio Spectrum Visualizer */}
         <div className="relative rounded-2xl overflow-hidden border border-emerald-500/20 bg-[#060812]">

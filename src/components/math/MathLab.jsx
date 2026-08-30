@@ -7,7 +7,9 @@ import {
   Calculator,
   Rotate3d,
   Cpu,
-  Zap
+  Zap,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import KatexMath from '../common/KatexMath';
 import Surface3DPlotter from './Surface3DPlotter';
@@ -250,10 +252,59 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
     }
   };
 
+  const handleExportMathSession = () => {
+    const mathData = {
+      version: '1.0.0',
+      type: 'girionix_math_session',
+      exportedAt: new Date().toISOString(),
+      problem: selectedProblem,
+      customEquation,
+      solvedDerivation,
+      activeFunction,
+      plotRange,
+      plotMode
+    };
+    const blob = new Blob([JSON.stringify(mathData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_MathLab_Session_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportMathSession = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const text = evt.target.result;
+        if (file.name.endsWith('.json')) {
+          const data = JSON.parse(text);
+          if (data.problem) setSelectedProblem(data.problem);
+          if (data.customEquation) setCustomEquation(data.customEquation);
+          if (data.solvedDerivation) setSolvedDerivation(data.solvedDerivation);
+          if (data.activeFunction) setActiveFunction(data.activeFunction);
+          if (data.plotRange) setPlotRange(data.plotRange);
+          if (data.plotMode) setPlotMode(data.plotMode);
+        } else {
+          setCustomEquation(text);
+        }
+      } catch (err) {
+        console.error('Import math error:', err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#07080F] overflow-y-auto p-4 space-y-4">
-      {/* Top Presets */}
-      <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 flex-shrink-0">
+      {/* Top Presets & Import/Export */}
+      <div className="flex items-center justify-between gap-2 overflow-x-auto pb-1 flex-shrink-0 flex-wrap">
         <div className="flex items-center gap-1.5 overflow-x-auto">
           {DEMO_MATH_PROBLEMS.map((problem) => (
             <button
@@ -272,6 +323,24 @@ export default function MathLab({ activeModel, isTitanMode = false }) {
               <span>{problem.title.split(':')[0]}</span>
             </button>
           ))}
+        </div>
+
+        {/* Export & Import Buttons */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleExportMathSession}
+            className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+            title="Export Math Session (.json)"
+          >
+            <FileDown className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Export</span>
+          </button>
+
+          <label className="px-2.5 py-1 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer">
+            <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Import</span>
+            <input type="file" accept=".json,.tex,.txt" onChange={handleImportMathSession} className="hidden" />
+          </label>
         </div>
       </div>
 

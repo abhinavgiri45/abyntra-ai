@@ -21,7 +21,9 @@ import {
   RotateCcw,
   ClipboardPaste,
   Wand2,
-  TestTube
+  TestTube,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import { DEMO_CODE_PROJECT } from '../../data/demoData';
 import { openrouter } from '../../services/openrouter';
@@ -273,6 +275,58 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
     }
   };
 
+  const handleExportCodeProject = () => {
+    const projectData = {
+      version: '1.0.0',
+      type: 'girionix_code_project',
+      exportedAt: new Date().toISOString(),
+      activeFileName,
+      files: project.files
+    };
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_Project_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportCodeProject = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const text = evt.target.result;
+        if (file.name.endsWith('.json')) {
+          const data = JSON.parse(text);
+          if (data.files && Array.isArray(data.files)) {
+            setProject({ files: data.files });
+            if (data.activeFileName) setActiveFileName(data.activeFileName);
+            return;
+          }
+        }
+        // If single code file (e.g. App.jsx, script.js, Component.tsx, main.py)
+        const updatedFiles = [...project.files];
+        const existingIdx = updatedFiles.findIndex(f => f.name === file.name);
+        if (existingIdx >= 0) {
+          updatedFiles[existingIdx].content = text;
+        } else {
+          updatedFiles.push({ name: file.name, content: text });
+        }
+        setProject({ files: updatedFiles });
+        setActiveFileName(file.name);
+      } catch (err) {
+        console.error('Import error:', err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   const handleAiModify = async () => {
     if (!aiPrompt.trim() || isGenerating) return;
     setIsGenerating(true);
@@ -451,6 +505,22 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
               </button>
             ))}
           </div>
+
+          {/* Export & Import File / Project Buttons */}
+          <button
+            onClick={handleExportCodeProject}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer"
+            title="Export Project (.json)"
+          >
+            <FileDown className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Export</span>
+          </button>
+
+          <label className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer">
+            <Upload className="w-3.5 h-3.5 text-emerald-400" />
+            <span>Import</span>
+            <input type="file" accept=".json,.jsx,.js,.tsx,.ts,.py,.html,.css" onChange={handleImportCodeProject} className="hidden" />
+          </label>
         </div>
 
         {/* Viewport switcher & 1-Click Code Actions */}

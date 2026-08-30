@@ -25,7 +25,10 @@ import {
   SlidersHorizontal,
   Flame,
   Palette,
-  Clock
+  Clock,
+  Upload,
+  FileDown,
+  FolderOpen
 } from 'lucide-react';
 import { imageGenerator } from '../../services/imageGenerator';
 import CinematicVideoPlayer from './CinematicVideoPlayer';
@@ -147,6 +150,56 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
     }
   };
 
+  const handleExportProject = () => {
+    const projectData = {
+      version: '1.0.0',
+      type: 'girionix_video_project',
+      exportedAt: new Date().toISOString(),
+      prompt: customPrompt,
+      cameraMotion,
+      cinematicStyle,
+      resolution,
+      aspectRatio,
+      fps,
+      duration,
+      audioGenre,
+      videoData: activeVideoData
+    };
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_MotionLab_Project_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportProject = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const data = JSON.parse(evt.target.result);
+        if (data.prompt) setCustomPrompt(data.prompt);
+        if (data.cameraMotion) setCameraMotion(data.cameraMotion);
+        if (data.cinematicStyle) setCinematicStyle(data.cinematicStyle);
+        if (data.resolution) setResolution(data.resolution);
+        if (data.aspectRatio) setAspectRatio(data.aspectRatio);
+        if (data.fps) setFps(data.fps);
+        if (data.duration) setDuration(data.duration);
+        if (data.audioGenre) setAudioGenre(data.audioGenre);
+        if (data.videoData) setActiveVideoData(data.videoData);
+      } catch (err) {
+        console.error('Invalid video project JSON:', err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   return (
     <div className="flex-1 flex flex-col h-full bg-[#07080F] overflow-y-auto p-4 space-y-4 font-sans">
       {/* Top Director Controls Hub */}
@@ -170,10 +223,25 @@ export default function VideoStudio({ activeModel, isAppInstalled = false, isTit
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="text-[10px] font-mono text-gray-400 uppercase">Engine Model:</span>
-            <span className="px-3 py-1 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5">
+            {/* Export & Import Buttons */}
+            <button
+              onClick={handleExportProject}
+              className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer"
+              title="Export MotionLab Project (.json)"
+            >
+              <FileDown className="w-3.5 h-3.5 text-amber-400" />
+              <span>Export</span>
+            </button>
+
+            <label className="px-3 py-1.5 rounded-xl bg-white/5 hover:bg-white/10 text-gray-300 hover:text-white border border-white/10 text-xs font-mono flex items-center gap-1.5 transition-colors cursor-pointer">
+              <Upload className="w-3.5 h-3.5 text-cyan-400" />
+              <span>Import</span>
+              <input type="file" accept=".json" onChange={handleImportProject} className="hidden" />
+            </label>
+
+            <span className="px-3 py-1.5 rounded-xl bg-amber-500/10 text-amber-300 border border-amber-500/30 text-xs font-mono font-bold flex items-center gap-1.5">
               <Clapperboard className="w-3.5 h-3.5 text-amber-400" />
-              <span>{isTitanMode ? '⚡ Titan CineMotion Core' : 'Girionix CineMotion 4K/8K Max'}</span>
+              <span>{isTitanMode ? '⚡ Titan Core' : 'CineMotion 8K'}</span>
             </span>
           </div>
         </div>

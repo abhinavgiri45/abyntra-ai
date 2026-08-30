@@ -27,7 +27,9 @@ import {
   BookOpen,
   User,
   Quote,
-  Sparkle
+  Sparkle,
+  Upload,
+  FileDown
 } from 'lucide-react';
 import { openrouter } from '../../services/openrouter';
 import { localNeuralEngine } from '../../services/localNeuralEngine';
@@ -268,6 +270,41 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
     readNext();
   };
 
+  const handleExportScript = () => {
+    const blob = new Blob([scriptText], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Screenplay_${genre}_${Date.now()}.fountain`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportScript = (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        const text = evt.target.result;
+        if (file.name.endsWith('.json')) {
+          const data = JSON.parse(text);
+          if (data.scriptText) setScriptText(data.scriptText);
+          if (data.genre) setGenre(data.genre);
+          if (data.logline) setLogline(data.logline);
+        } else {
+          setScriptText(text);
+        }
+      } catch (err) {
+        console.error('Import script error:', err);
+      }
+    };
+    reader.readAsText(file);
+    e.target.value = '';
+  };
+
   useEffect(() => {
     return () => {
       speech.stopSpeaking();
@@ -283,8 +320,24 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
         <div className="flex items-center gap-1.5 flex-wrap">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-bold">
             <ScrollText className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Screenplay & Story Studio</span>
+            <span>Screenplay Studio</span>
           </div>
+
+          {/* Export & Import Buttons */}
+          <button
+            onClick={handleExportScript}
+            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer"
+            title="Export Screenplay (.fountain)"
+          >
+            <FileDown className="w-3.5 h-3.5 text-indigo-400" />
+            <span>Export</span>
+          </button>
+
+          <label className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer">
+            <Upload className="w-3.5 h-3.5 text-cyan-400" />
+            <span>Import</span>
+            <input type="file" accept=".fountain,.txt,.json" onChange={handleImportScript} className="hidden" />
+          </label>
 
           <div className="hidden sm:flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10">
             <button
