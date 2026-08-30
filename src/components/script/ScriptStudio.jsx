@@ -270,16 +270,154 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
     readNext();
   };
 
-  const handleExportScript = () => {
-    const blob = new Blob([scriptText], { type: 'text/plain;charset=utf-8' });
+  const [showExportMenu, setShowExportMenu] = useState(false);
+
+  // 1. Export as Standard PDF Document (.pdf) via print stylesheet window
+  const handleExportPDF = () => {
+    const printWin = window.open('', '_blank', 'width=850,height=1100');
+    if (!printWin) return;
+
+    const formattedHtml = lines.map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '<div class="blank-line">&nbsp;</div>';
+      if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.') || trimmed.startsWith('I/E.')) {
+        return `<div class="slugline">${trimmed}</div>`;
+      }
+      if (trimmed.startsWith('FADE') || trimmed.startsWith('CUT TO:') || trimmed.endsWith('TO:')) {
+        return `<div class="transition">${trimmed}</div>`;
+      }
+      if (/^[A-Z0-9\s()'. -]+$/.test(trimmed) && trimmed.length < 35 && !trimmed.includes('.')) {
+        return `<div class="character">${trimmed}</div>`;
+      }
+      if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+        return `<div class="parenthetical">${trimmed}</div>`;
+      }
+      return `<div class="action-or-dialogue">${trimmed}</div>`;
+    }).join('\n');
+
+    const htmlContent = `<!DOCTYPE html>
+<html>
+<head>
+  <title>Screenplay_${Date.now()}</title>
+  <style>
+    @page { size: letter; margin: 1in 1in 1in 1.5in; }
+    body {
+      font-family: 'Courier Prime', 'Courier New', Courier, monospace;
+      font-size: 12pt;
+      line-height: 1.0;
+      color: #000000;
+      background: #FFFFFF;
+      margin: 0;
+      padding: 20px;
+    }
+    .slugline { font-weight: bold; text-transform: uppercase; margin-top: 18pt; margin-bottom: 6pt; }
+    .action-or-dialogue { margin-bottom: 6pt; text-align: justify; max-width: 60ch; }
+    .character { margin-left: 2.2in; margin-top: 12pt; margin-bottom: 0; text-transform: uppercase; }
+    .parenthetical { margin-left: 1.6in; max-width: 25ch; margin-bottom: 0; }
+    .transition { margin-left: 4.0in; text-transform: uppercase; margin-top: 12pt; margin-bottom: 12pt; font-weight: bold; }
+    .blank-line { height: 12pt; }
+  </style>
+</head>
+<body>
+  ${formattedHtml}
+  <script>
+    window.onload = function() { window.print(); }
+  </script>
+</body>
+</html>`;
+
+    printWin.document.open();
+    printWin.document.write(htmlContent);
+    printWin.document.close();
+    setShowExportMenu(false);
+  };
+
+  // 2. Export as Word Document (.docx / .doc)
+  const handleExportDOCX = (ext = 'docx') => {
+    const formattedHtml = lines.map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '<p style="margin:0; font-size:12pt;">&nbsp;</p>';
+      if (trimmed.startsWith('INT.') || trimmed.startsWith('EXT.')) {
+        return `<p style="margin:18pt 0 6pt 0; font-weight:bold; font-family:'Courier New', monospace; font-size:12pt; text-transform:uppercase;">${trimmed}</p>`;
+      }
+      if (/^[A-Z0-9\s()'. -]+$/.test(trimmed) && trimmed.length < 35 && !trimmed.includes('.')) {
+        return `<p style="margin:12pt 0 0 2.2in; font-weight:bold; font-family:'Courier New', monospace; font-size:12pt; text-transform:uppercase;">${trimmed}</p>`;
+      }
+      if (trimmed.startsWith('(') && trimmed.endsWith(')')) {
+        return `<p style="margin:0 0 0 1.6in; font-style:italic; font-family:'Courier New', monospace; font-size:12pt;">${trimmed}</p>`;
+      }
+      return `<p style="margin:0 0 6pt 0; font-family:'Courier New', monospace; font-size:12pt;">${trimmed}</p>`;
+    }).join('\n');
+
+    const docContent = `<!DOCTYPE html>
+<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+<head>
+  <meta charset='utf-8'>
+  <title>Girionix Screenplay</title>
+  <style>body { font-family: 'Courier New', Courier, monospace; font-size: 12pt; }</style>
+</head>
+<body>${formattedHtml}</body>
+</html>`;
+
+    const blob = new Blob(['\ufeff' + docContent], { type: 'application/msword;charset=utf-8' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Screenplay_${genre}_${Date.now()}.fountain`;
+    a.download = `Screenplay_${Date.now()}.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
+    setShowExportMenu(false);
+  };
+
+  // 3. Export as Plain Text (.txt)
+  const handleExportTXT = () => {
+    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Screenplay_${Date.now()}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportMenu(false);
+  };
+
+  // 4. Export as Fountain Screenplay (.fountain)
+  const handleExportFountain = () => {
+    const blob = new Blob([scriptContent], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Screenplay_${Date.now()}.fountain`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportMenu(false);
+  };
+
+  // 5. Export as Project JSON (.json)
+  const handleExportJSON = () => {
+    const projectData = {
+      version: '1.0.0',
+      type: 'girionix_screenplay_project',
+      exportedAt: new Date().toISOString(),
+      scriptContent,
+      stats: { wordCount, estimatedPages, estimatedMinutes }
+    };
+    const blob = new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `Girionix_Screenplay_${Date.now()}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowExportMenu(false);
   };
 
   const handleImportScript = (e) => {
@@ -291,11 +429,11 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
         const text = evt.target.result;
         if (file.name.endsWith('.json')) {
           const data = JSON.parse(text);
-          if (data.scriptText) setScriptText(data.scriptText);
-          if (data.genre) setGenre(data.genre);
-          if (data.logline) setLogline(data.logline);
+          if (data.scriptContent) setScriptContent(data.scriptContent);
+          else if (data.scriptText) setScriptContent(data.scriptText);
+          else setScriptContent(text);
         } else {
-          setScriptText(text);
+          setScriptContent(text);
         }
       } catch (err) {
         console.error('Import script error:', err);
@@ -313,9 +451,9 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
   }, []);
 
   return (
-    <div className="flex-1 flex flex-col h-full bg-[#060813] text-gray-200 overflow-hidden font-sans select-none">
+    <div className="flex-1 flex flex-col h-full bg-[#060813] text-gray-200 overflow-hidden font-sans select-none" onClick={() => setShowExportMenu(false)}>
       {/* Top Studio Control Bar */}
-      <div className="p-2.5 sm:p-3 border-b border-white/[0.08] bg-[#090C1A]/95 backdrop-blur-xl flex items-center justify-between gap-3 text-xs font-mono flex-wrap">
+      <div className="p-2.5 sm:p-3 border-b border-white/[0.08] bg-[#090C1A]/95 backdrop-blur-xl flex items-center justify-between gap-3 text-xs font-mono flex-wrap" onClick={(e) => e.stopPropagation()}>
         {/* Left: Branding & Formatting Toolbar */}
         <div className="flex items-center gap-1.5 flex-wrap">
           <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-indigo-500/15 text-indigo-300 border border-indigo-500/30 font-bold">
@@ -323,20 +461,71 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
             <span>Screenplay Studio</span>
           </div>
 
-          {/* Export & Import Buttons */}
-          <button
-            onClick={handleExportScript}
-            className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer"
-            title="Export Screenplay (.fountain)"
-          >
-            <FileDown className="w-3.5 h-3.5 text-indigo-400" />
-            <span>Export</span>
-          </button>
+          {/* Export Dropdown Menu Button */}
+          <div className="relative">
+            <button
+              onClick={() => setShowExportMenu(!showExportMenu)}
+              className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 hover:text-white border border-indigo-500/40 text-xs font-mono transition-all cursor-pointer"
+              title="Export Screenplay (.pdf, .docx, .doc, .txt, .fountain)"
+            >
+              <FileDown className="w-3.5 h-3.5 text-indigo-400" />
+              <span>Export</span>
+              <ChevronDown className="w-3 h-3 text-indigo-300" />
+            </button>
 
+            {showExportMenu && (
+              <div className="absolute left-0 mt-1.5 w-52 rounded-xl bg-[#0D1126] border border-white/10 shadow-2xl p-1.5 z-50 flex flex-col gap-0.5 text-xs font-mono backdrop-blur-2xl">
+                <button
+                  onClick={handleExportPDF}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-rose-400 font-bold">PDF</span>
+                  <span>Print / PDF Document (.pdf)</span>
+                </button>
+                <button
+                  onClick={() => handleExportDOCX('docx')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-blue-400 font-bold">DOCX</span>
+                  <span>Word Document (.docx)</span>
+                </button>
+                <button
+                  onClick={() => handleExportDOCX('doc')}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-cyan-400 font-bold">DOC</span>
+                  <span>Word 97-2003 (.doc)</span>
+                </button>
+                <button
+                  onClick={handleExportTXT}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-emerald-400 font-bold">TXT</span>
+                  <span>Plain Text (.txt)</span>
+                </button>
+                <button
+                  onClick={handleExportFountain}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-purple-400 font-bold">FTN</span>
+                  <span>Fountain (.fountain)</span>
+                </button>
+                <button
+                  onClick={handleExportJSON}
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-indigo-500/20 text-gray-200 hover:text-white text-left transition-colors"
+                >
+                  <span className="text-amber-400 font-bold">JSON</span>
+                  <span>Project Data (.json)</span>
+                </button>
+              </div>
+            )}
+          </div>
+
+          {/* Import Button */}
           <label className="flex items-center gap-1 px-2.5 py-1 rounded-lg bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-xs font-mono transition-all cursor-pointer">
             <Upload className="w-3.5 h-3.5 text-cyan-400" />
             <span>Import</span>
-            <input type="file" accept=".fountain,.txt,.json" onChange={handleImportScript} className="hidden" />
+            <input type="file" accept=".fountain,.txt,.json,.doc,.docx" onChange={handleImportScript} className="hidden" />
           </label>
 
           <div className="hidden sm:flex items-center gap-1 bg-black/50 p-1 rounded-xl border border-white/10">
@@ -345,7 +534,7 @@ Output ONLY the screenplay scene text without markdown backticks or conversation
               className="px-2 py-0.5 rounded-lg hover:bg-white/10 text-gray-300 hover:text-white transition-colors"
               title="Insert Scene Heading"
             >
-              Scene (INT/EXT)
+              Scene
             </button>
             <button
               onClick={() => insertElement('', 'Action description here...', '\n\n')}
