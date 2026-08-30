@@ -545,6 +545,9 @@ ${lengthRule}
       { role: 'user', content: prompt }
     ];
 
+    const masterKey = storage.getApiKey();
+    const activeKey = apiKey || masterKey;
+
     // Build ordered candidate model list for automatic seamless cascading
     const candidateModels = [];
     const targetModel = universalApiEngine.resolveTargetModel('girionix-lite');
@@ -553,12 +556,10 @@ ${lengthRule}
     // If using OpenRouter or default gateway, add verified high-parameter free models
     if (config.providerId === 'openrouter' || !config.providerId) {
       const freeVoiceCascade = [
-        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
-        'nvidia/nemotron-3-ultra-550b-a55b:free',
         'minimax/minimax-m3:free',
+        'nvidia/nemotron-3-nano-omni-30b-a3b-reasoning:free',
         'cohere/north-mini-code:free',
-        'dots-studio/dots-3-note-preview:free',
-        'google/gemini-2.0-flash-001'
+        'dots-studio/dots-3-note-preview:free'
       ];
       freeVoiceCascade.forEach(m => {
         if (!candidateModels.includes(m)) candidateModels.push(m);
@@ -566,7 +567,7 @@ ${lengthRule}
     }
 
     // Priority 1: Multi-Tier Live Neural Cascading
-    if (apiKey || config.providerId === 'custom' || config.providerId === 'openrouter') {
+    if (activeKey || config.providerId === 'custom' || config.providerId === 'openrouter') {
       for (const candidateModel of candidateModels) {
         if (signal?.aborted) break;
 
@@ -584,7 +585,7 @@ ${lengthRule}
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
-              'Authorization': apiKey ? `Bearer ${apiKey}` : undefined,
+              'Authorization': activeKey ? `Bearer ${activeKey}` : undefined,
               'HTTP-Referer': typeof window !== 'undefined' ? window.location.origin : 'https://girionix-ai.pages.dev',
               'X-Title': 'Girionix Real-time Voice AI'
             },
@@ -594,7 +595,8 @@ ${lengthRule}
 
           if (response.ok) {
             const data = await response.json();
-            const rawContent = data.choices?.[0]?.message?.content || '';
+            const msg = data.choices?.[0]?.message;
+            const rawContent = msg?.content || msg?.reasoning || '';
             const cleaned = this.cleanSpokenText(rawContent);
             if (cleaned && cleaned.length > 2) {
               return cleaned;

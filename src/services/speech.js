@@ -243,17 +243,17 @@ class SpeechService {
       let interimTranscript = '';
       let finalTranscript = '';
 
-      for (let i = event.resultIndex; i < event.results.length; ++i) {
+      for (let i = 0; i < event.results.length; ++i) {
         const item = event.results[i];
         if (item.isFinal) {
-          finalTranscript += item[0].transcript;
+          finalTranscript += item[0].transcript + ' ';
           hasFinal = true;
         } else {
           interimTranscript += item[0].transcript;
         }
       }
 
-      const currentText = (finalTranscript || interimTranscript).trim();
+      const currentText = (finalTranscript + interimTranscript).trim();
       if (currentText) {
         accumulatedText = currentText;
         if (onResult) {
@@ -263,7 +263,7 @@ class SpeechService {
           });
         }
 
-        // Natural human breathing silence threshold (~1200ms) so users aren't cut off mid-thought
+        // Fast responsive silence threshold (default 800ms) for snappy turnaround
         clearTimeout(this.silenceTimer);
         this.silenceTimer = setTimeout(() => {
           if (accumulatedText.trim() && !this.isSpeaking && !this.isProcessing) {
@@ -275,7 +275,7 @@ class SpeechService {
               onSpeechFinalized(finalized);
             }
           }
-        }, silenceTimeoutMs);
+        }, silenceTimeoutMs || 800);
       }
     };
 

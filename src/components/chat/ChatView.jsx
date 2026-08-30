@@ -266,9 +266,10 @@ export default function ChatView({
       setIsListening(false);
     } else {
       setIsListening(true);
+      const userLocale = typeof navigator !== 'undefined' ? navigator.language : 'en-US';
       speech.startListening({
-        lang: 'en-US',
-        silenceTimeoutMs: 2200,
+        lang: userLocale.startsWith('hi') ? 'hi-IN' : userLocale.includes('IN') ? 'en-IN' : 'en-US',
+        silenceTimeoutMs: 800,
         onResult: ({ transcript }) => {
           if (transcript) setInput(transcript);
         },

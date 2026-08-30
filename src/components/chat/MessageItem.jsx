@@ -1058,12 +1058,12 @@ export default function MessageItem({
         </div>
       )}
 
-      <div className={`max-w-2xl flex flex-col space-y-1.5 ${
-        isUser ? 'items-end' : 'items-start'
+      <div className={`flex flex-col space-y-1.5 ${
+        isUser ? 'max-w-2xl items-end' : 'max-w-3xl sm:max-w-4xl w-full items-start'
       }`}>
         {/* Author / Model Name */}
-        <div className="flex items-center gap-2 px-1 text-[11px] text-gray-500 font-mono">
-          <span>{isUser ? 'You' : message.modelName || activeModel.name}</span>
+        <div className="flex items-center gap-2 px-1 text-[11px] text-gray-400 font-mono">
+          <span className="font-semibold text-gray-300">{isUser ? 'You' : message.modelName || activeModel.name}</span>
           <span>•</span>
           <span>{message.timestamp}</span>
         </div>
@@ -1091,10 +1091,10 @@ export default function MessageItem({
         )}
 
         {/* Main Message Card */}
-        <div className={`p-4 rounded-3xl text-xs ${
+        <div className={`p-4 sm:p-5 rounded-3xl text-xs sm:text-[13.5px] leading-relaxed ${
           isUser
             ? 'bg-gradient-to-r from-cyan-600/90 to-purple-600/90 text-white rounded-tr-none shadow-lg'
-            : 'bg-[#0E101D] border border-white/[0.08] text-gray-200 rounded-tl-none shadow-xl'
+            : 'bg-[#0D0F1B] border border-white/[0.08] text-gray-100 rounded-tl-none shadow-xl w-full'
         }`}>
           {isEditing ? (
             <div className="space-y-2">
