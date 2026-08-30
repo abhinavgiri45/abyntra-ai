@@ -134,8 +134,18 @@ namespace GirionixAI
                 else if (joined.Contains("titan")) editionArgs = "&titan=true";
             }
 
-            appDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
-            if (!Directory.Exists(appDir)) appDir = AppDomain.CurrentDomain.BaseDirectory;
+            if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "index.html")))
+            {
+                appDir = AppDomain.CurrentDomain.BaseDirectory;
+            }
+            else if (File.Exists(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app", "index.html")))
+            {
+                appDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "app");
+            }
+            else
+            {
+                appDir = AppDomain.CurrentDomain.BaseDirectory;
+            }
 
             StartTcpServer();
             SetupTrayIcon();
@@ -199,24 +209,37 @@ namespace GirionixAI
                     if (string.IsNullOrEmpty(reqPath)) reqPath = "index.html";
 
                     string localPath = Path.Combine(appDir, reqPath.Replace('/', Path.DirectorySeparatorChar));
-                    if (!File.Exists(localPath)) localPath = Path.Combine(appDir, "index.html");
+                    if (!File.Exists(localPath))
+                    {
+                        if (!reqPath.StartsWith("assets") && !reqPath.Contains("."))
+                        {
+                            localPath = Path.Combine(appDir, "index.html");
+                        }
+                    }
 
                     if (File.Exists(localPath))
                     {
                         byte[] body = File.ReadAllBytes(localPath);
                         string ext = Path.GetExtension(localPath).ToLowerInvariant();
                         string mime = "text/html; charset=utf-8";
-                        if (ext == ".js") mime = "application/javascript; charset=utf-8";
+                        if (ext == ".js" || ext == ".mjs") mime = "application/javascript; charset=utf-8";
                         else if (ext == ".css") mime = "text/css; charset=utf-8";
                         else if (ext == ".png") mime = "image/png";
                         else if (ext == ".jpg" || ext == ".jpeg") mime = "image/jpeg";
                         else if (ext == ".svg") mime = "image/svg+xml";
                         else if (ext == ".ico") mime = "image/x-icon";
+                        else if (ext == ".wasm") mime = "application/wasm";
+                        else if (ext == ".woff2") mime = "font/woff2";
+                        else if (ext == ".woff") mime = "font/woff";
+                        else if (ext == ".ttf") mime = "font/ttf";
+                        else if (ext == ".webp") mime = "image/webp";
                         else if (ext == ".json") mime = "application/json; charset=utf-8";
 
                         string header = "HTTP/1.1 200 OK\\r\\n" +
                                         "Content-Type: " + mime + "\\r\\n" +
                                         "Content-Length: " + body.Length + "\\r\\n" +
+                                        "Access-Control-Allow-Origin: *\\r\\n" +
+                                        "Cache-Control: public, max-age=3600\\r\\n" +
                                         "Connection: close\\r\\n\\r\\n";
                         byte[] headerBytes = Encoding.UTF8.GetBytes(header);
                         stream.Write(headerBytes, 0, headerBytes.Length);
@@ -224,7 +247,7 @@ namespace GirionixAI
                     }
                     else
                     {
-                        byte[] notFound = Encoding.UTF8.GetBytes("HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\n\\r\\n");
+                        byte[] notFound = Encoding.UTF8.GetBytes("HTTP/1.1 404 Not Found\\r\\nContent-Length: 0\\r\\nConnection: close\\r\\n\\r\\n");
                         stream.Write(notFound, 0, notFound.Length);
                     }
                 }
