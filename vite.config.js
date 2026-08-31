@@ -59,7 +59,27 @@ const downloadsMiddlewarePlugin = () => ({
 export default defineConfig({
   plugins: [react(), downloadsMiddlewarePlugin()],
   build: {
-    emptyOutDir: true
+    emptyOutDir: true,
+    cssCodeSplit: true,
+    chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          if (id.includes('node_modules')) {
+            if (id.includes('react') || id.includes('react-dom') || id.includes('scheduler')) {
+              return 'react-vendor';
+            }
+            if (id.includes('lucide-react')) {
+              return 'lucide-vendor';
+            }
+            if (id.includes('katex')) {
+              return 'katex-vendor';
+            }
+            return 'vendor';
+          }
+        }
+      }
+    }
   },
   server: {
     port: 3000,

@@ -8,6 +8,14 @@
         location.replace(location.href.replace(/^http:/, 'https:'));
       }
     </script>
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin />
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com" />
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin />
+    <link rel="dns-prefetch" href="https://cdn.jsdelivr.net" />
+    <link rel="preconnect" href="https://openrouter.ai" crossorigin />
+    <link rel="dns-prefetch" href="https://openrouter.ai" />
+    <link rel="preconnect" href="https://image.pollinations.ai" crossorigin />
+    <link rel="dns-prefetch" href="https://image.pollinations.ai" />
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="shortcut icon" href="/favicon.ico" />
     <link rel="icon" type="image/png" sizes="192x192" href="/icon-192.png" />
@@ -20,6 +28,13 @@
     <meta name="theme-color" content="#07080E" />
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="application-name" content="Girionix AI" />
+    <script>
+      if ('serviceWorker' in navigator && location.protocol === 'https:') {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('/sw.js').catch(() => {});
+        });
+      }
+    </script>
     
     <!-- Primary SEO Meta Tags -->
     <title>Girionix AI — Sovereign Polymath AI Workspace | Think • Create • Explore</title>

@@ -1,14 +1,74 @@
+# Global Security & Edge Acceleration Headers
+/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  X-XSS-Protection: 1; mode=block
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: camera=(), microphone=(), geolocation=()
+  Cross-Origin-Opener-Policy: same-origin-allow-popups
+  Access-Control-Allow-Origin: *
+  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+
+# Edge Cache-First for Compiled Hashed Assets (Infinite Edge & Client Cache)
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+# High-Concurrency Cache for Web Worker & Service Worker
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate
+  Content-Type: application/javascript; charset=utf-8
+  Service-Worker-Allowed: /
+
+# Fast Edge Caching for Fonts & WASM Binaries
+*.woff2
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
+
+*.wasm
+  Cache-Control: public, max-age=31536000, immutable
+  Content-Type: application/wasm
+  Access-Control-Allow-Origin: *
+
+# Edge Caching for Static Images & Icons
+*.png
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+*.ico
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+*.svg
+  Cache-Control: public, max-age=604800, stale-while-revalidate=86400
+  Access-Control-Allow-Origin: *
+
+# Edge Caching for Metadata & SEO
+/manifest.json
+  Content-Type: application/manifest+json; charset=utf-8
+  Cache-Control: public, max-age=86400, stale-while-revalidate=604800
+  Access-Control-Allow-Origin: *
+
 /sitemap.xml
   Content-Type: application/xml; charset=utf-8
   X-Robots-Tag: all
+  Cache-Control: public, max-age=3600, stale-while-revalidate=86400
   Access-Control-Allow-Origin: *
-  Cache-Control: public, max-age=3600
 
 /robots.txt
   Content-Type: text/plain; charset=utf-8
   X-Robots-Tag: all
+  Cache-Control: public, max-age=86400
   Access-Control-Allow-Origin: *
 
-/manifest.json
-  Content-Type: application/manifest+json; charset=utf-8
+/version.json
+  Content-Type: application/json; charset=utf-8
+  Cache-Control: public, max-age=60
   Access-Control-Allow-Origin: *
+
+# Edge Stale-While-Revalidate for HTML Documents (Instant TTFB under 100k+ concurrency)
+/
+  Cache-Control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
+
+/index.html
+  Cache-Control: public, max-age=0, s-maxage=3600, stale-while-revalidate=86400
