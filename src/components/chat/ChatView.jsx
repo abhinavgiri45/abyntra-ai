@@ -29,7 +29,8 @@ import {
   Award,
   Crown,
   Lock,
-  RefreshCw
+  RefreshCw,
+  FileCode
 } from 'lucide-react';
 import MessageItem from './MessageItem';
 import VoiceOrbModal from './VoiceOrbModal';
