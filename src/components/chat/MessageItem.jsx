@@ -916,47 +916,57 @@ export default function MessageItem({
 
   const renderContent = (content) => {
     if (!content) return null;
-    const parts = content.split(/(```[\s\S]*?```|\$\$[\s\S]*?\$\$|\$[^$\n]+\$)/g);
+    const parts = content.split(/(```[a-zA-Z0-9_#+.-]*[\s\S]*?(?:```|$)|(?:\$\$[\s\S]*?\$\$)|(?:\$[^$\n]+\$))/g);
 
     return parts.map((part, index) => {
       if (!part) return null;
 
-      // 1. Supercharged Code Blocks with Quick Action Bar
-      if (part.startsWith('```') && part.endsWith('```')) {
-        const lines = part.slice(3, -3).trim().split('\n');
-        const firstLine = lines[0].trim();
-        let language = 'javascript';
-        let code = lines.join('\n');
+      // 1. Supercharged Gemini-Style Code Blocks with 1-Click Copy & Runner Bar
+      if (part.trim().startsWith('```')) {
+        let raw = part.trim();
+        // Remove leading ``` and trailing ```
+        raw = raw.replace(/^```/, '');
+        if (raw.endsWith('```')) {
+          raw = raw.slice(0, -3);
+        }
+        
+        const lines = raw.split('\n');
+        const firstLine = (lines[0] || '').trim();
+        let language = 'code';
+        let code = raw;
 
-        if (/^[a-zA-Z0-9_-]+$/.test(firstLine)) {
-          language = firstLine;
+        if (/^[a-zA-Z0-9_#+.-]+$/.test(firstLine)) {
+          language = firstLine.toLowerCase();
           code = lines.slice(1).join('\n');
         }
 
-        const isRunable = ['javascript', 'jsx', 'react', 'js', 'html'].includes(language.toLowerCase());
+        // Clean code of leading/trailing blank line
+        code = code.replace(/^\n+/, '').replace(/\n+$/, '');
+
+        const isRunable = ['javascript', 'jsx', 'react', 'js', 'html', 'typescript', 'ts'].includes(language.toLowerCase());
         const isCopied = copiedCodeIdx === index;
         const isCleanCopied = copiedCodeIdx === index + '-clean';
         const isExplained = explainedCodeIdx === index;
 
         return (
-          <div key={index} className="my-3.5 rounded-2xl overflow-hidden border border-cyan-500/25 bg-[#090A14] shadow-2xl group">
-            {/* Code Header Toolbar */}
-            <div className="flex flex-wrap items-center justify-between px-4 py-2 bg-gradient-to-r from-slate-900 via-[#0B0D1B] to-slate-900 border-b border-white/10 text-xs font-mono gap-2">
-              <div className="flex items-center gap-2">
-                <span className="px-2 py-0.5 rounded bg-cyan-500/20 text-cyan-300 font-bold uppercase text-[11px] border border-cyan-500/30">
+          <div key={index} className="my-4 rounded-2xl overflow-hidden border border-white/[0.12] bg-[#090A14] shadow-2xl group transition-all hover:border-cyan-500/40">
+            {/* Gemini-Style Sleek Header Toolbar */}
+            <div className="flex flex-wrap items-center justify-between px-4 py-2.5 bg-[#121420] border-b border-white/[0.08] text-xs font-mono gap-2 select-none">
+              <div className="flex items-center gap-2.5">
+                <span className="px-2.5 py-0.5 rounded-lg bg-white/[0.08] text-cyan-300 font-bold uppercase text-[11px] border border-white/10 tracking-wider">
                   {language}
                 </span>
-                <span className="text-[10px] text-gray-500 hidden sm:inline">
-                  {code.split('\n').length} lines • {code.length} chars
+                <span className="text-[11px] text-gray-400 hidden sm:inline">
+                  {code.split('\n').length} lines
                 </span>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex items-center gap-1.5">
+              {/* Action Toolbar with Prominent Gemini Copy Button */}
+              <div className="flex items-center gap-2">
                 {isRunable && onOpenInCodeStudio && (
                   <button
                     onClick={() => onOpenInCodeStudio(code, language)}
-                    className="flex items-center gap-1 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-300 text-xs font-bold border border-cyan-500/40 shadow-glow-cyan transition-all cursor-pointer hover:scale-105"
+                    className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-gradient-to-r from-cyan-500/20 to-blue-500/20 hover:from-cyan-500/30 hover:to-blue-500/30 text-cyan-300 text-xs font-bold border border-cyan-500/40 shadow-glow-cyan transition-all cursor-pointer hover:scale-105"
                     title="Live Run in React 18 Canvas & IDE"
                   >
                     <Play className="w-3.5 h-3.5 fill-current text-cyan-400" />
@@ -964,27 +974,37 @@ export default function MessageItem({
                   </button>
                 )}
 
+                {/* Gemini-Style Copy Code Button */}
                 <button
                   onClick={() => {
                     navigator.clipboard.writeText(code);
                     setCopiedCodeIdx(index);
                     setTimeout(() => setCopiedCodeIdx(null), 2000);
                   }}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
+                  className={`flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm ${
                     isCopied 
-                      ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-glow-emerald' 
-                      : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-500/40 shadow-glow-cyan hover:scale-105'
+                      ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-500/50 shadow-glow-emerald' 
+                      : 'bg-white/10 hover:bg-cyan-500/20 text-gray-200 hover:text-cyan-200 border border-white/15 hover:border-cyan-500/40 hover:scale-105'
                   }`}
-                  title="1-Click Copy full code to clipboard"
+                  title="Copy full code to clipboard"
                 >
-                  {isCopied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5" />}
-                  <span>{isCopied ? 'Copied to Clipboard!' : 'Copy Code'}</span>
+                  {isCopied ? (
+                    <>
+                      <Check className="w-3.5 h-3.5 text-emerald-400" />
+                      <span className="text-emerald-300">Copied!</span>
+                    </>
+                  ) : (
+                    <>
+                      <Copy className="w-3.5 h-3.5 text-gray-300" />
+                      <span>Copy code</span>
+                    </>
+                  )}
                 </button>
 
                 <button
                   onClick={() => handleCopyCleanCode(code, index)}
                   className="hidden sm:flex items-center gap-1 px-2.5 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 text-[11px] transition-all cursor-pointer"
-                  title="Copy Clean Code (Removes comments & annotations)"
+                  title="Copy Clean Code (Removes comments & docstrings)"
                 >
                   {isCleanCopied ? <Check className="w-3 h-3 text-emerald-400" /> : <Scissors className="w-3 h-3 text-purple-400" />}
                   <span>{isCleanCopied ? 'Clean!' : 'Clean'}</span>
@@ -992,15 +1012,15 @@ export default function MessageItem({
 
                 <button
                   onClick={() => handleDownloadCodeFile(code, language)}
-                  className="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 cursor-pointer"
-                  title="Download File (.jsx / .py / .ts)"
+                  className="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/10 cursor-pointer transition-colors"
+                  title="Download File"
                 >
                   <Download className="w-3.5 h-3.5" />
                 </button>
 
                 <button
                   onClick={() => setExplainedCodeIdx(isExplained ? null : index)}
-                  className="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-cyan-300 border border-white/10 cursor-pointer"
+                  className="p-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-cyan-300 border border-white/10 cursor-pointer transition-colors"
                   title="Explain this code step-by-step"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
@@ -1008,7 +1028,8 @@ export default function MessageItem({
               </div>
             </div>
 
-            <pre className="p-4 text-xs font-mono text-cyan-100 overflow-x-auto leading-relaxed bg-[#05060A]">
+            {/* Code Body */}
+            <pre className="p-4 text-[13px] font-mono text-cyan-100 overflow-x-auto leading-relaxed bg-[#05060A] selection:bg-cyan-500/30">
               <code>{code}</code>
             </pre>
 
