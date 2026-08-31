@@ -59,7 +59,7 @@ const downloadsMiddlewarePlugin = () => ({
 export default defineConfig({
   plugins: [react(), downloadsMiddlewarePlugin()],
   build: {
-    emptyOutDir: false,
+    emptyOutDir: true,
     chunkSizeWarningLimit: 2500
   },
   server: {
