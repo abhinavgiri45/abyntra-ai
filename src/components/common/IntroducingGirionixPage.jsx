@@ -658,11 +658,11 @@ export default function NeuralPulseSphere() {
                     <div className="lg:col-span-7 p-4 rounded-2xl bg-[#080718] border border-purple-500/30 space-y-3 shadow-xl">
                       <div className="text-xs font-bold text-purple-300 font-mono">Formal Riemann Zeta Functional Equation:</div>
                       <div className="p-4 rounded-xl bg-purple-950/30 border border-purple-500/30 text-center overflow-x-auto touch-scroll">
-                        <KatexMath math="\zeta(s) = 2^s \pi^{s-1} \sin\left(\frac{\pi s}{2}\right) \Gamma(1-s) \zeta(1-s)" block={true} />
+                        <KatexMath math="\\zeta(s) = 2^s \\pi^{s-1} \\sin\\left(\\frac{\\pi s}{2}\\right) \\Gamma(1-s) \\zeta(1-s)" block={true} />
                       </div>
                       <div className="text-xs text-gray-300 font-sans leading-relaxed">
-                        Step 1: Apply Poisson summation formula to Jacobi theta function \(\theta(\tau)\).<br />
-                        Step 2: Analytical continuation guarantees all non-trivial zeros lie strictly on the critical line \(\text{Re}(s) = \frac{1}{2}\).
+                        Step 1: Apply Poisson summation formula to Jacobi theta function θ(τ).<br />
+                        Step 2: Analytical continuation guarantees all non-trivial zeros lie strictly on the critical line Re(s) = 1/2.
                       </div>
                     </div>
 
@@ -671,7 +671,7 @@ export default function NeuralPulseSphere() {
                       <div className="w-full h-32 rounded-xl bg-gradient-to-br from-purple-950/60 via-slate-900 to-indigo-950/80 border border-purple-500/30 flex items-center justify-center p-3">
                         <div className="text-center font-mono text-[11px] text-purple-300 space-y-1">
                           <RotateCcw className="w-6 h-6 text-purple-400 mx-auto animate-spin" />
-                          <div>\(z = \sin(x) \cdot \cos(y) \cdot e^{-(x^2+y^2)/10}\)</div>
+                          <div>z = sin(x) · cos(y) · e^-(x²+y²)/10</div>
                           <div className="text-[9px] text-gray-400">Interactive 3D Parametric Orbit Mesh</div>
                         </div>
                       </div>
