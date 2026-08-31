@@ -22,24 +22,20 @@ import { storage } from './services/storage';
 import { updateService } from './services/updateService';
 
 // Dynamic Route Resolver for Instant SPA Web Navigation:
-// - '/' or '/intro' -> Official Introduction / Announcement Page
-// - '/chat' -> Full Superhuman Chat & AI Studio Canvas Workspace
-// - '/switch-user' -> Switch User Identity & Profile Selector
+// - '/' or '/chat' -> Full Superhuman Chat & AI Studio Canvas Workspace (Default)
+// - '/intro' or '/about' -> Official Introduction / Announcement Page
 // - '/why-switch' -> Model Benchmarks & Comparison Matrix
 // - '/downloads' -> Standalone Platform Native App Packages
+// - '/switch-user' -> Switch User Identity & Profile Selector
 const resolveInitialRoute = () => {
-  if (typeof window === 'undefined') return { view: 'intro' };
+  if (typeof window === 'undefined') return { view: 'chat' };
   const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
   const hash = window.location.hash.toLowerCase().replace(/^#\/?/, '');
   const search = new URLSearchParams(window.location.search);
 
-  // Direct chat workspace requested
-  if (pathname === '/chat' || hash === 'chat' || search.get('view') === 'chat' || search.get('direct') === 'chat') {
-    return { view: 'chat' };
-  }
-  // Switch user profile requested
-  if (pathname === '/switch-user' || hash === 'switch-user' || search.get('view') === 'switch-user') {
-    return { view: 'switch-user' };
+  // Introduction requested
+  if (pathname === '/intro' || pathname === '/about' || hash === 'intro' || hash === 'about' || search.get('view') === 'intro') {
+    return { view: 'intro' };
   }
   // Why switch comparison requested
   if (pathname === '/why-switch' || hash === 'why-switch' || search.get('view') === 'why-switch') {
@@ -49,13 +45,13 @@ const resolveInitialRoute = () => {
   if (pathname === '/downloads' || hash === 'downloads' || search.get('view') === 'downloads') {
     return { view: 'downloads' };
   }
-  // Native desktop app mode detection: standalone installed apps go straight to chat
-  const isNative = search.get('app') === 'true' || search.get('native') === 'true' || hash.includes('app=true');
-  if (isNative) {
-    return { view: 'chat' };
+  // Switch user profile requested
+  if (pathname === '/switch-user' || hash === 'switch-user' || search.get('view') === 'switch-user') {
+    return { view: 'switch-user' };
   }
-  // Default root '/' is Introduction
-  return { view: 'intro' };
+
+  // Default for '/' and '/chat' is the full Chat Workspace!
+  return { view: 'chat' };
 };
 
 export default function App() {
@@ -87,12 +83,13 @@ export default function App() {
   // Bidirectional History & URL Routing Synchronizer
   const navigateTo = (route, push = true) => {
     if (typeof window === 'undefined') return;
-    let targetPath = '/';
+    let targetPath = '/chat';
     if (route === 'chat') targetPath = '/chat';
-    else if (route === 'switch-user') targetPath = '/switch-user';
+    else if (route === 'intro' || route === 'about') targetPath = '/intro';
     else if (route === 'why-switch') targetPath = '/why-switch';
     else if (route === 'downloads') targetPath = '/downloads';
-    else targetPath = '/';
+    else if (route === 'switch-user') targetPath = '/switch-user';
+    else targetPath = '/chat';
 
     try {
       if (window.location.pathname !== targetPath) {
@@ -119,15 +116,15 @@ export default function App() {
         setIntroTab('comparison');
         setIsNameModalOpen(false);
         setIsDownloadOpen(false);
-      } else if (current.view === 'switch-user') {
-        setIsAboutOpen(false);
-        setIsNameModalOpen(true);
-        setIsDownloadOpen(false);
       } else if (current.view === 'downloads') {
+        setIsDownloadOpen(true);
         setIsAboutOpen(false);
         setIsNameModalOpen(false);
-        setIsDownloadOpen(true);
-      } else if (current.view === 'chat') {
+      } else if (current.view === 'switch-user') {
+        setIsNameModalOpen(true);
+        setIsAboutOpen(false);
+        setIsDownloadOpen(false);
+      } else {
         setIsAboutOpen(false);
         setIsNameModalOpen(false);
         setIsDownloadOpen(false);
@@ -140,36 +137,31 @@ export default function App() {
   const handleOpenIntro = () => {
     setIntroTab('overview');
     setIsAboutOpen(true);
-    setIsNameModalOpen(false);
     navigateTo('intro');
   };
 
   const handleOpenWhySwitch = () => {
     setIntroTab('comparison');
     setIsAboutOpen(true);
-    setIsNameModalOpen(false);
     navigateTo('why-switch');
   };
 
   const handleCloseIntro = () => {
     setIsAboutOpen(false);
-    storage.setSeenIntro();
+    storage.setSeenIntro(true);
     navigateTo('chat');
   };
 
   const handleLaunchApp = (studioTab = null) => {
-    setIsAboutOpen(false);
-    storage.setSeenIntro();
+    handleCloseIntro();
     if (studioTab && typeof studioTab === 'string') {
       setActiveStudioTab(studioTab);
       setLayoutMode('split');
     }
-    navigateTo('chat');
   };
 
   const handleOpenSwitchUser = () => {
     setIsNameModalOpen(true);
-    setIsAboutOpen(false);
     navigateTo('switch-user');
   };
 
