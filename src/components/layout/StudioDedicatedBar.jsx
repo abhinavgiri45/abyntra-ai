@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   Code2, 
   ScrollText,
@@ -18,9 +18,11 @@ import {
   Layers,
   ChevronDown,
   Smartphone,
-  Monitor
+  Monitor,
+  Key
 } from 'lucide-react';
 import { getDedicatedStudioModel, STUDIO_DEDICATED_MODELS } from '../../services/modelCatalog';
+import { universalApiEngine } from '../../services/universalApiEngine';
 
 export default function StudioDedicatedBar({
   activeStudioTab,
@@ -85,6 +87,18 @@ export default function StudioDedicatedBar({
               <span>Native App</span>
             </button>
           )}
+
+          {/* Dynamic API Provider & Key Indicator */}
+          <div 
+            onClick={() => setIsDetailsOpen(!isDetailsOpen)}
+            className="hidden sm:flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] border border-white/10 text-[11px] font-mono text-gray-300 cursor-pointer transition-all hover:scale-105"
+            title="Active AI Provider & API Key Routing"
+          >
+            <Key className="w-3 h-3 text-cyan-400" />
+            <span className="text-cyan-300 font-bold">
+              {universalApiEngine.getProviderConfig().apiKey ? 'API Connected' : 'Free Neural Gateway'}
+            </span>
+          </div>
 
           <div 
             onClick={() => setIsDetailsOpen(!isDetailsOpen)}

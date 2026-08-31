@@ -671,6 +671,7 @@ export default function ChatView({
                 message={message}
                 activeModel={activeModel}
                 onOpenInCodeStudio={onOpenInCodeStudio}
+                onOpenStudioTab={onOpenStudioTab}
                 onPinMessage={handlePinMessage}
                 onEditMessage={handleEditMessage}
                 onOpenDiff={(code) => {
@@ -685,59 +686,72 @@ export default function ChatView({
         )}
       </div>
 
-      {/* Chat Input Bar */}
+      {/* Chat Input Bar with Integrated AI Studio Canvas Dock */}
       <div className="p-3 sm:p-4 pb-[calc(0.75rem+env(safe-area-inset-bottom,0px))] border-t border-white/[0.08] bg-[#0A0C14]/90 backdrop-blur-xl relative z-10">
         <div className="max-w-4xl mx-auto space-y-2">
-          {/* Quick Intent Chips */}
+          {/* Integrated AI Studio Canvas Dock (ChatGPT Canvas & Claude Artifacts style) */}
           <div className="flex items-center gap-1.5 overflow-x-auto pb-1 text-xs font-medium no-scrollbar">
             <button
-              onClick={() => setInput('generate an 8k image of ')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
-            >
-              <ImageIcon className="w-3.5 h-3.5 text-rose-400" />
-              <span>Image</span>
-            </button>
-
-            <button
-              onClick={() => setInput('create a cinematic 60fps video scene for: ')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
-              title="60 FPS Hollywood Video Studio"
-            >
-              <Film className="w-3.5 h-3.5 text-amber-400" />
-              <span>Video</span>
-            </button>
-
-            <button
-              onClick={() => setInput('write a React 18 component with Tailwind CSS: ')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('code') : setInput('write a React 18 component with Tailwind CSS: ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-cyan-500/10 hover:bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105 shadow-glow-cyan/50"
+              title="Open React 18 Sandboxed Code Canvas"
             >
               <Code2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Code</span>
+              <span className="font-bold">💻 Code IDE</span>
             </button>
 
             <button
-              onClick={() => setInput('create a mind map for ')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('script') : setInput('write a screenplay scene: ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-indigo-500/10 hover:bg-indigo-500/20 text-indigo-300 border border-indigo-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              title="Open Hollywood Screenplay Studio"
             >
-              <Brain className="w-3.5 h-3.5 text-purple-400" />
-              <span>Mind Map</span>
+              <FileCode className="w-3.5 h-3.5 text-indigo-400" />
+              <span className="font-bold">✍️ Script Writer</span>
             </button>
 
             <button
-              onClick={() => setInput('derive step-by-step with KaTeX proof: ')}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('math') : setInput('derive step-by-step with KaTeX proof: ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-purple-500/10 hover:bg-purple-500/20 text-purple-300 border border-purple-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              title="Open Olympiad Math & 3D Plotter"
             >
-              <Sigma className="w-3.5 h-3.5 text-emerald-400" />
-              <span>Math</span>
+              <Sigma className="w-3.5 h-3.5 text-purple-400" />
+              <span className="font-bold">📐 Math Lab</span>
+            </button>
+
+            <button
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('image') : setInput('generate an 8k image of ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 border border-rose-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              title="Open 8K FLUX.1 VisionForge"
+            >
+              <ImageIcon className="w-3.5 h-3.5 text-rose-400" />
+              <span className="font-bold">🎨 8K Vision</span>
+            </button>
+
+            <button
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('video') : setInput('create a cinematic 60fps video scene for: ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-amber-500/10 hover:bg-amber-500/20 text-amber-300 border border-amber-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              title="Open MotionLab 60FPS Video Studio"
+            >
+              <Film className="w-3.5 h-3.5 text-amber-400" />
+              <span className="font-bold">🎬 MotionLab</span>
+            </button>
+
+            <button
+              onClick={() => onOpenStudioTab ? onOpenStudioTab('audio') : setInput('compose music: ')}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 text-emerald-300 border border-emerald-500/30 transition-all whitespace-nowrap cursor-pointer hover:scale-105"
+              title="Open AudioLab 48kHz Stem Mixer & Voice Studio"
+            >
+              <Zap className="w-3.5 h-3.5 text-emerald-400" />
+              <span className="font-bold">🎙️ AudioLab</span>
             </button>
 
             <button
               onClick={() => setIsPromptEnhancerOpen(true)}
-              className="flex items-center gap-1.5 px-2.5 sm:px-3 py-1 rounded-xl bg-white/[0.03] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.08] transition-all whitespace-nowrap"
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-white/[0.04] hover:bg-white/[0.08] text-gray-300 hover:text-white border border-white/[0.1] transition-all whitespace-nowrap cursor-pointer"
               title="Enhance prompt with AI"
             >
               <Wand2 className="w-3.5 h-3.5 text-cyan-400" />
-              <span>Enhance</span>
+              <span>Enhance Prompt</span>
             </button>
           </div>
 

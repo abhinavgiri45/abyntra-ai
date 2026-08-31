@@ -649,19 +649,24 @@ export default function CodeStudio({ activeModel, injectedCode, isTitanMode = fa
           </button>
 
           <button
-            onClick={handleDownloadActiveFile}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5"
-            title="Download Active File (.jsx)"
+            onClick={handleCopy}
+            className={`flex items-center gap-1.5 px-3 py-1 rounded-xl text-xs font-mono font-bold transition-all cursor-pointer shadow-sm hover:scale-105 ${
+              copied 
+                ? 'bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 shadow-glow-emerald' 
+                : 'bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-200 border border-cyan-500/40 shadow-glow-cyan'
+            }`}
+            title="1-Click Copy entire code to clipboard (Ctrl+C)"
           >
-            <Download className="w-4 h-4" />
+            {copied ? <Check className="w-3.5 h-3.5 text-emerald-400" /> : <Copy className="w-3.5 h-3.5 text-cyan-400" />}
+            <span>{copied ? 'Copied to Clipboard!' : 'Copy Code'}</span>
           </button>
 
           <button
-            onClick={handleCopy}
-            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5"
-            title="Copy current file code"
+            onClick={handleDownloadActiveFile}
+            className="p-1.5 rounded-lg text-gray-400 hover:text-white hover:bg-white/5 cursor-pointer"
+            title="Download Active File (.jsx)"
           >
-            {copied ? <Check className="w-4 h-4 text-emerald-400" /> : <Copy className="w-4 h-4" />}
+            <Download className="w-4 h-4" />
           </button>
         </div>
       </div>
