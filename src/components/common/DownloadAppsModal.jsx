@@ -39,12 +39,12 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapStandard = {
     windows: {
-      file: '/downloads/Girionix_AI_Windows.zip',
-      name: 'Girionix_AI_Windows.zip',
-      label: 'Download Portable App (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Setup.exe',
-      exeName: 'Girionix_AI_Setup.exe',
-      exeLabel: 'Windows Setup Wizard (.exe)',
+      file: '/downloads/Girionix_AI_Setup.exe',
+      name: 'Girionix_AI_Setup.exe',
+      label: 'Download Windows Setup Wizard (.exe)',
+      standaloneFile: '/downloads/GirionixAI.exe',
+      standaloneName: 'GirionixAI.exe',
+      standaloneLabel: 'Direct Standalone Executable (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
@@ -87,12 +87,12 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapTitan = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Windows.zip',
-      name: 'Girionix_AI_Titan_Windows.zip',
-      label: 'Download Titan Portable (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Titan_Setup.exe',
-      exeName: 'Girionix_AI_Titan_Setup.exe',
-      exeLabel: 'Titan Setup Wizard (.exe)',
+      file: '/downloads/Girionix_AI_Titan_Setup.exe',
+      name: 'Girionix_AI_Titan_Setup.exe',
+      label: 'Download Titan Setup Wizard (.exe)',
+      standaloneFile: '/downloads/GirionixAI.exe',
+      standaloneName: 'GirionixAI.exe',
+      standaloneLabel: 'Direct Standalone Executable (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
@@ -135,12 +135,12 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
   const downloadMapTitanLite = {
     windows: {
-      file: '/downloads/Girionix_AI_Titan_Lite_Windows.zip',
-      name: 'Girionix_AI_Titan_Lite_Windows.zip',
-      label: 'Download Titan Lite Portable (.zip - ⭐ No Chrome Warning)',
-      exeFile: '/downloads/Girionix_AI_Titan_Lite_Setup.exe',
-      exeName: 'Girionix_AI_Titan_Lite_Setup.exe',
-      exeLabel: 'Titan Lite Setup (.exe)',
+      file: '/downloads/Girionix_AI_Titan_Lite_Setup.exe',
+      name: 'Girionix_AI_Titan_Lite_Setup.exe',
+      label: 'Download Titan Lite Setup Wizard (.exe)',
+      standaloneFile: '/downloads/GirionixAI.exe',
+      standaloneName: 'GirionixAI.exe',
+      standaloneLabel: 'Direct Standalone Executable (.exe)',
       scriptFile: '/downloads/Install-Girionix-AI.bat',
       scriptName: 'Install-Girionix-AI.bat',
       scriptLabel: '1-Click Verified Script (.bat)',
