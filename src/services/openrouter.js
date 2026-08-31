@@ -58,10 +58,21 @@ export const openrouter = {
         if (key) headers['Authorization'] = `Bearer ${key}`;
       }
 
+      const createTimeout = (ms) => {
+        try {
+          if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+            return AbortSignal.timeout(ms);
+          }
+        } catch (_) {}
+        const ctrl = new AbortController();
+        setTimeout(() => ctrl.abort(), ms);
+        return ctrl.signal;
+      };
+
       const response = await fetch(endpoint, {
         method: 'GET',
         headers,
-        signal: AbortSignal.timeout(6000)
+        signal: createTimeout(6000)
       });
 
       const data = await response.json().catch(() => ({}));

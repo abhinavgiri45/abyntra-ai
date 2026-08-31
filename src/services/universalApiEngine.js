@@ -194,10 +194,21 @@ export const universalApiEngine = {
     }
 
     try {
+      const createTimeout = (ms) => {
+        try {
+          if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+            return AbortSignal.timeout(ms);
+          }
+        } catch (_) {}
+        const ctrl = new AbortController();
+        setTimeout(() => ctrl.abort(), ms);
+        return ctrl.signal;
+      };
+
       const response = await fetch(modelsEndpoint, {
         method: 'GET',
         headers,
-        signal: AbortSignal.timeout(6000)
+        signal: createTimeout(6000)
       });
 
       if (!response.ok) {

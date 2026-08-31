@@ -581,6 +581,17 @@ ${lengthRule}
             stream: false
           };
 
+          const createTimeout = (ms) => {
+            try {
+              if (typeof AbortSignal !== 'undefined' && typeof AbortSignal.timeout === 'function') {
+                return AbortSignal.timeout(ms);
+              }
+            } catch (_) {}
+            const ctrl = new AbortController();
+            setTimeout(() => ctrl.abort(), ms);
+            return ctrl.signal;
+          };
+
           const response = await fetch(endpoint, {
             method: 'POST',
             headers: {
@@ -590,7 +601,7 @@ ${lengthRule}
               'X-Title': 'Girionix Real-time Voice AI'
             },
             body: JSON.stringify(requestBody),
-            signal: signal || AbortSignal.timeout(isLongFormRequested ? 8000 : 4500)
+            signal: signal || createTimeout(isLongFormRequested ? 8000 : 4500)
           });
 
           if (response.ok) {
