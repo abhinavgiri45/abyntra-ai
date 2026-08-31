@@ -40,18 +40,14 @@ export default function App() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
   const [introTab, setIntroTab] = useState('overview');
-  // The AI Web App ALWAYS opens with the Official Introduction Page as the primary landing page first!
+  // Landing directly in the sovereign ChatGPT-style workspace for instant 0ms load
   const [isAboutOpen, setIsAboutOpen] = useState(() => {
     try {
-      if (typeof window === 'undefined') return true;
+      if (typeof window === 'undefined') return false;
       const params = new URLSearchParams(window.location.search);
-      // Skip intro only if explicit native app flags or direct chat mode requested
-      if (params.get('direct') === 'chat' || params.get('app') === 'true' || params.get('native') === 'true') {
-        return false;
-      }
-      return true;
+      return params.get('intro') === 'true' || params.get('about') === 'true';
     } catch (_) {
-      return true;
+      return false;
     }
   });
 
