@@ -201,15 +201,19 @@ export default function App() {
     setActiveSessionId(freshSession.id);
   };
 
+  const [mobileActivePane, setMobileActivePane] = useState('chat'); // 'chat' | 'studio'
+
   const handleOpenInCodeStudio = (code) => {
     setInjectedCode(code);
     setActiveStudioTab('code');
     setLayoutMode('split');
+    setMobileActivePane('studio');
   };
 
   const handleLaunchStudioFromTools = (studioId) => {
     setActiveStudioTab(studioId);
     setLayoutMode('split');
+    setMobileActivePane('studio');
   };
 
   const handleCloseIntro = () => {
@@ -254,7 +258,7 @@ export default function App() {
       />
 
       {/* Main Workspace Area */}
-      <div className="flex-1 flex flex-col h-full overflow-hidden">
+      <div className="flex-1 flex flex-col h-full overflow-hidden min-w-0">
         <Header
           layoutMode={layoutMode}
           setLayoutMode={setLayoutMode}
@@ -279,12 +283,40 @@ export default function App() {
           onToggleTitanMode={handleToggleTitanMode}
         />
 
+        {/* Mobile View Switcher when in Split Mode on small screens */}
+        {layoutMode === 'split' && (
+          <div className="flex md:hidden items-center justify-between px-3 py-1.5 bg-[#090C17] border-b border-white/10 gap-2 shrink-0">
+            <button
+              onClick={() => setMobileActivePane('chat')}
+              className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                mobileActivePane === 'chat'
+                  ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-glow-cyan'
+                  : 'text-gray-400 hover:text-white bg-white/[0.03]'
+              }`}
+            >
+              <span>💬 Chat</span>
+            </button>
+            <button
+              onClick={() => setMobileActivePane('studio')}
+              className={`flex-1 py-1.5 px-3 rounded-xl text-xs font-bold transition-all flex items-center justify-center gap-1.5 ${
+                mobileActivePane === 'studio'
+                  ? 'bg-gradient-to-r from-purple-500/25 to-cyan-500/25 text-cyan-200 border border-cyan-500/40 shadow-sm'
+                  : 'text-gray-400 hover:text-white bg-white/[0.03]'
+              }`}
+            >
+              <span>💻 Studio ({activeStudioTab.toUpperCase()})</span>
+            </button>
+          </div>
+        )}
+
         {/* Workspace Dual Pane / Chat Layout */}
-        <main className="flex-1 overflow-hidden relative flex flex-col md:flex-row">
+        <main className="flex-1 overflow-hidden relative flex flex-col md:flex-row min-w-0">
           {/* Left Pane: Chat & Welcome Screen */}
           {(layoutMode === 'chat' || layoutMode === 'split') && (
-            <div className={`h-full flex flex-col transition-all duration-300 min-w-0 ${
-              layoutMode === 'split' ? 'w-full md:w-1/2 border-r border-white/[0.08]' : 'w-full'
+            <div className={`h-full flex-col transition-all duration-300 min-w-0 ${
+              layoutMode === 'split' 
+                ? (mobileActivePane === 'chat' ? 'flex w-full md:w-1/2 md:border-r md:border-white/[0.08]' : 'hidden md:flex md:w-1/2 md:border-r md:border-white/[0.08]') 
+                : 'flex w-full'
             }`}>
               <ChatView
                 activeModel={activeModel}
@@ -293,6 +325,7 @@ export default function App() {
                 onOpenStudioTab={(tabId) => {
                   setActiveStudioTab(tabId);
                   setLayoutMode('split');
+                  setMobileActivePane('studio');
                 }}
                 layoutMode={layoutMode}
                 setLayoutMode={setLayoutMode}
@@ -318,15 +351,20 @@ export default function App() {
 
           {/* Right Pane: Live AI Studio (Code Sandbox, Math Lab, 8K Vision, Motion Lab) */}
           {(layoutMode === 'studio' || layoutMode === 'split') && (
-            <div className={`h-full flex flex-col transition-all duration-300 min-w-0 ${
-              layoutMode === 'split' ? 'w-full md:w-1/2' : 'w-full'
+            <div className={`h-full flex-col transition-all duration-300 min-w-0 ${
+              layoutMode === 'split' 
+                ? (mobileActivePane === 'studio' ? 'flex w-full md:w-1/2' : 'hidden md:flex md:w-1/2') 
+                : 'flex w-full'
             }`}>
               <StudioPanel
                 activeStudioTab={activeStudioTab}
                 setActiveStudioTab={setActiveStudioTab}
                 activeModel={activeModel}
                 injectedCode={injectedCode}
-                onClose={() => setLayoutMode('chat')}
+                onClose={() => {
+                  setLayoutMode('chat');
+                  setMobileActivePane('chat');
+                }}
                 isAppInstalled={isAppInstalled}
                 isTitanMode={isTitanMode}
                 onOpenDownload={() => setIsDownloadOpen(true)}

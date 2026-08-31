@@ -836,8 +836,8 @@ export default function ChatView({
           </div>
 
           {/* Quick Engine & Mode Bar below input */}
-          <div className="flex flex-wrap items-center justify-between gap-2 px-1 text-[11px] font-mono text-gray-400">
-            <div className="flex items-center gap-3">
+          <div className="flex items-center justify-between gap-2 px-1 text-[11px] font-mono text-gray-400 overflow-x-auto no-scrollbar py-0.5 w-full">
+            <div className="flex items-center gap-1.5 sm:gap-2.5 flex-nowrap shrink-0">
               {/* Engine Selector */}
               <div className="relative">
                 <button
