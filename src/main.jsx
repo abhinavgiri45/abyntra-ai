@@ -44,10 +44,18 @@ class RootErrorBoundary extends React.Component {
   }
 }
 
+if (typeof window !== 'undefined') {
+  window.addEventListener('error', (event) => {
+    console.error('Captured Global Error:', event.error || event.message);
+  });
+  window.addEventListener('unhandledrejection', (event) => {
+    console.error('Captured Unhandled Rejection:', event.reason);
+  });
+}
+
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
-    <RootErrorBoundary>
-      <App />
-    </RootErrorBoundary>
-  </React.StrictMode>,
+  <RootErrorBoundary>
+    <App />
+  </RootErrorBoundary>,
 )
+
