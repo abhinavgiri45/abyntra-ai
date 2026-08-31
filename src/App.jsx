@@ -21,161 +21,45 @@ import { AI_MODELS, TITAN_AI_MODELS } from './services/modelCatalog';
 import { storage } from './services/storage';
 import { updateService } from './services/updateService';
 
-// Dynamic Route Resolver for Instant SPA Web Navigation:
-// - '/' or '/chat' -> Full Superhuman Chat & AI Studio Canvas Workspace (Default)
-// - '/intro' or '/about' -> Official Introduction / Announcement Page
-// - '/why-switch' -> Model Benchmarks & Comparison Matrix
-// - '/downloads' -> Standalone Platform Native App Packages
-// - '/switch-user' -> Switch User Identity & Profile Selector
-const resolveInitialRoute = () => {
-  if (typeof window === 'undefined') return { view: 'chat' };
-  const pathname = window.location.pathname.toLowerCase().replace(/\/$/, '') || '/';
-  const hash = window.location.hash.toLowerCase().replace(/^#\/?/, '');
-  const search = new URLSearchParams(window.location.search);
-
-  // Introduction requested
-  if (pathname === '/intro' || pathname === '/about' || hash === 'intro' || hash === 'about' || search.get('view') === 'intro') {
-    return { view: 'intro' };
-  }
-  // Why switch comparison requested
-  if (pathname === '/why-switch' || hash === 'why-switch' || search.get('view') === 'why-switch') {
-    return { view: 'why-switch' };
-  }
-  // Downloads requested
-  if (pathname === '/downloads' || hash === 'downloads' || search.get('view') === 'downloads') {
-    return { view: 'downloads' };
-  }
-  // Switch user profile requested
-  if (pathname === '/switch-user' || hash === 'switch-user' || search.get('view') === 'switch-user') {
-    return { view: 'switch-user' };
-  }
-
-  // Default for '/' and '/chat' is the full Chat Workspace!
-  return { view: 'chat' };
-};
-
 export default function App() {
-  const initialRoute = resolveInitialRoute();
   const [isAppInstalled, setIsAppInstalled] = useState(() => storage.isAppInstalled());
   const [isTitanMode, setIsTitanMode] = useState(() => {
     try {
-      return localStorage.getItem('girionix_titan_mode') === 'true' || (typeof window !== 'undefined' && window.location.search.includes('titan=true'));
+      return localStorage.getItem('girionix_titan_mode') === 'true' || localStorage.getItem('girionix_titan_mode') === 'true' || (typeof window !== 'undefined' && window.location.search.includes('titan=true'));
     } catch (_) { return false; }
   });
   const [isTitanWorkstationOpen, setIsTitanWorkstationOpen] = useState(false);
   const [activeModel, setActiveModel] = useState(() => {
-    const isTitan = typeof window !== 'undefined' && (localStorage.getItem('girionix_titan_mode') === 'true' || window.location.search.includes('titan=true'));
+    const isTitan = typeof window !== 'undefined' && (localStorage.getItem('girionix_titan_mode') === 'true' || localStorage.getItem('girionix_titan_mode') === 'true' || window.location.search.includes('titan=true'));
     const isLite = typeof window !== 'undefined' && window.location.search.includes('profile=lite');
     if (isTitan) return isLite ? TITAN_AI_MODELS[1] : TITAN_AI_MODELS[0];
-    return AI_MODELS[0]; // Full Pro Flagship Universal Model
+    return AI_MODELS[0]; // Full Pro Flagship Universal Model available seamlessly on both web and app
   });
   const [layoutMode, setLayoutMode] = useState('chat'); // 'chat' | 'split' | 'studio'
   const [activeStudioTab, setActiveStudioTab] = useState('code'); // 'code' | 'math' | 'image' | 'video'
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isToolsOpen, setIsToolsOpen] = useState(false);
-  const [introTab, setIntroTab] = useState(initialRoute.view === 'why-switch' ? 'comparison' : 'overview');
-  
-  // Dynamic Route States
-  const [isAboutOpen, setIsAboutOpen] = useState(initialRoute.view === 'intro' || initialRoute.view === 'why-switch');
-  const [isNameModalOpen, setIsNameModalOpen] = useState(initialRoute.view === 'switch-user');
-  const [isDownloadOpen, setIsDownloadOpen] = useState(initialRoute.view === 'downloads');
-
-  // Bidirectional History & URL Routing Synchronizer
-  const navigateTo = (route, push = true) => {
-    if (typeof window === 'undefined') return;
-    let targetPath = '/chat';
-    if (route === 'chat') targetPath = '/chat';
-    else if (route === 'intro' || route === 'about') targetPath = '/intro';
-    else if (route === 'why-switch') targetPath = '/why-switch';
-    else if (route === 'downloads') targetPath = '/downloads';
-    else if (route === 'switch-user') targetPath = '/switch-user';
-    else targetPath = '/chat';
-
+  const [introTab, setIntroTab] = useState('overview');
+  // The AI Web App ALWAYS opens with the Official Introduction Page as the primary landing page first!
+  const [isAboutOpen, setIsAboutOpen] = useState(() => {
     try {
-      if (window.location.pathname !== targetPath) {
-        if (push) {
-          window.history.pushState({ route }, '', targetPath);
-        } else {
-          window.history.replaceState({ route }, '', targetPath);
-        }
+      if (typeof window === 'undefined') return true;
+      const params = new URLSearchParams(window.location.search);
+      // Skip intro only if explicit native app flags or direct chat mode requested
+      if (params.get('direct') === 'chat' || params.get('app') === 'true' || params.get('native') === 'true') {
+        return false;
       }
-    } catch (_) {}
-  };
-
-  // Listen for browser Back/Forward navigation
-  useEffect(() => {
-    const handlePopState = () => {
-      const current = resolveInitialRoute();
-      if (current.view === 'intro') {
-        setIsAboutOpen(true);
-        setIntroTab('overview');
-        setIsNameModalOpen(false);
-        setIsDownloadOpen(false);
-      } else if (current.view === 'why-switch') {
-        setIsAboutOpen(true);
-        setIntroTab('comparison');
-        setIsNameModalOpen(false);
-        setIsDownloadOpen(false);
-      } else if (current.view === 'downloads') {
-        setIsDownloadOpen(true);
-        setIsAboutOpen(false);
-        setIsNameModalOpen(false);
-      } else if (current.view === 'switch-user') {
-        setIsNameModalOpen(true);
-        setIsAboutOpen(false);
-        setIsDownloadOpen(false);
-      } else {
-        setIsAboutOpen(false);
-        setIsNameModalOpen(false);
-        setIsDownloadOpen(false);
-      }
-    };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, []);
-
-  const handleOpenIntro = () => {
-    setIntroTab('overview');
-    setIsAboutOpen(true);
-    navigateTo('intro');
-  };
+      return true;
+    } catch (_) {
+      return true;
+    }
+  });
 
   const handleOpenWhySwitch = () => {
     setIntroTab('comparison');
     setIsAboutOpen(true);
-    navigateTo('why-switch');
   };
-
-  const handleCloseIntro = () => {
-    setIsAboutOpen(false);
-    storage.setSeenIntro(true);
-    navigateTo('chat');
-  };
-
-  const handleLaunchApp = (studioTab = null) => {
-    handleCloseIntro();
-    if (studioTab && typeof studioTab === 'string') {
-      setActiveStudioTab(studioTab);
-      setLayoutMode('split');
-    }
-  };
-
-  const handleOpenSwitchUser = () => {
-    setIsNameModalOpen(true);
-    navigateTo('switch-user');
-  };
-
-  const handleSaveName = (newName) => {
-    setUserName(newName);
-    setIsNameModalOpen(false);
-    navigateTo('chat');
-  };
-
-  const handleCloseSwitchUser = () => {
-    setIsNameModalOpen(false);
-    navigateTo('chat');
-  };
-
+  const [isDownloadOpen, setIsDownloadOpen] = useState(false);
   const [isProStatusOpen, setIsProStatusOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isLocalModalOpen, setIsLocalModalOpen] = useState(false);
@@ -184,6 +68,7 @@ export default function App() {
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const [isVoiceModeOpen, setIsVoiceModeOpen] = useState(false);
   const [isShortcutsOpen, setIsShortcutsOpen] = useState(false);
+  const [isNameModalOpen, setIsNameModalOpen] = useState(false);
   const [userName, setUserName] = useState('');
   const [injectedCode, setInjectedCode] = useState(null);
 
@@ -209,7 +94,9 @@ export default function App() {
   useEffect(() => {
     const isApp = storage.isAppInstalled();
     const savedName = storage.getUserName();
-    if (savedName) {
+    if (!savedName && (storage.hasSeenIntro() || isApp)) {
+      setIsNameModalOpen(true);
+    } else if (savedName) {
       setUserName(savedName);
     }
 
@@ -223,8 +110,7 @@ export default function App() {
         window.location.hash.includes('native=true')
       );
       if (isRunningApp && isExplicitNative) {
-        setIsAboutOpen(false);
-        navigateTo('chat', false);
+        setIsAboutOpen(false); // Standalone installed desktop/mobile app goes straight to workspace
       }
     };
 
@@ -326,6 +212,15 @@ export default function App() {
     setLayoutMode('split');
   };
 
+  const handleCloseIntro = () => {
+    setIsAboutOpen(false);
+    storage.setSeenIntro(true);
+    const savedName = storage.getUserName();
+    if (!savedName) {
+      setIsNameModalOpen(true);
+    }
+  };
+
   if (isTitanMode) {
     return (
       <TitanWorkstationView
@@ -348,9 +243,12 @@ export default function App() {
         isCollapsed={isSidebarCollapsed}
         setIsCollapsed={setIsSidebarCollapsed}
         onOpenSettings={() => setIsToolsOpen(true)}
-        onOpenAbout={handleOpenIntro}
+        onOpenAbout={() => {
+          setIntroTab('overview');
+          setIsAboutOpen(true);
+        }}
         onOpenWhySwitch={handleOpenWhySwitch}
-        onOpenDownload={() => { setIsDownloadOpen(true); navigateTo('downloads'); }}
+        onOpenDownload={() => setIsDownloadOpen(true)}
         onOpenProStatus={() => setIsProStatusOpen(true)}
         isAppInstalled={isAppInstalled}
       />
@@ -361,9 +259,12 @@ export default function App() {
           layoutMode={layoutMode}
           setLayoutMode={setLayoutMode}
           onOpenTools={() => setIsToolsOpen(true)}
-          onOpenAbout={handleOpenIntro}
+          onOpenAbout={() => {
+            setIntroTab('overview');
+            setIsAboutOpen(true);
+          }}
           onOpenWhySwitch={handleOpenWhySwitch}
-          onOpenDownload={() => { setIsDownloadOpen(true); navigateTo('downloads'); }}
+          onOpenDownload={() => setIsDownloadOpen(true)}
           onOpenProStatus={() => setIsProStatusOpen(true)}
           onOpenScratchpad={() => setIsScratchpadOpen(true)}
           onOpenUpdates={() => setIsUpdateModalOpen(true)}
@@ -372,7 +273,7 @@ export default function App() {
           onNewChat={handleCreateNewSession}
           onToggleSidebar={() => setIsSidebarCollapsed(prev => !prev)}
           userName={userName}
-          onChangeName={handleOpenSwitchUser}
+          onChangeName={() => setIsNameModalOpen(true)}
           isAppInstalled={isAppInstalled}
           isTitanMode={isTitanMode}
           onToggleTitanMode={handleToggleTitanMode}
@@ -402,9 +303,12 @@ export default function App() {
                 setActiveSessionId={setActiveSessionId}
                 onCreateNewSession={handleCreateNewSession}
                 onOpenVoiceModal={() => setIsVoiceModeOpen(true)}
-                onOpenAbout={handleOpenIntro}
+                onOpenAbout={() => {
+                  setIntroTab('overview');
+                  setIsAboutOpen(true);
+                }}
                 onOpenWhySwitch={handleOpenWhySwitch}
-                onOpenDownload={() => { setIsDownloadOpen(true); navigateTo('downloads'); }}
+                onOpenDownload={() => setIsDownloadOpen(true)}
                 isAppInstalled={isAppInstalled}
                 isTitanMode={isTitanMode}
                 onOpenTitanWorkstation={() => setIsTitanWorkstationOpen(true)}
@@ -425,7 +329,7 @@ export default function App() {
                 onClose={() => setLayoutMode('chat')}
                 isAppInstalled={isAppInstalled}
                 isTitanMode={isTitanMode}
-                onOpenDownload={() => { setIsDownloadOpen(true); navigateTo('downloads'); }}
+                onOpenDownload={() => setIsDownloadOpen(true)}
               />
             </div>
           )}
@@ -456,24 +360,26 @@ export default function App() {
         isOpen={isAboutOpen}
         initialTab={introTab}
         onClose={handleCloseIntro}
-        onLaunchApp={handleLaunchApp}
+        onLaunchApp={(studioTab) => {
+          handleCloseIntro();
+          if (studioTab && typeof studioTab === 'string') {
+            setActiveStudioTab(studioTab);
+            setLayoutMode('split');
+          }
+        }}
         onOpenDownload={() => {
           handleCloseIntro();
           setIsDownloadOpen(true);
-          navigateTo('downloads');
         }}
       />
 
       {/* Download Native Apps Modal (Android, Windows, iOS, Mac, Linux) */}
       <DownloadAppsModal
         isOpen={isDownloadOpen}
-        onClose={() => {
-          setIsDownloadOpen(false);
-          navigateTo('chat');
-        }}
+        onClose={() => setIsDownloadOpen(false)}
         onInstalledChange={(installed) => {
           setIsAppInstalled(installed);
-          if (installed) setActiveModel(AI_MODELS[0]);
+          if (installed) setActiveModel(AI_MODELS[0]); // Automatically switch to Pro once installed!
         }}
       />
 
@@ -491,7 +397,6 @@ export default function App() {
         onOpenDownload={() => {
           setIsUpdateModalOpen(false);
           setIsDownloadOpen(true);
-          navigateTo('downloads');
         }}
       />
 
@@ -522,12 +427,13 @@ export default function App() {
         activeModel={activeModel}
       />
 
-      {/* Welcome & Switch User Profile Modal */}
+      {/* Welcome Name Onboarding Modal */}
       <WelcomeNameModal
         isOpen={isNameModalOpen}
-        currentUserName={userName}
-        onSaveName={handleSaveName}
-        onClose={handleCloseSwitchUser}
+        onSaveName={(name) => {
+          setUserName(name);
+          setIsNameModalOpen(false);
+        }}
       />
 
       {/* Shortcuts Modal */}
