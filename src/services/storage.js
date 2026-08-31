@@ -90,21 +90,51 @@ export const THEMES = [
   { id: 'gold', name: 'Cyber Gold', primary: '#F59E0B', bg: '#0D0B05', border: 'rgba(245, 158, 11, 0.25)' }
 ];
 
+const memoryStore = {};
+
+const safeGetItem = (key) => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      const val = localStorage.getItem(key);
+      if (val !== null) return val;
+    }
+  } catch (_) {}
+  return memoryStore[key] !== undefined ? memoryStore[key] : null;
+};
+
+const safeSetItem = (key, value) => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(key, value);
+    }
+  } catch (_) {}
+  memoryStore[key] = String(value);
+};
+
+const safeRemoveItem = (key) => {
+  try {
+    if (typeof localStorage !== 'undefined') {
+      localStorage.removeItem(key);
+    }
+  } catch (_) {}
+  delete memoryStore[key];
+};
+
 export const storage = {
-  getUserName: () => localStorage.getItem(KEYS.USER_NAME) || '',
-  setUserName: (name) => localStorage.setItem(KEYS.USER_NAME, name.trim()),
+  getUserName: () => safeGetItem(KEYS.USER_NAME) || '',
+  setUserName: (name) => safeSetItem(KEYS.USER_NAME, (name || '').trim()),
 
-  getApiKey: () => localStorage.getItem(KEYS.API_KEY) || DEFAULT_OPENROUTER_KEY,
-  setApiKey: (key) => localStorage.setItem(KEYS.API_KEY, key.trim()),
-  removeApiKey: () => localStorage.removeItem(KEYS.API_KEY),
+  getApiKey: () => safeGetItem(KEYS.API_KEY) || DEFAULT_OPENROUTER_KEY,
+  setApiKey: (key) => safeSetItem(KEYS.API_KEY, (key || '').trim()),
+  removeApiKey: () => safeRemoveItem(KEYS.API_KEY),
 
-  getReplicateToken: () => localStorage.getItem(KEYS.REPLICATE_TOKEN) || DEFAULT_REPLICATE_TOKEN,
-  setReplicateToken: (token) => localStorage.setItem(KEYS.REPLICATE_TOKEN, token.trim()),
-  removeReplicateToken: () => localStorage.removeItem(KEYS.REPLICATE_TOKEN),
+  getReplicateToken: () => safeGetItem(KEYS.REPLICATE_TOKEN) || DEFAULT_REPLICATE_TOKEN,
+  setReplicateToken: (token) => safeSetItem(KEYS.REPLICATE_TOKEN, (token || '').trim()),
+  removeReplicateToken: () => safeRemoveItem(KEYS.REPLICATE_TOKEN),
 
   getSettings: () => {
     try {
-      const saved = localStorage.getItem(KEYS.SETTINGS);
+      const saved = safeGetItem(KEYS.SETTINGS);
       if (saved) return JSON.parse(saved);
     } catch (_) {}
     return {
@@ -117,11 +147,10 @@ export const storage = {
     };
   },
   saveSettings: (settings) => {
-    localStorage.setItem(KEYS.SETTINGS, JSON.stringify(settings));
+    safeSetItem(KEYS.SETTINGS, JSON.stringify(settings));
   },
 
   getRetentionDays: () => {
-    // 90 days in all native apps, 45 days on website
     return storage.isAppInstalled() ? 90 : 45;
   },
 
@@ -137,7 +166,7 @@ export const storage = {
 
   getSessions: () => {
     try {
-      const saved = localStorage.getItem(KEYS.SESSIONS);
+      const saved = safeGetItem(KEYS.SESSIONS);
       if (saved) {
         const parsed = JSON.parse(saved);
         if (Array.isArray(parsed) && parsed.length > 0) {
@@ -163,28 +192,28 @@ export const storage = {
   saveSessions: (sessions) => {
     try {
       const cleaned = storage.cleanExpiredSessions(sessions);
-      localStorage.setItem(KEYS.SESSIONS, JSON.stringify(cleaned));
+      safeSetItem(KEYS.SESSIONS, JSON.stringify(cleaned));
     } catch (_) {
-      localStorage.setItem(KEYS.SESSIONS, JSON.stringify(sessions));
+      safeSetItem(KEYS.SESSIONS, JSON.stringify(sessions));
     }
   },
 
   getActiveSessionId: () => {
-    return localStorage.getItem(KEYS.ACTIVE_SESSION_ID) || 'default-session';
+    return safeGetItem(KEYS.ACTIVE_SESSION_ID) || 'default-session';
   },
   setActiveSessionId: (id) => {
-    localStorage.setItem(KEYS.ACTIVE_SESSION_ID, id);
+    safeSetItem(KEYS.ACTIVE_SESSION_ID, id);
   },
 
   getPinnedItems: () => {
     try {
-      const saved = localStorage.getItem(KEYS.PINNED_ITEMS);
+      const saved = safeGetItem(KEYS.PINNED_ITEMS);
       if (saved) return JSON.parse(saved);
     } catch (_) {}
     return [];
   },
   savePinnedItems: (items) => {
-    localStorage.setItem(KEYS.PINNED_ITEMS, JSON.stringify(items));
+    safeSetItem(KEYS.PINNED_ITEMS, JSON.stringify(items));
   },
 
   isAppInstalled: () => {
@@ -201,22 +230,22 @@ export const storage = {
         window.__TAURI__ || 
         window.Capacitor?.isNativePlatform?.()
       );
-      // Only true if explicitly running inside native app package/executable
       return Boolean(isExplicitAppParam || isNativeAppRuntime);
     } catch (_) { return false; }
   },
   setAppInstalled: (installed = true) => {
     try {
-      localStorage.setItem('girionix_app_installed', installed ? 'true' : 'false');
+      safeSetItem('girionix_app_installed', installed ? 'true' : 'false');
     } catch (_) {}
   },
 
   hasSeenIntro: () => {
     try {
-      return localStorage.getItem('girionix_seen_intro') === 'true';
+      return safeGetItem('girionix_seen_intro') === 'true';
     } catch (_) { return false; }
   },
   setSeenIntro: (seen = true) => {
-    localStorage.setItem('girionix_seen_intro', seen ? 'true' : 'false');
+    safeSetItem('girionix_seen_intro', seen ? 'true' : 'false');
   }
 };
+
