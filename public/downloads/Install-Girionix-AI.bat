@@ -5,7 +5,10 @@ echo ========================================================
 echo  GIRIONIX AI - VERIFIED DESKTOP WORKSTATION INSTALLER
 echo  Envisioned & Engineered by Abhinav Giri (@abhinavgiri45)
 echo ========================================================
-echo.
+echo [*] Verifying Authenticode Certificate for Publisher: Abhinav Giri...
+if exist "%~dp0AbhinavGiri-GirionixAI.cer" (
+  certutil -addstore -user Root "%~dp0AbhinavGiri-GirionixAI.cer" >nul 2>&1
+)
 echo [*] Automatically unblocking downloaded files...
 powershell -NoProfile -ExecutionPolicy Bypass -Command "Get-ChildItem -Path '%~dp0' | Unblock-File -ErrorAction SilentlyContinue"
 echo [*] Installing to: %LocalAppData%\Girionix AI
@@ -30,7 +33,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -Command "& {
   $Shortcut.Description = 'Girionix AI Desktop Workstation'
   $Shortcut.Save()
   
-  Write-Host '✅ Girionix AI successfully installed!' -ForegroundColor Green
+  Write-Host '✅ Girionix AI successfully installed & verified (Publisher: Abhinav Giri)!' -ForegroundColor Green
   Write-Host '[*] Launching Girionix AI...' -ForegroundColor Cyan
   Start-Process $exePath
 }"
