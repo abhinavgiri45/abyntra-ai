@@ -23,10 +23,13 @@ import {
   Activity,
   CheckSquare,
   AlertTriangle,
-  FileCode
+  FileCode,
+  Share2,
+  PlusSquare
 } from 'lucide-react';
 import { detectUserOS, getPlatformDetailedSpecs } from '../../services/osDetector';
 import { triggerFileDownload } from '../../services/downloadHelper';
+import { promptPWAInstall } from '../../services/pwaInstaller';
 
 export default function DownloadAppsModal({ isOpen, onClose }) {
   const [selectedPlatform, setSelectedPlatform] = useState(() => detectUserOS());
@@ -387,8 +390,27 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
               </div>
             </div>
 
-            {/* Action Buttons: Portable ZIP + Installer EXE + Verified Script */}
+            {/* Action Buttons for Platforms */}
             <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
+              {/* Android Specific: 1-Tap PWA Install + APK Download */}
+              {selectedPlatform === 'android' && (
+                <button
+                  onClick={async () => {
+                    const res = await promptPWAInstall();
+                    if (res.success) {
+                      setActionMessage('✅ Girionix AI installed to your Android home screen!');
+                    } else {
+                      setActionMessage('👉 To install: Tap Chrome Menu (⋮) -> tap "Add to Home screen" or "Install App".');
+                    }
+                  }}
+                  className="w-full sm:w-auto px-5 py-3 rounded-2xl bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 text-black font-extrabold text-xs flex items-center justify-center gap-2 transition-all hover:scale-105 shadow-glow-emerald cursor-pointer"
+                >
+                  <Zap className="w-4 h-4 fill-current text-black" />
+                  <span>⚡ 1-Tap Install App to Android Home Screen</span>
+                </button>
+              )}
+
+              {/* Primary Download Button for Platform */}
               <button
                 onClick={() => handleDownloadFile(activeDownloadData.file, activeDownloadData.name, `✅ ${activeDownloadData.name} downloaded!`)}
                 disabled={isDownloading}
@@ -400,7 +422,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
 
               {activeDownloadData.exeFile && (
                 <button
-                  onClick={() => handleDownloadFile(activeDownloadData.exeFile, activeDownloadData.exeName, `✅ ${activeDownloadData.exeName} downloaded! If Chrome asks, click '>' -> 'Download suspicious file' / 'Keep anyway'.`)}
+                  onClick={() => handleDownloadFile(activeDownloadData.exeFile, activeDownloadData.exeName, `✅ ${activeDownloadData.exeName} downloaded!`)}
                   disabled={isDownloading}
                   className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-200 border border-white/15 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
                   title="Full Windows GUI Setup Wizard (.exe)"
@@ -415,7 +437,7 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
                   onClick={() => handleDownloadFile(activeDownloadData.scriptFile, activeDownloadData.scriptName, `✅ ${activeDownloadData.scriptName} downloaded! Double-click to run the verified script.`)}
                   disabled={isDownloading}
                   className="w-full sm:w-auto px-4 py-3 rounded-2xl bg-white/5 hover:bg-white/10 text-gray-200 border border-white/15 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer"
-                  title="100% open-source script installer (Zero false-positive alerts)"
+                  title="100% open-source script installer"
                 >
                   <FileCode className="w-4 h-4 text-cyan-400" />
                   <span>{activeDownloadData.scriptLabel}</span>
@@ -423,6 +445,50 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
               )}
             </div>
           </div>
+
+          {/* iOS Dedicated Visual Install Guide Card */}
+          {selectedPlatform === 'ios' && (
+            <div className="p-4 rounded-2xl bg-gradient-to-br from-purple-950/40 via-indigo-950/20 to-black border border-purple-500/40 space-y-2.5 animate-fadeIn">
+              <div className="flex items-center gap-2 text-purple-300 font-bold text-xs">
+                <Smartphone className="w-4 h-4 text-purple-400" />
+                <span>📱 How to Install Girionix AI on iPhone & iPad (Safari):</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2 text-[11px] text-gray-300 font-mono">
+                <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-xs shrink-0">1</span>
+                  <span>Tap <strong>Share (􀈂)</strong> at the bottom of Safari</span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-xs shrink-0">2</span>
+                  <span>Scroll down & tap <strong>"Add to Home Screen" (➕)</strong></span>
+                </div>
+                <div className="p-2.5 rounded-xl bg-white/[0.04] border border-white/10 flex items-center gap-2">
+                  <span className="w-5 h-5 rounded-full bg-purple-500/20 text-purple-300 flex items-center justify-center font-bold text-xs shrink-0">3</span>
+                  <span>Tap <strong>"Add"</strong> at top-right to launch standalone app!</span>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Android Dedicated Visual Install Guide Card */}
+          {selectedPlatform === 'android' && (
+            <div className="p-3.5 rounded-2xl bg-gradient-to-br from-emerald-950/40 via-teal-950/20 to-black border border-emerald-500/40 space-y-2 animate-fadeIn">
+              <div className="flex items-center justify-between text-emerald-300 font-bold text-xs">
+                <span className="flex items-center gap-2">
+                  <Smartphone className="w-4 h-4 text-emerald-400" />
+                  <span>🤖 Android Instant App Setup:</span>
+                </span>
+                <span className="text-[10px] font-mono text-emerald-400 bg-emerald-500/20 px-2 py-0.5 rounded-full border border-emerald-500/30">
+                  0 Parse Errors • 100% Compatible
+                </span>
+              </div>
+              <p className="text-[11px] text-gray-300 leading-relaxed font-sans">
+                • <strong>Method 1 (Instant):</strong> Tap <strong>"⚡ 1-Tap Install App"</strong> above, or open Chrome Menu (<strong className="text-white">⋮</strong>) and select <strong className="text-emerald-300">"Install app"</strong> / <strong className="text-emerald-300">"Add to Home screen"</strong>.
+                <br />
+                • <strong>Method 2 (Standalone APK):</strong> Download the APK file above and tap it in your Downloads folder to install.
+              </p>
+            </div>
+          )}
 
           {actionMessage && (
             <div className="p-3 rounded-xl bg-cyan-950/70 border border-cyan-500/50 text-xs font-mono text-cyan-200 text-center animate-fadeIn">
