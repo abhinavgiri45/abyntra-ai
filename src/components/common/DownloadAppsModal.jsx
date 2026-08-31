@@ -45,9 +45,6 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       standaloneFile: '/downloads/GirionixAI.exe',
       standaloneName: 'GirionixAI.exe',
       standaloneLabel: 'Direct Standalone Executable (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },
@@ -93,9 +90,6 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       standaloneFile: '/downloads/GirionixAI.exe',
       standaloneName: 'GirionixAI.exe',
       standaloneLabel: 'Direct Standalone Executable (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },
@@ -141,9 +135,6 @@ export default function DownloadAppsModal({ isOpen, onClose }) {
       standaloneFile: '/downloads/GirionixAI.exe',
       standaloneName: 'GirionixAI.exe',
       standaloneLabel: 'Direct Standalone Executable (.exe)',
-      scriptFile: '/downloads/Install-Girionix-AI.bat',
-      scriptName: 'Install-Girionix-AI.bat',
-      scriptLabel: '1-Click Verified Script (.bat)',
       uninstaller: '/downloads/Uninstall_Girionix_AI.exe',
       uninstallerName: 'Uninstall_Girionix_AI.exe'
     },

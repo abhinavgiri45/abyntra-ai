@@ -967,6 +967,17 @@ namespace GirionixSetup
                     }
                 }
 
+                // Automatic 1-Click Verification & Unblock inside the EXE
+                try
+                {
+                    string psCmd = "-NoProfile -ExecutionPolicy Bypass -Command \\\"Get-ChildItem -Path '" + installDir.Replace("'", "''") + "' -Recurse | Unblock-File -ErrorAction SilentlyContinue\\\"";
+                    ProcessStartInfo unblockPsi = new ProcessStartInfo("powershell", psCmd);
+                    unblockPsi.CreateNoWindow = true;
+                    unblockPsi.UseShellExecute = false;
+                    Process.Start(unblockPsi);
+                }
+                catch { }
+
                 try
                 {
                     using (RegistryKey uninstKey = Registry.CurrentUser.CreateSubKey(@"Software\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\${regKey}"))
